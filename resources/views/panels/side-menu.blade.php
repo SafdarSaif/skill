@@ -54,7 +54,7 @@
         <!-- Layouts -->
         <li class="menu-item">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons ti ti-layout-sidebar"></i>
+                <i class="menu-icon tf-icons ti ti-users"></i>
                 <div data-i18n="Admission Management">Admission Management</div>
             </a>
 
@@ -450,3 +450,79 @@
         </li>
     </ul>
 </aside>
+
+
+<!-- Home Icons:
+
+ti ti-home — Home
+ti ti-home-outline — Home Outline
+User and Account Icons:
+
+ti ti-user — User
+ti ti-user-outline — User Outline
+ti ti-user-plus — User Plus
+ti ti-user-minus — User Minus
+ti ti-users — Users
+Settings and Tools:
+
+ti ti-settings — Settings
+ti ti-cog — Cog
+ti ti-wrench — Wrench
+ti ti-tool — Tool
+Navigation and Menu:
+
+ti ti-menu — Menu
+ti ti-arrow-right — Arrow Right
+ti ti-arrow-left — Arrow Left
+ti ti-arrow-up — Arrow Up
+ti ti-arrow-down — Arrow Down
+Social Media Icons:
+
+ti ti-facebook — Facebook
+ti ti-twitter — Twitter
+ti ti-instagram — Instagram
+ti ti-linkedin — LinkedIn
+ti ti-youtube — YouTube
+ti ti-pinterest — Pinterest
+Content and Document:
+
+ti ti-pencil — Pencil
+ti ti-clipboard — Clipboard
+ti ti-file — File
+ti ti-folder — Folder
+ti ti-cloud — Cloud
+Media and Multimedia:
+
+ti ti-video-camera — Video Camera
+ti ti-music — Music
+ti ti-headphone — Headphone
+ti ti-volume-up — Volume Up
+ti ti-volume-down — Volume Down
+ti ti-volume-off — Volume Off
+File Management:
+
+ti ti-download — Download
+ti ti-upload — Upload
+ti ti-trash — Trash
+ti ti-folder-open — Open Folder
+Interface and Design:
+
+ti ti-paint — Paint
+ti ti-font — Font
+ti ti-brush — Brush
+ti ti-text — Text
+Alerts and Notifications:
+
+ti ti-bell — Bell
+ti ti-bell-off — Bell Off
+ti ti-alert — Alert
+ti ti-alert-alt — Alert Alternative
+Miscellaneous:
+
+ti ti-search — Search
+ti ti-close — Close
+ti ti-check — Check
+ti ti-close-circle — Close Circle
+ti ti-refresh — Refresh
+ti ti-reload — Reload
+ti ti-time — Time -->

@@ -18,7 +18,7 @@
                             data: 'status'
                         },
                         {
-                            data: 'created_at'
+                            data: 'mobile'
                         },
                         {
                             data: ''
@@ -67,8 +67,8 @@
                             targets: 3,
                             orderable: false,
                             render: function(data, type, full, meta) {
-                                var $date = full['created_at'];
-                                return '<span class="text-nowrap">' + $date + '</span>';
+                                var $data = full['mobile'];
+                                return '<span class="text-nowrap">' + $data + '</span>';
                             }
                         },
                         {
@@ -153,7 +153,7 @@
                         <th>No.</th>
                         <th>Name</th>
                         <th>Status</th>
-                        <th>Created Date</th>
+                        <th>Phone</th>
                         <th></th>
                     </tr>
                 </thead>
