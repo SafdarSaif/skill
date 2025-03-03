@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\PermissionController;
 use App\Http\Controllers\User\RoleController;
 use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\StudentsController;
 
 
 // Route::get('/', function () {
@@ -54,3 +55,14 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
     Route::post('/users', [UserController::class, 'store'])->name('users');
 });
+
+
+
+Route::get('/student', [StudentsController::class, 'index'])->name('student');
+Route::get('/student/create', [StudentsController::class, 'create'])->name('student.create');
+Route::post('/student/store', [StudentsController::class, 'store'])->name('setting.student.store');
+Route::get('/student/edit/{id}', [StudentsController::class, 'edit'])->name('student.edit');
+Route::post('/student/update/{id}', [StudentsController::class, 'update'])->name('student.update');
+Route::delete('/student/destroy/{id}', [StudentsController::class, 'destroy'])->name('student.destroy');
+Route::get('student/status/{id}', [StudentsController::class, 'status'])->name('student.status');
+

@@ -52,62 +52,67 @@
         </li>
 
         <!-- Layouts -->
-        {{-- <li class="menu-item">
+        <li class="menu-item">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons ti ti-layout-sidebar"></i>
-                <div data-i18n="Academics">Academics</div>
+                <div data-i18n="Admission Management">Admission Management</div>
+            </a>
+
+            <ul class="menu-sub">
+
+                <li class="menu-item">
+                    <a href="{{ route('student') }}" class="menu-link">
+                        <div data-i18n="Students">Students</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="" class="menu-link">
+                        <div data-i18n="Student Course">Student Course</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="menu-item">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-layout-sidebar"></i>
+                <div data-i18n="Course Management">Course Management</div>
             </a>
 
             <ul class="menu-sub">
 
                 <li class="menu-item">
                     <a href="" class="menu-link">
-                        <div data-i18n="Boards">Boards</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="" class="menu-link">
-                        <div data-i18n="Departments">Departments</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="" class="menu-link">
                         <div data-i18n="Courses">Courses</div>
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href=""
-                        class="menu-link" target="_blank">
+                    <a href="" class="menu-link">
                         <div data-i18n="Subjects">Subjects</div>
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="Academics/Syllabus" class="menu-link">
-                        <div data-i18n="Syllabus">Syllabus</div>
+                    <a href="" class="menu-link">
+                        <div data-i18n="Student Course">Student Course</div>
                     </a>
                 </li>
-                <!-- <li class="menu-item">
-                    <a href="layouts-without-navbar.html" class="menu-link">
-                        <div data-i18n="Without navbar">Without navbar</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="layouts-fluid.html" class="menu-link">
-                        <div data-i18n="Fluid">Fluid</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="layouts-container.html" class="menu-link">
-                        <div data-i18n="Container">Container</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="layouts-blank.html" class="menu-link">
-                        <div data-i18n="Blank">Blank</div>
-                    </a>
-                </li> -->
+
             </ul>
-        </li> --}}
+        </li>
+        <li class="menu-item">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-layout-sidebar"></i>
+                <div data-i18n="Payment Management">Payment Management</div>
+            </a>
+
+            <ul class="menu-sub">
+
+                <li class="menu-item">
+                    <a href="" class="menu-link">
+                        <div data-i18n="Student Payment">Student Payment</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
 
         <!-- Front Pages -->
         {{-- <li class="menu-item">
