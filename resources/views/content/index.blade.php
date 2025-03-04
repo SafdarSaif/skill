@@ -116,7 +116,9 @@
             {{ session('status') }}
         </div>
        @endif
-
+       @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
         <form id="" class="mb-6" action="{{ route('login') }}" method="POST">
             @csrf
           <div class="mb-6">

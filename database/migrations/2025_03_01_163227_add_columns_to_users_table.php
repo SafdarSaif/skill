@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             
             // $table->integer('mobile')->nullable();
-            $table->string('mobile', 20)->nullable()->change();
+            $table->bigInteger('mobile')->nullable();
             $table->string('code', 255)->nullable();
             $table->tinyInteger('status')->default(1);
         });

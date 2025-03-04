@@ -31,6 +31,22 @@ class StudentsController extends Controller
         return view('students.index');
     }
 
+    public function getStudentDetails($mobile){
+        try{
+            $student = Students::where('mobile', $mobile)->get();
+            if($student->isEmpty())
+            {
+                return response()->json(['status' => 'error','message' => 'No student found with this mobile number']);
+            }
+            return response()->json(['status' => 'success', 'data' => $student]);
+        }
+        catch(\Exception $e){
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+        
+        
+    }
+
     /**
      * Show the form for creating a new resource.
      */
