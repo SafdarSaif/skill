@@ -96,7 +96,7 @@ class StudentsController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Validation failed',
-                'errors' => $e->errors(), // Returns errors in the required format
+                'errors' => $e->errors(), 
             ], 422);
         } catch (\Exception $e) {
             return response()->json([

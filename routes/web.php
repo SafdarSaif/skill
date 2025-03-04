@@ -5,6 +5,8 @@ use App\Http\Controllers\User\PermissionController;
 use App\Http\Controllers\User\RoleController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\StudentsController;
+use App\Http\Controllers\CourseController;
+use App\Http\Controllers\CategoryController;
 
 
 // Route::get('/', function () {
@@ -65,4 +67,24 @@ Route::get('/student/edit/{id}', [StudentsController::class, 'edit'])->name('stu
 Route::post('/student/update/{id}', [StudentsController::class, 'update'])->name('student.update');
 Route::delete('/student/destroy/{id}', [StudentsController::class, 'destroy'])->name('student.destroy');
 Route::get('student/status/{id}', [StudentsController::class, 'status'])->name('student.status');
+
+
+
+
+Route::get('/course', [CourseController::class, 'index'])->name('course');
+Route::get('/course/create', [CourseController::class, 'create'])->name('course.create');
+Route::post('/course/store', [CourseController::class, 'store'])->name('course.store');
+Route::get('/course/edit/{id}', [CourseController::class, 'edit'])->name('course.edit');
+Route::post('/course/update/{id}', [CourseController::class, 'update'])->name('course.update');
+Route::delete('/course/destroy/{id}', [CourseController::class, 'destroy'])->name('course.destroy');
+Route::get('course/status/{id}', [CourseController::class, 'status'])->name('course.status');
+
+Route::get('/category', [CategoryController::class, 'index'])->name('category');
+Route::get('/category/create', [CategoryController::class, 'create'])->name('category.create');
+Route::post('/category/store', [CategoryController::class, 'store'])->name('category.store');
+Route::get('/category/edit/{id}', [CategoryController::class, 'edit'])->name('category.edit');
+Route::post('/category/update/{id}', [CategoryController::class, 'update'])->name('category.update');
+Route::delete('/category/destroy/{id}', [CategoryController::class, 'destroy'])->name('category.destroy');
+Route::get('category/status/{id}', [CategoryController::class, 'status'])->name('category.status');
+
 
