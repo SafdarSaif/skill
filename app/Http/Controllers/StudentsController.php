@@ -6,6 +6,8 @@ use App\Models\Students;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Carbon;
+use App\Http\Controllers\OTPController;
+
 
 class StudentsController extends Controller
 {
@@ -43,7 +45,33 @@ class StudentsController extends Controller
         catch(\Exception $e){
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
-        
+    }
+
+    public function registerStudent(Request $request){
+        // dd($request);
+      $mobile = $request->mobile;
+        try{
+            $student = Students::where('mobile', )->first();
+
+            if($student)
+            {
+                return response()->json(['status' => 'error','message' => 'Student already registered with this '.$request->mobile]);
+            }
+          
+            $studentdata = new Students();
+            $studentdata->name = $request->name;
+            $studentdata->email = $request->email;
+            $studentdata->mobile = $mobile;
+            $studentdata->status = 0;
+          
+            $studentdata->save();
+            $otpresponse = OTPController::getOtp($mobile);
+            
+            return $otpresponse;
+        }
+        catch(\Exception $e){
+            return response()->json(['status' => 'error','message' => $e->getMessage()]);
+        }
         
     }
 

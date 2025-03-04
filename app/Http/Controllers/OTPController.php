@@ -12,11 +12,15 @@ class OTPController extends Controller
 {
     public static function getOtp($mobileNo)
     {
-        $checkStudent = Students::where('mobile_no',$mobileNo)->count();
-        if($checkStudent)
+        $checkStudent = Students::where('mobile',$mobileNo)->first();
+        
+        if($checkStudent->count())
         {
+            
             $otp = self::generateOtp($checkStudent);
+            
             $isOtpSend = self::sendOtpToUser($otp,$mobileNo);
+            
             if($isOtpSend)
             {
                 return response()->json([
@@ -44,9 +48,10 @@ class OTPController extends Controller
     public static function generateOtp($studentData)
     {
         $otpData['otp'] = random_int(1000,9999);
-        $otpData['mobileNo'] = $studentData->mobile;
-        $otpData['expireAt'] = Carbon::now()->addMinutes(5);
-        $otpData['studentId'] = $studentData->id;
+        $otpData['mobile_number'] = $studentData->mobile;
+        $otpData['expire_at'] = Carbon::now()->addMinutes(5);
+        $otpData['students_id'] = $studentData->id;
+       
         $storeOtp = OTP::create($otpData);
         if($storeOtp)
         {
@@ -74,7 +79,7 @@ class OTPController extends Controller
 
     public function verifyOtp($otp,$mobileNo)
     {
-        $checkOtp = OTP::where(['otp'=>$otp,'mobile_no'=>$mobileNo])->where('is_used',false)->count();
+        $checkOtp = OTP::where(['otp'=>$otp,'mobile'=>$mobileNo])->where('is_used',false)->count();
         if($checkOtp)
         {
             return response()->json(['status' =>'success','message'=>'Welcome!']);

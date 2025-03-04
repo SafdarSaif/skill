@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->string('email')->unique()->nullable();
             $table->date('dob')->nullable();
-            $table->string('mobile', 20)->unique()->nullable();
+            $table->bigInteger('mobile')->unique()->nullable();
             $table->string('fathers_name')->nullable();
             $table->string('mothers_name')->nullable();
             $table->text('address')->nullable();
@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('city')->nullable();
             $table->string('country')->nullable();
             $table->string('heighest_qualification')->nullable();
-            $table->tinyInteger('status')->default(1)->nullable();
+            $table->boolean('status')->default(true)->nullable();
             $table->string('unique_id')->unique()->nullable();
             $table->timestamps();
         });
