@@ -7,6 +7,9 @@ use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\StudentsController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\StudentPaymentController;
+use App\Http\Controllers\StudentCourseController;
+use App\Http\Controllers\SubjectController;
 
 
 // Route::get('/', function () {
@@ -67,6 +70,8 @@ Route::get('/student/edit/{id}', [StudentsController::class, 'edit'])->name('stu
 Route::post('/student/update/{id}', [StudentsController::class, 'update'])->name('student.update');
 Route::delete('/student/destroy/{id}', [StudentsController::class, 'destroy'])->name('student.destroy');
 Route::get('student/status/{id}', [StudentsController::class, 'status'])->name('student.status');
+Route::get('/student/{id}', [StudentsController::class, 'show'])->name('student.show');
+
 
 
 
@@ -88,3 +93,26 @@ Route::delete('/category/destroy/{id}', [CategoryController::class, 'destroy'])-
 Route::get('category/status/{id}', [CategoryController::class, 'status'])->name('category.status');
 
 
+Route::get('/payment', [StudentPaymentController::class, 'index'])->name('payment');
+Route::get('/payment/create', [StudentPaymentController::class, 'create'])->name('payment.create');
+Route::post('/payment/store', [StudentPaymentController::class, 'store'])->name('payment.store');
+Route::get('/payment/edit/{id}', [StudentPaymentController::class, 'edit'])->name('payment.edit');
+Route::post('/payment/update/{id}', [StudentPaymentController::class, 'update'])->name('payment.update');
+Route::delete('/payment/destroy/{id}', [StudentPaymentController::class, 'destroy'])->name('payment.destroy');
+Route::get('payment/status/{id}', [StudentPaymentController::class, 'status'])->name('payment.status');
+
+Route::get('/studentcourse', [StudentCourseController::class, 'index'])->name('studentcourse');
+Route::get('/studentcourse/create', [StudentCourseController::class, 'create'])->name('studentcourse.create');
+Route::post('/studentcourse/store', [StudentCourseController::class, 'store'])->name('studentcourse.store');
+Route::get('/studentcourse/edit/{id}', [StudentCourseController::class, 'edit'])->name('studentcourse.edit');
+Route::post('/studentcourse/update/{id}', [StudentCourseController::class, 'update'])->name('studentcourse.update');
+Route::delete('/studentcourse/destroy/{id}', [StudentCourseController::class, 'destroy'])->name('studentcourse.destroy');
+Route::get('studentcourse/status/{id}', [StudentCourseController::class, 'status'])->name('studentcourse.status');
+
+Route::get('/subject', [SubjectController::class, 'index'])->name('subject');
+Route::get('/subject/create', [SubjectController::class, 'create'])->name('subject.create');
+Route::post('/subject/store', [SubjectController::class, 'store'])->name('subject.store');
+Route::get('/subject/edit/{id}', [SubjectController::class, 'edit'])->name('subject.edit');
+Route::post('/subject/update/{id}', [SubjectController::class, 'update'])->name('subject.update');
+Route::delete('/subject/destroy/{id}', [SubjectController::class, 'destroy'])->name('subject.destroy');
+Route::get('subject/status/{id}', [SubjectController::class, 'status'])->name('subject.status');
