@@ -12,10 +12,10 @@
                             data: 'DT_RowIndex',
                         },
                         {
-                            data: 'name'
+                            data: 'category'
                         },
                         {
-                            data: 'category'
+                            data: 'name'
                         },
                         {
                             data: 'status'
@@ -32,7 +32,7 @@
                         },
                         {
                             // Name
-                            targets: 1,
+                            targets: 2,
                             render: function(data, type, full, meta) {
                                 var $name = full['name'];
                                 return '<span class="text-nowrap">' + $name + '</span>';
@@ -64,7 +64,7 @@
                         },
 
                         {
-                            targets: 2,
+                            targets: 1,
                             orderable: false,
                             render: function(data, type, full, meta) {
                                 var $data = full['category'];
@@ -151,8 +151,8 @@
                 <thead>
                     <tr>
                         <th>No.</th>
-                        <th>Name</th>
                         <th>Course Category</th>
+                        <th>Name</th>
                         <th>Status</th>
                         <th></th>
                     </tr>
