@@ -82,7 +82,7 @@
 
                 <li class="menu-item">
                     <a href="{{ route('category') }}" class="menu-link">
-                        <div data-i18n="Category">Category</div>
+                        <div data-i18n="Course Category">Course Category</div>
                     </a>
                 </li>
                 <li class="menu-item">
@@ -119,45 +119,48 @@
             </ul>
         </li>
 
+
+       
+
         <!-- Front Pages -->
-        {{-- <li class="menu-item">
+        <li class="menu-item">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class='menu-icon tf-icons ti ti-files'></i>
-                <div data-i18n="Admissions">Admissions</div>
+                <div data-i18n="Content & Support System">Content & Support System</div>
             </a>
             <ul class="menu-sub">
                 <li class="menu-item">
-                    <a href="" class="menu-link">
-                        <div data-i18n="Applications">Applications</div>
+                    <a href="{{ route('news') }}" class="menu-link">
+                        <div data-i18n=" News Updates"> News Updates</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('slider') }}" class="menu-link">
+                        <div data-i18n="Slider Management">Slider Management</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('faq') }}" class="menu-link">
+                        <div data-i18n="FAQs Management">FAQs Management</div>
                     </a>
                 </li>
                 <li class="menu-item">
                     <a href="" class="menu-link">
-                        <div data-i18n="Apply Fresh">Apply Fresh</div>
+                        <div data-i18n="Student Queries Management">Student Queries Management</div>
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="" class="menu-link" target="_blank">
-                        <div data-i18n="Re-Registrations">Re-Registrations</div>
+                    <a href="" class="menu-link">
+                        <div data-i18n=" Contact/Support Section "> Contact/Support Section </div>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="" class="menu-link" target="_blank">
-                        <div data-i18n="Back Paper">Back Paper</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="" class="menu-link" target="_blank">
-                        <div data-i18n="Results">Results</div>
-                    </a>
-                </li>
-                <li class="menu-item">
+                {{-- <li class="menu-item">
                     <a href="" class="menu-link" target="_blank">
                         <div data-i18n="Exam Schedule">Exam Schedule</div>
                     </a>
-                </li>
+                </li> --}}
             </ul>
-        </li> --}}
+        </li>
 
 
         <!-- Apps & Pages -->

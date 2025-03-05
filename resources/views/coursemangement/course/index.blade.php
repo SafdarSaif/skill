@@ -15,10 +15,10 @@
                             data: 'name'
                         },
                         {
-                            data: 'status'
+                            data: 'category'
                         },
                         {
-                            data: 'mobile'
+                            data: 'status'
                         },
                         {
                             data: ''
@@ -40,7 +40,7 @@
                         },
                         {
                             // Name
-                            targets: 2,
+                            targets: 3,
                             render: function(data, type, full, meta) {
                                 var $checkedStatus = full['status'] == 1 ? 'checked' : '';
                                 var $nameStatus = full['status'] == 1 ? 'Yes' : 'No';
@@ -64,10 +64,10 @@
                         },
 
                         {
-                            targets: 3,
+                            targets: 2,
                             orderable: false,
                             render: function(data, type, full, meta) {
-                                var $data = full['mobile'];
+                                var $data = full['category'];
                                 return '<span class="text-nowrap">' + $data + '</span>';
                             }
                         },
@@ -152,8 +152,8 @@
                     <tr>
                         <th>No.</th>
                         <th>Name</th>
+                        <th>Course Category</th>
                         <th>Status</th>
-                        <th>Phone</th>
                         <th></th>
                     </tr>
                 </thead>

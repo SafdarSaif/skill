@@ -21,8 +21,8 @@ class Course extends Model
     /**
      * Get the category associated with the course.
      */
-    // public function category()
-    // {
-    //     return $this->belongsTo(Category::class, 'category_id');
-    // }
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
 }
