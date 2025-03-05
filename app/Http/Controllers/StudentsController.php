@@ -140,7 +140,7 @@ class StudentsController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Validation failed',
-                'errors' => $e->errors(), 
+                'errors' => $e->errors(),
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
@@ -156,9 +156,10 @@ class StudentsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Students $students)
+    public function show($id)
     {
-        //
+        $student = Students::findOrFail($id);
+        return view('students.profile', compact('student'));
     }
 
     /**
@@ -177,7 +178,7 @@ class StudentsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $studentId)  
+    public function update(Request $request, $studentId)
     {
         // Validate input
         $validated = $request->validate([
@@ -195,11 +196,11 @@ class StudentsController extends Controller
             'country' => 'required|string',
             'heighest_qualification' => 'required|string',
         ]);
-    
+
         try {
             // Find student record
             $student = Students::findOrFail($studentId);
-    
+
             // Update each field manually (instead of mass assignment)
             $student->name = $validated['name'];
             $student->email = $validated['email'];
@@ -214,9 +215,9 @@ class StudentsController extends Controller
             $student->pincode = $validated['pincode'];
             $student->country = $validated['country'];
             $student->heighest_qualification = $validated['heighest_qualification'];
-            
+
             $student->save(); // Save the updated student data
-    
+
             return response()->json(['status' => 'success', 'message' => 'Student updated successfully!']);
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
