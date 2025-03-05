@@ -33,46 +33,60 @@ class StudentsController extends Controller
         return view('students.index');
     }
 
-    public function getStudentDetails($mobile){
-        try{
+    public function getStudentDetails($mobile)
+    {
+        try {
             $student = Students::where('mobile', $mobile)->get();
-            if($student->isEmpty())
-            {
-                return response()->json(['status' => 'error','message' => 'No student found with this mobile number']);
+            if ($student->isEmpty()) {
+                return response()->json(['status' => 'error', 'message' => 'No student found with this mobile number']);
             }
             return response()->json(['status' => 'success', 'data' => $student]);
-        }
-        catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
     }
 
-    public function registerStudent(Request $request){
+    public static function StudentAllDetaills($mobile)
+    {
+        try {
+            $student = Students::where('mobile', $mobile)->first();
+            if ($student->count()) {
+                $studata = Students::where('mobile', $mobile)->with('studentCourses')->first();
+                return response()->json(['status'=>'success', 'data'=>$studata]);
+            } else {
+                return response()->json(['status' => 'error','message'=> 'No student found with this mobile number']);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+    }
+
+
+    public function registerStudent(Request $request)
+    {
         // dd($request);
-      $mobile = $request->mobile;
-        try{
+        $mobile = $request->mobile;
+        try {
             $student = Students::where('mobile', )->first();
 
-            if($student)
-            {
-                return response()->json(['status' => 'error','message' => 'Student already registered with this '.$request->mobile]);
+            if ($student) {
+                return response()->json(['status' => 'error', 'message' => 'Student already registered with this ' . $request->mobile]);
             }
-          
+
             $studentdata = new Students();
             $studentdata->name = $request->name;
             $studentdata->email = $request->email;
             $studentdata->mobile = $mobile;
-            $studentdata->status = 0;
-          
+            $studentdata->status = 1;
+
             $studentdata->save();
             $otpresponse = OTPController::getOtp($mobile);
-            
+
             return $otpresponse;
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
-        catch(\Exception $e){
-            return response()->json(['status' => 'error','message' => $e->getMessage()]);
-        }
-        
+
     }
 
     /**

@@ -21,6 +21,7 @@ class OTPController extends Controller
             
             $isOtpSend = self::sendOtpToUser($otp,$mobileNo);
             
+            
             if($isOtpSend)
             {
                 return response()->json([
@@ -44,6 +45,7 @@ class OTPController extends Controller
             ]);
         }
     }
+
 
     public static function generateOtp($studentData)
     {
@@ -79,10 +81,13 @@ class OTPController extends Controller
 
     public function verifyOtp($otp,$mobileNo)
     {
-        $checkOtp = OTP::where(['otp'=>$otp,'mobile'=>$mobileNo])->where('is_used',false)->count();
+        $checkOtp = OTP::where(['otp'=>$otp,'mobile_number'=>$mobileNo])->where('is_used',false)->count();
         if($checkOtp)
         {
-            return response()->json(['status' =>'success','message'=>'Welcome!']);
+            OTP::where(['otp'=>$otp,'mobile_number'=>$mobileNo])->update(['is_used'=>true]);
+            $stu_data = StudentsController::StudentAllDetaills($mobileNo);
+            return response()->json(['status' =>'success','message'=>'Welcome!',
+            'data' => json_decode($stu_data->content(),true)['data']]);
         }
         else
         {
