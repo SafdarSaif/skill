@@ -66,7 +66,7 @@
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="" class="menu-link">
+                    <a href="{{ route('studentcourse') }}" class="menu-link">
                         <div data-i18n="Student Course">Student Course</div>
                     </a>
                 </li>
@@ -91,7 +91,7 @@
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="" class="menu-link">
+                    <a href="{{ route('subject') }}" class="menu-link">
                         <div data-i18n="Subjects">Subjects</div>
                     </a>
                 </li>
@@ -112,7 +112,7 @@
             <ul class="menu-sub">
 
                 <li class="menu-item">
-                    <a href="" class="menu-link">
+                    <a href="{{ route('payment') }}" class="menu-link">
                         <div data-i18n="Student Payment">Student Payment</div>
                     </a>
                 </li>

@@ -1,52 +1,49 @@
 @extends('layouts.main')
+
 @section('content')
     <script type="module">
         $(function() {
-            var dataTablestudent = $('#student-table'),
-                dt_permission;
-            // Users List datatable
-            if (dataTablestudent.length) {
-                dt_permission = dataTablestudent.DataTable({
-                    ajax: "{{ route('student') }}",
+            var dataTableCourses = $('#student-course-table'),
+                dt_courses;
+
+            if (dataTableCourses.length) {
+                dt_courses = dataTableCourses.DataTable({
+                    ajax: "{{ route('studentcourse') }}",
                     columns: [{
                             data: 'DT_RowIndex',
+                            title: 'No.'
                         },
                         {
-                            data: 'name'
+                            data: 'student.name',
+                            title: 'Student Name'
                         },
                         {
-                            data: 'status'
+                            data: 'course.name',
+                            title: 'Course Name'
                         },
                         {
-                            data: 'mobile'
+                            data: 'status',
+                            title: 'Status'
                         },
                         {
-                            data: ''
+                            data: 'created_at',
+                            title: 'Enrolled Date'
+                        },
+                        {
+                            data: '',
+                            title: 'Actions'
                         },
                     ],
-                    columnDefs: [{
-                            targets: 0,
-                            render: function(data, type, full, meta) {
-                                return data;
-                            }
-                        },
+                    columnDefs: [
+                        
                         {
-                            // Name
-                            targets: 1,
-                            render: function(data, type, full, meta) {
-                                var $name = full['name'];
-                                return '<span class="text-nowrap">' + $name + '</span>';
-                            }
-                        },
-                        {
-                            // Name
-                            targets: 2,
+                            targets: 3,
                             render: function(data, type, full, meta) {
                                 var $checkedStatus = full['status'] == 1 ? 'checked' : '';
                                 var $nameStatus = full['status'] == 1 ? 'Yes' : 'No';
                                 var isDisabled =
-                                    'onclick="updateActiveStatus(&#39;/student/status/' +
-                                    full['id'] + '&#39;, &#39;student-table&#39;)"';
+                                    'onclick="updateActiveStatus(&#39;/studentcourse/status/' +
+                                    full['id'] + '&#39;, &#39;student-course&#39;)"';
                                 return '<label class="switch">' +
                                     '<input  type="checkbox" ' + isDisabled + $checkedStatus +
                                     ' class="switch-input">' +
@@ -62,30 +59,25 @@
                                     '</label>';
                             }
                         },
-
                         {
-                            targets: 3,
-                            orderable: false,
+                            targets: 4,
                             render: function(data, type, full, meta) {
-                                var $data = full['mobile'];
-                                return '<span class="text-nowrap">' + $data + '</span>';
+                                return data ? moment(data).format('DD-MM-YYYY HH:mm A') : 'N/A';
                             }
                         },
                         {
-                            // Actions
                             targets: -1,
                             searchable: false,
-                            title: 'Actions',
                             orderable: false,
                             render: function(data, type, full, meta) {
                                 return (
-                                    '<a href="/student/' + full['id'] + '" class="btn btn-sm btn-info">View</a>' +
-                                    '<span class="text-nowrap"><button class="btn btn-sm btn-icon me-2" onclick="edit(&#39;/student/edit/' +
-                                    full['id'] +
-                                    '&#39; , &#39;modal-xl&#39;)"><i class="ti ti-edit"></i></button>' +
-                                    '<button class="btn btn-sm btn-icon delete-record"onclick="destry(&#39;/student/destroy/' +
-                                    full['id'] +
-                                    '&#39; , &#39;student-table&#39;)"><i class="ti ti-trash"></i></button></span>'
+                                    '<span class="text-nowrap">' +
+                                    '<button class="btn btn-sm btn-icon me-2" onclick="edit(\'/studentcourse/edit/' +
+                                    full['id'] + '\', \'modal-lg\')">' +
+                                    '<i class="ti ti-edit"></i></button>' +
+                                    '<button class="btn btn-sm btn-icon delete-record" onclick="destry(\'/studentcourse/destroy/' +
+                                    full['id'] + '\', \'student-course-table\')">' +
+                                    '<i class="ti ti-trash"></i></button></span>'
                                 );
                             }
                         }
@@ -105,35 +97,33 @@
                         searchPlaceholder: 'Search..'
                     },
                     buttons: [{
-                        text: 'Add student',
+                        text: 'Add Enrollment',
                         className: 'add-new btn btn-primary mb-3 mb-md-0 waves-effect waves-light',
                         attr: {
-                            'onclick': "add('{{ route('student.create') }}', 'modal-xl')"
+                            'onclick': "add('{{ route('studentcourse.create') }}', 'modal-lg')"
                         },
                         init: function(api, node, config) {
                             $(node).removeClass('btn-secondary');
                         }
                     }],
-                    // For responsive popup
                     responsive: {
                         details: {
                             display: $.fn.dataTable.Responsive.display.modal({
                                 header: function(row) {
                                     var data = row.data();
-                                    return 'Details of ' + data['name'];
+                                    return 'Details of ' + data['student.name'];
                                 }
                             }),
                             type: 'column',
                             renderer: function(api, rowIdx, columns) {
                                 var data = $.map(columns, function(col, i) {
-                                    return col.title !==
-                                        '' ? '<tr data-dt-row="' + col.rowIndex +
+                                    return col.title !== '' ? '<tr data-dt-row="' + col
+                                        .rowIndex +
                                         '" data-dt-column="' + col.columnIndex + '">' +
                                         '<td>' + col.title + ':</td> ' +
                                         '<td>' + col.data + '</td>' +
                                         '</tr>' : '';
                                 }).join('');
-
                                 return data ? $('<table class="table"/><tbody />').append(data) : false;
                             }
                         }
@@ -142,24 +132,22 @@
             }
         });
     </script>
-    <h4 class="mb-4">Student List</h4>
 
-    <!-- Admission Table -->
+    <h4 class="mb-4">Student Course Enrollments</h4>
     <div class="card">
         <div class="card-datatable table-responsive">
-
-            <table id="student-table" class="table border-top">
+            <table id="student-course-table" class="table border-top">
                 <thead>
                     <tr>
                         <th>No.</th>
-                        <th>Name</th>
+                        <th>Student Name</th>
+                        <th>Course Name</th>
                         <th>Status</th>
-                        <th>Phone</th>
-                        <th></th>
+                        <th>Enrolled Date</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
             </table>
         </div>
     </div>
-    <!--/ Admission Table -->
 @endsection
