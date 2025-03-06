@@ -108,7 +108,7 @@ class StudentPaymentController extends Controller
         $request->validate([
             'student_id' => 'required|integer|exists:students,id',
             'course_id' => 'required|integer|exists:courses,id',
-            'amount' => 'required|numeric|min:0', // Added validation for amount
+            'amount' => 'required|numeric|min:0',
             'transaction_id' => 'required|string|unique:student_payments,transaction_id',
             'payment_status' => 'required|in:pending,completed,failed',
             'payment_confirmation_date' => 'nullable|date',
@@ -118,7 +118,7 @@ class StudentPaymentController extends Controller
             $payment = new StudentPayment();
             $payment->student_id = $request->student_id;
             $payment->course_id = $request->course_id;
-            $payment->amount = $request->amount; // Store amount
+            $payment->amount = $request->amount; 
             $payment->transaction_id = $request->transaction_id;
             $payment->payment_status = $request->payment_status;
             $payment->payment_confirmation_date = $request->payment_confirmation_date;
