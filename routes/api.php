@@ -17,3 +17,5 @@ Route::get('/students-details/{mobile_no}',[StudentsController::class,'getStuden
 Route::post('/students-registration',[StudentsController::class,'registerStudent']);
 Route::get('/students-all-details/{mobile_no}',[StudentsController::class,'StudentAllDetaills']);
 Route::get('/students-payment/{mobile_no}',[StudentPaymentController::class,'StudentPayment']);
+Route::post('/pay-student-course-fee',[StudentPaymentController::class,'payStuCourseFee']);
+
