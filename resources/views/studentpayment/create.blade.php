@@ -12,7 +12,7 @@
             <label for="student_id" class="form-label">Student <span class="text-danger">*</span></label>
             <select name="student_id" id="student_id" class="form-select" required>
                 <option value="">Select Student</option>
-                @foreach ($student as $id => $name)
+                @foreach($student as $id => $name)
                     <option value="{{ $id }}">{{ $name }}</option>
                 @endforeach
             </select>
@@ -23,28 +23,40 @@
             <label for="course_id" class="form-label">Course <span class="text-danger">*</span></label>
             <select name="course_id" id="course_id" class="form-select" required>
                 <option value="">Select Course</option>
-                @foreach ($course as $id => $name)
+                @foreach($course as $id => $name)
                     <option value="{{ $id }}">{{ $name }}</option>
                 @endforeach
             </select>
         </div>
-        <!-- Course ID -->
+
+        <!-- Amount -->
         <div class="col-md-6">
-            <label for="course_id" class="form-label">Course <span class="text-danger">*</span></label>
-            <select name="course_id" id="course_id" class="form-select" required>
-                <option value="">Select Course</option>
-                @foreach ($course as $id => $name)
-                    <option value="{{ $id }}">{{ $name }}</option>
-                @endforeach
+            <label for="amount" class="form-label">Amount <span class="text-danger">*</span></label>
+            <input type="number" name="amount" id="amount" class="form-control" required placeholder="Enter amount" min="0" step="0.01">
+        </div>
+
+        <!-- Transaction ID -->
+        <div class="col-md-6">
+            <label for="transaction_id" class="form-label">Transaction ID <span class="text-danger">*</span></label>
+            <input type="text" name="transaction_id" id="transaction_id" class="form-control" required placeholder="Enter transaction ID">
+        </div>
+
+        <!-- Payment Status -->
+        <div class="col-md-6">
+            <label for="payment_status" class="form-label">Payment Status <span class="text-danger">*</span></label>
+            <select name="payment_status" id="payment_status" class="form-select" required>
+                <option value="pending">Pending</option>
+                <option value="completed">Completed</option>
+                <option value="failed">Failed</option>
             </select>
         </div>
 
+        <!-- Payment Confirmation Date -->
+        <div class="col-md-12">
+            <label for="payment_confirmation_date" class="form-label">Payment Confirmation Date</label>
+            <input type="datetime-local" name="payment_confirmation_date" id="payment_confirmation_date" class="form-control">
+        </div>
 
-        
-
-        
-
-        
         <!-- Submit Buttons -->
         <div class="col-12 text-center mt-3">
             <button type="submit" class="btn btn-primary">Save</button>
@@ -55,41 +67,23 @@
 
 <!-- jQuery Validation -->
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         $("#payment-form").validate({
             rules: {
-                student_id: {
-                    required: true,
-                    number: true
-                },
-                course_id: {
-                    required: true,
-                    number: true
-                },
-                transaction_id: {
-                    required: true
-                },
-                payment_status: {
-                    required: true
-                }
+                student_id: { required: true, number: true },
+                course_id: { required: true, number: true },
+                amount: { required: true, number: true, min: 0 },
+                transaction_id: { required: true },
+                payment_status: { required: true }
             },
             messages: {
-                student_id: {
-                    required: "Please enter student ID",
-                    number: "Enter a valid number"
-                },
-                course_id: {
-                    required: "Please enter course ID",
-                    number: "Enter a valid number"
-                },
-                transaction_id: {
-                    required: "Please enter transaction ID"
-                },
-                payment_status: {
-                    required: "Please select payment status"
-                }
+                student_id: { required: "Please select a student", number: "Enter a valid number" },
+                course_id: { required: "Please select a course", number: "Enter a valid number" },
+                amount: { required: "Please enter the amount", number: "Enter a valid number", min: "Amount cannot be negative" },
+                transaction_id: { required: "Please enter transaction ID" },
+                payment_status: { required: "Please select payment status" }
             },
-            submitHandler: function(form) {
+            submitHandler: function (form) {
                 $(':input[type="submit"]').prop('disabled', true);
                 var formData = new FormData(form);
                 formData.append("_token", "{{ csrf_token() }}");
@@ -101,7 +95,7 @@
                     processData: false,
                     contentType: false,
                     dataType: 'json',
-                    success: function(response) {
+                    success: function (response) {
                         $(':input[type="submit"]').prop('disabled', false);
                         if (response.status == 'success') {
                             toastr.success(response.message);
@@ -111,7 +105,7 @@
                             toastr.error(response.message);
                         }
                     },
-                    error: function(response) {
+                    error: function (response) {
                         $(':input[type="submit"]').prop('disabled', false);
                         toastr.error(response.responseJSON.message);
                     }

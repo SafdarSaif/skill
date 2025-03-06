@@ -1,52 +1,37 @@
 @extends('layouts.main')
+
 @section('content')
     <script type="module">
         $(function() {
-            var dataTablecategory = $('#category-table'),
-                dt_permission;
-            // Users List datatable
-            if (dataTablecategory.length) {
-                dt_permission = dataTablecategory.DataTable({
-                    ajax: "{{ route('category') }}",
-                    columns: [{
-                            data: 'DT_RowIndex',
-                        },
-                        {
-                            data: 'name'
-                        },
-                        {
-                            data: 'status'
-                        },
-                        // {
-                        //     data: 'mobile'
-                        // },
-                        {
-                            data: ''
-                        },
+            var dataTableNews = $('#news-updates-table'),
+                dt_news;
+
+            if (dataTableNews.length) {
+                dt_news = dataTableNews.DataTable({
+                    ajax: "{{ route('news') }}",
+                    columns: [
+                        { data: 'DT_RowIndex', title: 'No.' },
+                        { data: 'name', title: 'Title' },
+                        { data: 'content', title: 'Content' },
+                        { data: 'image', title: 'Image' },
+                        { data: 'status', title: 'Status' },
+                        { data: '', title: 'Actions' }
                     ],
-                    columnDefs: [{
-                            targets: 0,
+                    columnDefs: [
+                        {
+                            targets: 3, // Image column
                             render: function(data, type, full, meta) {
-                                return data;
+                                return data ? `<img src="${data}" alt="News Image" width="50" height="50">` : 'No Image';
                             }
                         },
                         {
-                            // Name
-                            targets: 1,
-                            render: function(data, type, full, meta) {
-                                var $name = full['name'];
-                                return '<span class="text-nowrap">' + $name + '</span>';
-                            }
-                        },
-                        {
-                            // Name
-                            targets: 2,
+                            targets: 4,
                             render: function(data, type, full, meta) {
                                 var $checkedStatus = full['status'] == 1 ? 'checked' : '';
-                                var $nameStatus = full['status'] == 1 ? 'Yes' : 'No';
+                                var $nameStatus = full['status'] == 1 ? 'Published' : 'Draft';
                                 var isDisabled =
-                                    'onclick="updateActiveStatus(&#39;/category/status/' +
-                                    full['id'] + '&#39;, &#39;category-table&#39;)"';
+                                    'onclick="updateActiveStatus(&#39;/news/status/' +
+                                    full['id'] + '&#39;, &#39;news-updates-table&#39;)"';
                                 return '<label class="switch">' +
                                     '<input  type="checkbox" ' + isDisabled + $checkedStatus +
                                     ' class="switch-input">' +
@@ -62,29 +47,19 @@
                                     '</label>';
                             }
                         },
-
-                        // {
-                        //     targets: 3,
-                        //     orderable: false,
-                        //     render: function(data, type, full, meta) {
-                        //         var $data = full['mobile'];
-                        //         return '<span class="text-nowrap">' + $data + '</span>';
-                        //     }
-                        // },
                         {
-                            // Actions
-                            targets: -1,
+                            targets: -1, // Actions column
                             searchable: false,
-                            title: 'Actions',
                             orderable: false,
                             render: function(data, type, full, meta) {
                                 return (
-                                    '<span class="text-nowrap"><button class="btn btn-sm btn-icon me-2" onclick="edit(&#39;/category/edit/' +
-                                    full['id'] +
-                                    '&#39; , &#39;modal-lg&#39;)"><i class="ti ti-edit"></i></button>' +
-                                    '<button class="btn btn-sm btn-icon delete-record"onclick="destry(&#39;/category/destroy/' +
-                                    full['id'] +
-                                    '&#39; , &#39;category-table&#39;)"><i class="ti ti-trash"></i></button></span>'
+                                    '<span class="text-nowrap">' +
+                                    '<button class="btn btn-sm btn-icon me-2" onclick="edit(\'/news/edit/' +
+                                    full['id'] + '\', \'modal-lg\')">' +
+                                    '<i class="ti ti-edit"></i></button>' +
+                                    '<button class="btn btn-sm btn-icon delete-record" onclick="destroy(\'/news/destroy/' +
+                                    full['id'] + '\', \'news-updates-table\')">' +
+                                    '<i class="ti ti-trash"></i></button></span>'
                                 );
                             }
                         }
@@ -98,41 +73,39 @@
                         '<"col-sm-12 col-md-6"i>' +
                         '<"col-sm-12 col-md-6"p>' +
                         '>',
+
                     language: {
                         sLengthMenu: 'Show _MENU_',
                         search: 'Search',
-                        searchPlaceholder: 'Search..'
+                        searchPlaceholder: 'Search News..'
                     },
                     buttons: [{
-                        text: 'Add category',
+                        text: 'Add News',
                         className: 'add-new btn btn-primary mb-3 mb-md-0 waves-effect waves-light',
                         attr: {
-                            'onclick': "add('{{ route('category.create') }}', 'modal-lg')"
+                            'onclick': "add('{{ route('news.create') }}', 'modal-lg')"
                         },
                         init: function(api, node, config) {
                             $(node).removeClass('btn-secondary');
                         }
                     }],
-                    // For responsive popup
                     responsive: {
                         details: {
                             display: $.fn.dataTable.Responsive.display.modal({
                                 header: function(row) {
                                     var data = row.data();
-                                    return 'Details of ' + data['name'];
+                                    return 'Details of ' + data['title'];
                                 }
                             }),
                             type: 'column',
                             renderer: function(api, rowIdx, columns) {
                                 var data = $.map(columns, function(col, i) {
-                                    return col.title !==
-                                        '' ? '<tr data-dt-row="' + col.rowIndex +
+                                    return col.title !== '' ? '<tr data-dt-row="' + col.rowIndex +
                                         '" data-dt-column="' + col.columnIndex + '">' +
                                         '<td>' + col.title + ':</td> ' +
                                         '<td>' + col.data + '</td>' +
                                         '</tr>' : '';
                                 }).join('');
-
                                 return data ? $('<table class="table"/><tbody />').append(data) : false;
                             }
                         }
@@ -141,24 +114,22 @@
             }
         });
     </script>
-    <h4 class="mb-4">Course Category List</h4>
 
-    <!-- Admission Table -->
+    <h4 class="mb-4">News Updates</h4>
     <div class="card">
         <div class="card-datatable table-responsive">
-
-            <table id="category-table" class="table border-top">
+            <table id="news-updates-table" class="table border-top">
                 <thead>
                     <tr>
                         <th>No.</th>
-                        <th>Name</th>
+                        <th>Title</th>
+                        <th>Content</th>
+                        <th>Image</th>
                         <th>Status</th>
-                        {{-- <th>Phone</th> --}}
-                        <th></th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
             </table>
         </div>
     </div>
-    <!--/ Admission Table -->
 @endsection

@@ -13,13 +13,30 @@ class CourseController extends Controller
     /**
      * Display a listing of the resource.
      */
+    // public function index(Request $request)
+    // {
+    //     if ($request->ajax()) {
+    //         $data = Course::orderBy('id', 'desc')->get();
+
+    //         return DataTables::of($data)
+    //             ->addIndexColumn()
+    //             ->editColumn('created_at', function ($data) {
+    //                 return Carbon::createFromFormat('Y-m-d H:i:s', $data->created_at)->format('d-m-Y h:i A');
+    //             })
+    //             ->make(true);
+    //     }
+    //     return view('coursemangement.course.index');
+    // }
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Course::orderBy('id', 'desc')->get();
+            $data = Course::with('category')->orderBy('id', 'desc')->get();
 
             return DataTables::of($data)
                 ->addIndexColumn()
+                ->editColumn('category', function ($data) {
+                    return $data->category ? $data->category->name : 'N/A';
+                })
                 ->editColumn('created_at', function ($data) {
                     return Carbon::createFromFormat('Y-m-d H:i:s', $data->created_at)->format('d-m-Y h:i A');
                 })
@@ -27,6 +44,7 @@ class CourseController extends Controller
         }
         return view('coursemangement.course.index');
     }
+
 
     /**
      * Show the form for creating a new resource.

@@ -10,6 +10,10 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\StudentPaymentController;
 use App\Http\Controllers\StudentCourseController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\NewsUpdateController;
+use App\Http\Controllers\SliderController;
+use App\Http\Controllers\FaqController;
+use App\Http\Controllers\StudentQueryController;
 
 
 // Route::get('/', function () {
@@ -71,6 +75,9 @@ Route::post('/student/update/{id}', [StudentsController::class, 'update'])->name
 Route::delete('/student/destroy/{id}', [StudentsController::class, 'destroy'])->name('student.destroy');
 Route::get('student/status/{id}', [StudentsController::class, 'status'])->name('student.status');
 Route::get('/student/{id}', [StudentsController::class, 'show'])->name('student.show');
+// Route::post('/student', [StudentsController::class, 'show'])->name('student.show');
+
+
 
 
 
@@ -116,3 +123,41 @@ Route::get('/subject/edit/{id}', [SubjectController::class, 'edit'])->name('subj
 Route::post('/subject/update/{id}', [SubjectController::class, 'update'])->name('subject.update');
 Route::delete('/subject/destroy/{id}', [SubjectController::class, 'destroy'])->name('subject.destroy');
 Route::get('subject/status/{id}', [SubjectController::class, 'status'])->name('subject.status');
+
+
+
+Route::get('/news', [NewsUpdateController::class, 'index'])->name('news');
+Route::get('/news/create', [NewsUpdateController::class, 'create'])->name('news.create');
+Route::post('/news/store', [NewsUpdateController::class, 'store'])->name('news.store');
+Route::get('/news/edit/{id}', [NewsUpdateController::class, 'edit'])->name('news.edit');
+Route::post('/news/update/{id}', [NewsUpdateController::class, 'update'])->name('news.update');
+Route::delete('/news/destroy/{id}', [NewsUpdateController::class, 'destroy'])->name('news.destroy');
+Route::get('news/status/{id}', [NewsUpdateController::class, 'status'])->name('news.status');
+
+
+Route::get('/slider', [SliderController::class, 'index'])->name('slider');
+Route::get('/slider/create', [SliderController::class, 'create'])->name('slider.create');
+Route::post('/slider/store', [SliderController::class, 'store'])->name('slider.store');
+Route::get('/slider/edit/{id}', [SliderController::class, 'edit'])->name('slider.edit');
+Route::post('/slider/update/{id}', [SliderController::class, 'update'])->name('slider.update');
+Route::delete('/slider/destroy/{id}', [SliderController::class, 'destroy'])->name('slider.destroy');
+Route::get('slider/status/{id}', [SliderController::class, 'status'])->name('slider.status');
+
+
+Route::get('/faq', [FaqController::class, 'index'])->name('faq');
+Route::get('/faq/create', [FaqController::class, 'create'])->name('faq.create');
+Route::post('/faq/store', [FaqController::class, 'store'])->name('faq.store');
+Route::get('/faq/edit/{id}', [FaqController::class, 'edit'])->name('faq.edit');
+Route::post('/faq/update/{id}', [FaqController::class, 'update'])->name('faq.update');
+Route::delete('/faq/destroy/{id}', [FaqController::class, 'destroy'])->name('faq.destroy');
+Route::get('faq/status/{id}', [FaqController::class, 'status'])->name('faq.status');
+
+
+
+Route::get('/studentquery', [StudentQueryController::class, 'index'])->name('studentquery');
+Route::get('/studentquery/create', [StudentQueryController::class, 'create'])->name('studentquery.create');
+Route::post('/studentquery/store', [StudentQueryController::class, 'store'])->name('studentquery.store');
+Route::get('/studentquery/edit/{id}', [StudentQueryController::class, 'edit'])->name('studentquery.edit');
+Route::post('/studentquery/update/{id}', [StudentQueryController::class, 'update'])->name('studentquery.update');
+Route::delete('/studentquery/destroy/{id}', [StudentQueryController::class, 'destroy'])->name('studentquery.destroy');
+Route::get('studentquery/status/{id}', [StudentQueryController::class, 'status'])->name('studentquery.status');
