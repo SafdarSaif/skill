@@ -21,6 +21,7 @@ class Course extends Model
     /**
      * Get the category associated with the course.
      */
+
     public function category()
     {
         return $this->belongsTo(Category::class, 'category_id');
@@ -30,4 +31,10 @@ class Course extends Model
     {
         return $this->belongsTo(Course::class, 'course_id');
     }
+
+    public function students()
+{
+    return $this->belongsToMany(Students::class, 'student_courses', 'course_id', 'student_id');
+}
+
 }

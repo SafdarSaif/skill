@@ -1,6 +1,6 @@
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
     <div class="app-brand demo ">
-        {{-- <img src="/assets/img/logo/logo.png" alt="" style="height: 41px"> --}}
+        {{-- <img src="/public/assets/img/logo/logo.png" alt="" style="height: 41px"> --}}
         <h4>Skill App</h4>
 
         <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">

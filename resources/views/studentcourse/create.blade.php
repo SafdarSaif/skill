@@ -32,7 +32,7 @@
         <!-- Payment ID -->
         <div class="col-md-6">
             <label for="payment_id" class="form-label">Payment <span class="text-danger">*</span></label>
-            <select name="payment_id" id="payment_id" class="form-select" required>
+            <select name="payment_id" id="payment_id" class="form-select" >
                 <option value="">Select Payment</option>
                 @foreach ($studentpayment as $id => $name)
                     <option value="{{ $id }}">{{ $name }}</option>

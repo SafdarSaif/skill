@@ -40,6 +40,20 @@ class StudentPaymentController extends Controller
     
         return view('studentpayment.index', compact('students', 'courses'));
     }
+
+    public static function StudentPayment($mobile){
+        try{
+            $student = Students::where('mobile', $mobile)->first();
+            if($student){
+                $data =  StudentPayment::where('student_id', $student->id)->with('course')->get();
+                return response()->json(['status'=>'success', 'data'=>$data]);
+            }else{
+                return response()->json(['status'=>'success','message' => 'Student not found']);
+            }
+        } catch(\Exception $e){
+            return response()->json(['message' => 'An error occurred while fetching student payment details'], 500);
+        }
+    }
     
 
     /**

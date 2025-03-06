@@ -29,8 +29,9 @@ class Students extends Model
         'status'
     ];
 
-    public function studentCourses()
-    {
-        return $this->hasMany(StudentCourse::class, 'student_id');
+
+    public function studentCourses(){
+        return $this->hasMany(StudentCourse::class, 'student_id')->with('course');
     }
 }
+

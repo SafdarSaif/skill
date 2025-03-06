@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('otps', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->tinyInteger('otp');
+            $table->integer('otp');
             $table->dateTime('expire_at');
             $table->bigInteger('mobile_number');
             $table->boolean('is_used')->default(false);
