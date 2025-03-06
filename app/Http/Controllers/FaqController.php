@@ -41,8 +41,37 @@ class FaqController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'question' => 'required|string|min:5|max:255|unique:faqs,question',
+            'answer'   => 'required|string|min:10',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => $validator->errors()->first(),
+            ], 422);
+        }
+
+        try {
+            $faq = Faq::create([
+                'question' => $request->question,
+                'answer'   => $request->answer,
+            ]);
+
+            return response()->json([
+                'status'  => 'success',
+                'message' => 'FAQ added successfully!',
+                'data'    => $faq,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Something went wrong! ' . $e->getMessage(),
+            ], 500);
+        }
     }
+
 
     /**
      * Display the specified resource.
@@ -55,24 +84,92 @@ class FaqController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Faq $faq)
+    public function edit($faqID)
     {
-        //
+        $faq = Faq::findOrFail($faqID);
+
+
+        return view('website.faq.edit', compact('faq'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Faq $faq)
+    /**
+     * Update the specified FAQ in storage.
+     */
+    public function update(Request $request, $id)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'question' => 'required|string|min:5|max:255|unique:faqs,question,' . $id,
+            'answer'   => 'required|string|min:10',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
+
+        try {
+            $faq = Faq::findOrFail($id);
+
+            $faq->update([
+                'question' => $request->question,
+                'answer'   => $request->answer,
+            ]);
+
+            return response()->json([
+                'status'  => 'success',
+                'message' => 'FAQ updated successfully!',
+                'data'    => $faq
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Something went wrong! ' . $e->getMessage()
+            ], 500);
+        }
     }
+
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Faq $faq)
+    public function destroy($faqID)
+    { {
+            try {
+                $faqs = Faq::destroy($faqID);
+                return ['status' => 'success', 'message' => 'Faq  deleted successfully!'];
+            } catch (\Throwable $e) {
+                return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+            }
+        }
+    }
+
+    public function status($id)
     {
-        //
+        try {
+            $news = Faq::findOrFail($id);
+            if ($news) {
+                $news->status = $news->status == 1 ? 0 : 1;
+                $news->save();
+                return response()->json([
+                    'status' => 'success',
+                    'message' => $news->name . ' status updated successfully!',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Course not found',
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 }

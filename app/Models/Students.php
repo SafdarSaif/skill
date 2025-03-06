@@ -19,7 +19,7 @@ class Students extends Model
         'mobile',
         'fathers_name',
         'mothers_name',
-        'address', 
+        'address',
         'state',
         'district',
         'city',
@@ -28,4 +28,9 @@ class Students extends Model
         'heighest_qualification',
         'status'
     ];
+
+    public function studentCourses()
+    {
+        return $this->hasMany(StudentCourse::class, 'student_id');
+    }
 }

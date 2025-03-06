@@ -127,3 +127,9 @@
   text-align: center;
   margin-top: 1rem;
 }
+
+/* #cke_notifications_area_editor{display: none !important;}
+.cke_notification .cke_notification_warning{
+  display:none !important;
+}
+#cke_notifications_area_testimonial{display: none !important;} */

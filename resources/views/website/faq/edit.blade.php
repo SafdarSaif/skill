@@ -1,34 +1,25 @@
 <div class="modal-body">
     <div class="text-center mb-3">
-        <h3 class="mb-2 text-primary">Edit News</h3>
-        <p class="text-muted">Update the news details below</p>
+        <h3 class="mb-2 text-primary">Edit FAQ</h3>
+        <p class="text-muted">Modify the FAQ details below</p>
     </div>
 
-    <form id="edit-news-form" action="{{ route('news.update', $news->id) }}" method="POST" enctype="multipart/form-data"
+    <form id="faq-edit-form" action="{{ route('faq.update', $faq->id) }}" method="POST" enctype="multipart/form-data"
         class="row g-3">
         @csrf
 
-        <!-- News Name -->
+
+        <!-- FAQ Question -->
         <div class="col-md-12">
-            <label for="edit-name" class="form-label">News Name <span class="text-danger">*</span></label>
-            <input type="text" name="title" id="edit-name" class="form-control" value="{{ $news->name }}"
+            <label for="question" class="form-label">Question <span class="text-danger">*</span></label>
+            <input type="text" name="question" id="question" class="form-control" value="{{ $faq->question }}"
                 required>
         </div>
 
-        <!-- News Image -->
+        <!-- FAQ Answer -->
         <div class="col-md-12">
-            <label for="edit-image" class="form-label">Image</label>
-            <input type="file" name="image" id="edit-image" class="form-control">
-            <div class="mt-2">
-                <img id="edit-image-preview" src="{{ asset($news->image) }}" alt="News Image" class="img-thumbnail"
-                    width="150">
-            </div>
-        </div>
-
-        <!-- News Content -->
-        <div class="col-md-12">
-            <label for="edit-content" class="form-label">Content <span class="text-danger">*</span></label>
-            <textarea name="content" id="edit-content" class="form-control" rows="4" required>{{ $news->content }}</textarea>
+            <label for="answer" class="form-label">Answer <span class="text-danger">*</span></label>
+            <textarea name="answer" id="content" class="form-control" rows="4" required>{{ $faq->answer }}</textarea>
         </div>
 
         <!-- Submit Buttons -->
@@ -44,42 +35,32 @@
 <script>
     $(document).ready(function() {
         // Initialize CKEditor
-        CKEDITOR.replace('edit-content');
+        CKEDITOR.replace('content');
 
-        // Image Preview
-        $("#edit-image").change(function(event) {
-            let reader = new FileReader();
-            reader.onload = function(e) {
-                $("#edit-image-preview").attr("src", e.target.result);
-            };
-            reader.readAsDataURL(event.target.files[0]);
-        });
-
-        $("#edit-news-form").validate({
+        $("#faq-edit-form").validate({
             rules: {
-                name: {
+                question: {
                     required: true,
-                    minlength: 3
+                    minlength: 5
                 },
-                content: {
+                answer: {
                     required: true,
                     minlength: 10
                 }
             },
             messages: {
-                name: {
-                    required: "Please enter a news name",
-                    minlength: "Name must be at least 3 characters long"
+                question: {
+                    required: "Please enter a question",
+                    minlength: "Question must be at least 5 characters long"
                 },
-                content: {
-                    required: "Please enter news content",
-                    minlength: "Content must be at least 10 characters long"
+                answer: {
+                    required: "Please enter an answer",
+                    minlength: "Answer must be at least 10 characters long"
                 }
             },
             submitHandler: function(form) {
                 $(':input[type="submit"]').prop('disabled', true);
 
-                // Update CKEditor content before submitting
                 for (instance in CKEDITOR.instances) {
                     CKEDITOR.instances[instance].updateElement();
                 }
@@ -99,7 +80,7 @@
                         if (response.status === 'success') {
                             toastr.success(response.message);
                             $(".modal").modal('hide');
-                            $('#news-table').DataTable().ajax.reload();
+                            $('#faq-table').DataTable().ajax.reload();
                         } else {
                             toastr.error(response.message);
                         }

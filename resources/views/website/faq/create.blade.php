@@ -1,28 +1,22 @@
 <div class="modal-body">
     <div class="text-center mb-3">
-        <h3 class="mb-2 text-primary">Add News</h3>
-        <p class="text-muted">Fill in the news details below</p>
+        <h3 class="mb-2 text-primary">Add FAQ</h3>
+        <p class="text-muted">Fill in the FAQ details below</p>
     </div>
 
-    <form id="news-form" action="{{ route('news.store') }}" method="POST" enctype="multipart/form-data" class="row g-3">
+    <form id="faq-form" action="{{ route('faq.store') }}" method="POST" enctype="multipart/form-data" class="row g-3">
         @csrf
 
-        <!-- News Title -->
+        <!-- FAQ Question -->
         <div class="col-md-12">
-            <label for="title" class="form-label">News Title <span class="text-danger">*</span></label>
-            <input type="text" name="title" id="title" class="form-control" required>
+            <label for="question" class="form-label">Question <span class="text-danger">*</span></label>
+            <input type="text" name="question" id="question" class="form-control" required>
         </div>
 
-        <!-- News Image -->
+        <!-- FAQ Answer -->
         <div class="col-md-12">
-            <label for="image" class="form-label">Image</label>
-            <input type="file" name="image" id="image" class="form-control">
-        </div>
-        
-        <!-- News Content -->
-        <div class="col-md-12">
-            <label for="content" class="form-label">Content <span class="text-danger">*</span></label>
-            <textarea name="content" id="content" class="form-control" rows="4" required></textarea>
+            <label for="answer" class="form-label">Answer <span class="text-danger">*</span></label>
+            <textarea name="answer" id="answer" class="form-control" rows="4" required></textarea>
         </div>
 
         <!-- Submit Buttons -->
@@ -38,27 +32,27 @@
 <script>
     $(document).ready(function() {
         // Initialize CKEditor
-        CKEDITOR.replace('content');
+        CKEDITOR.replace('answer');
 
-        $("#news-form").validate({
+        $("#faq-form").validate({
             rules: {
-                title: {
+                question: {
                     required: true,
-                    minlength: 3
+                    minlength: 5
                 },
-                content: {
+                answer: {
                     required: true,
                     minlength: 10
                 }
             },
             messages: {
-                title: {
-                    required: "Please enter a news title",
-                    minlength: "Title must be at least 3 characters long"
+                question: {
+                    required: "Please enter a question",
+                    minlength: "Question must be at least 5 characters long"
                 },
-                content: {
-                    required: "Please enter news content",
-                    minlength: "Content must be at least 10 characters long"
+                answer: {
+                    required: "Please enter an answer",
+                    minlength: "Answer must be at least 10 characters long"
                 }
             },
             submitHandler: function(form) {
@@ -83,7 +77,7 @@
                         if (response.status === 'success') {
                             toastr.success(response.message);
                             $(".modal").modal('hide');
-                            $('#news-table').DataTable().ajax.reload();
+                            $('#faq-table').DataTable().ajax.reload();
                         } else {
                             toastr.error(response.message);
                         }

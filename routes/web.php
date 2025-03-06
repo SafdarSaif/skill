@@ -13,6 +13,7 @@ use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\NewsUpdateController;
 use App\Http\Controllers\SliderController;
 use App\Http\Controllers\FaqController;
+use App\Http\Controllers\StudentQueryController;
 
 
 // Route::get('/', function () {
@@ -150,3 +151,13 @@ Route::get('/faq/edit/{id}', [FaqController::class, 'edit'])->name('faq.edit');
 Route::post('/faq/update/{id}', [FaqController::class, 'update'])->name('faq.update');
 Route::delete('/faq/destroy/{id}', [FaqController::class, 'destroy'])->name('faq.destroy');
 Route::get('faq/status/{id}', [FaqController::class, 'status'])->name('faq.status');
+
+
+
+Route::get('/studentquery', [StudentQueryController::class, 'index'])->name('studentquery');
+Route::get('/studentquery/create', [StudentQueryController::class, 'create'])->name('studentquery.create');
+Route::post('/studentquery/store', [StudentQueryController::class, 'store'])->name('studentquery.store');
+Route::get('/studentquery/edit/{id}', [StudentQueryController::class, 'edit'])->name('studentquery.edit');
+Route::post('/studentquery/update/{id}', [StudentQueryController::class, 'update'])->name('studentquery.update');
+Route::delete('/studentquery/destroy/{id}', [StudentQueryController::class, 'destroy'])->name('studentquery.destroy');
+Route::get('studentquery/status/{id}', [StudentQueryController::class, 'status'])->name('studentquery.status');

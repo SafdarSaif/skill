@@ -3,23 +3,27 @@
 @section('content')
     <script type="module">
         $(function() {
-            var dataTablefaq = $('#faq-table'),
-                dt_faq;
+            var dataTableQuery = $('#student-query-table'),
+                dt_query;
 
-            if (dataTablefaq.length) {
-                dt_faq = dataTablefaq.DataTable({
-                    ajax: "{{ route('faq') }}",
+            if (dataTableQuery.length) {
+                dt_query = dataTableQuery.DataTable({
+                    ajax: "{{ route('studentquery') }}",
                     columns: [{
                             data: 'DT_RowIndex',
                             title: 'No.'
                         },
                         {
-                            data: 'question',
-                            title: 'Question'
+                            data: 'name',
+                            title: 'Student Name'
                         },
                         {
-                            data: 'answer',
-                            title: 'Answer'
+                            data: 'email',
+                            title: 'Email'
+                        },
+                        {
+                            data: 'query',
+                            title: 'Query'
                         },
                         {
                             data: 'status',
@@ -31,14 +35,14 @@
                         }
                     ],
                     columnDefs: [{
-                            targets: 3,
+                            targets: 4,
                             render: function(data, type, full, meta) {
                                 var checked = full['status'] == 1 ? 'checked' : '';
-                                var statusText = full['status'] == 1 ? 'Published' : 'Draft';
+                                var statusText = full['status'] == 1 ? 'Resolved' : 'Pending';
 
                                 return `
                                     <label class="switch">
-                                        <input type="checkbox" ${checked} onclick="updateActiveStatus('/faq/status/${full['id']}', 'faq-table')" class="switch-input">
+                                        <input type="checkbox" ${checked} onclick="updateActiveStatus('/studentquery/status/${full['id']}', 'student-query-table')" class="switch-input">
                                         <span class="switch-toggle-slider">
                                             <span class="switch-on"><i class="ti ti-check"></i></span>
                                             <span class="switch-off"><i class="ti ti-x"></i></span>
@@ -52,15 +56,15 @@
                             searchable: false,
                             orderable: false,
                             render: function(data, type, full, meta) {
-                                return (
-                                    '<span class="text-nowrap">' +
-                                    '<button class="btn btn-sm btn-icon me-2" onclick="edit(\'/faq/edit/' +
-                                    full['id'] + '\', \'modal-lg\')">' +
-                                    '<i class="ti ti-edit"></i></button>' +
-                                    '<button class="btn btn-sm btn-icon delete-record" onclick="destry(\'/faq/destroy/' +
-                                    full['id'] + '\', \'faq-table\')">' +
-                                    '<i class="ti ti-trash"></i></button></span>'
-                                );
+                                return `
+                                    <span class="text-nowrap">
+                                        <button class="btn btn-sm btn-icon me-2" onclick="edit('/studentquery/edit/${full['id']}', 'modal-lg')">
+                                            <i class="ti ti-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-icon delete-record" onclick="destry('/studentquery/destroy/${full['id']}', 'student-query-table')">
+                                            <i class="ti ti-trash"></i>
+                                        </button>
+                                    </span>`;
                             }
                         }
                     ],
@@ -76,13 +80,13 @@
                     language: {
                         sLengthMenu: 'Show _MENU_',
                         search: 'Search',
-                        searchPlaceholder: 'Search FAQ...'
+                        searchPlaceholder: 'Search Student Queries...'
                     },
                     buttons: [{
-                        text: 'Add FAQ',
+                        text: 'Add Query',
                         className: 'add-new btn btn-primary mb-3 mb-md-0 waves-effect waves-light',
                         attr: {
-                            'onclick': "add('{{ route('faq.create') }}', 'modal-lg')"
+                            'onclick': "add('{{ route('studentquery.create') }}', 'modal-lg')"
                         },
                         init: function(api, node, config) {
                             $(node).removeClass('btn-secondary');
@@ -93,7 +97,7 @@
                             display: $.fn.dataTable.Responsive.display.modal({
                                 header: function(row) {
                                     var data = row.data();
-                                    return 'Details of ' + data['question'];
+                                    return 'Details of ' + data['student_name'];
                                 }
                             }),
                             type: 'column',
@@ -113,15 +117,16 @@
         });
     </script>
 
-    <h4 class="mb-4">FAQ</h4>
+    <h4 class="mb-4">Student Queries</h4>
     <div class="card">
         <div class="card-datatable table-responsive">
-            <table id="faq-table" class="table border-top">
+            <table id="student-query-table" class="table border-top">
                 <thead>
                     <tr>
                         <th>No.</th>
-                        <th>Question</th>
-                        <th>Answer</th>
+                        <th>Student Name</th>
+                        <th>Email</th>
+                        <th>Query</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>

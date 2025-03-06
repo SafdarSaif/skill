@@ -118,6 +118,14 @@ class StudentsController extends Controller
         return view('students.profile', compact('student'));
     }
 
+    public function profile($id)
+{
+    $student = Students::with('studentCourses.course')->findOrFail($id);
+
+    return view('students.profile', compact('student'));
+}
+
+
     /**
      * Show the form for editing the specified resource.
      */
