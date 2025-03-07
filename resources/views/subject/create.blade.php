@@ -29,7 +29,11 @@
             <label for="description" class="form-label">Description</label>
             <textarea name="description" id="description" class="form-control" rows="3"></textarea>
         </div>
-
+        <!-- Image Upload -->
+        <div class="col-md-12">
+            <label for="image" class="form-label">Subject Image</label>
+            <input type="file" name="image" id="image" class="form-control" accept="image/*">
+        </div>
         <!-- Submit Buttons -->
         <div class="col-12 text-center mt-3">
             <button type="submit" class="btn btn-primary">Save</button>

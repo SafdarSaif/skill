@@ -18,6 +18,9 @@
                             data: 'name'
                         },
                         {
+                            data: 'image'
+                        },
+                        {
                             data: 'status'
                         },
                         {
@@ -39,8 +42,16 @@
                             }
                         },
                         {
+    // Image Column
+    targets: 3,
+    render: function(data, type, full, meta) {
+        var imageUrl = full['image'] ? full['image'] : 'default-image.jpg';
+        return '<img src="' + imageUrl + '" alt="Course Image" width="50" height="50" class="rounded">';
+    }
+},
+                        {
                             // Name
-                            targets: 3,
+                            targets: 4,
                             render: function(data, type, full, meta) {
                                 var $checkedStatus = full['status'] == 1 ? 'checked' : '';
                                 var $nameStatus = full['status'] == 1 ? 'Yes' : 'No';
@@ -153,6 +164,7 @@
                         <th>No.</th>
                         <th>Course Category</th>
                         <th>Name</th>
+                        <th>Image</th>
                         <th>Status</th>
                         <th></th>
                     </tr>

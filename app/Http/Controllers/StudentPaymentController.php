@@ -18,43 +18,44 @@ class StudentPaymentController extends Controller
     {
         $students = Students::pluck('name', 'id');
         $courses = Course::pluck('name', 'id');
-    
+
         if ($request->ajax()) {
-            $data = StudentPayment::with(['student', 'course']) 
+            $data = StudentPayment::with(['student', 'course'])
                 ->orderBy('id', 'desc')
                 ->get();
-    
+
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->editColumn('student_id', function ($data) {
-                    return $data->student ? $data->student->name : 'N/A'; 
+                    return $data->student ? $data->student->name : 'N/A';
                 })
                 ->editColumn('course_id', function ($data) {
-                    return $data->course ? $data->course->name : 'N/A'; 
+                    return $data->course ? $data->course->name : 'N/A';
                 })
                 ->editColumn('created_at', function ($data) {
                     return Carbon::parse($data->created_at)->format('d-m-Y h:i A');
                 })
                 ->make(true);
         }
-    
+
         return view('studentpayment.index', compact('students', 'courses'));
     }
-
-    public static function StudentPayment($mobile){
-        try{
+    
+    public static function StudentPayment($mobile)
+    {
+        try {
             $student = Students::where('mobile', $mobile)->first();
-            if($student){
-                $data =  StudentPayment::where('student_id', $student->id)->with('course')->get();
-                return response()->json(['status'=>'success', 'data'=>$data]);
-            }else{
-                return response()->json(['status'=>'success','message' => 'Student not found']);
+            if ($student) {
+                $data = StudentPayment::where('student_id', $student->id)->with('course')->get();
+                return response()->json(['status' => 'success', 'data' => $data]);
+            } else {
+                return response()->json(['status' => 'success', 'message' => 'Student not found']);
             }
-        } catch(\Exception $e){
-            return response()->json(['message' => 'An error occurred while fetching student payment details'], 500);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error','message' => 'An error occurred while fetching student payment details'], 500);
         }
     }
-    
+
 
     /**
      * Show the form for creating a new resource.
@@ -107,6 +108,7 @@ class StudentPaymentController extends Controller
     {
         $request->validate([
             'student_id' => 'required|integer|exists:students,id',
+            'amount' => 'required|decimal',
             'course_id' => 'required|integer|exists:courses,id',
             'amount' => 'required|numeric|min:0',
             'transaction_id' => 'required|string|unique:student_payments,transaction_id',

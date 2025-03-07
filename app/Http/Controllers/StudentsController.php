@@ -78,7 +78,6 @@ class StudentsController extends Controller
             $studentdata->email = $request->email;
             $studentdata->mobile = $mobile;
             $studentdata->status = 1;
-
             $studentdata->save();
             $otpresponse = OTPController::getOtp($mobile);
 

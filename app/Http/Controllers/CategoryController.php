@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Carbon;
@@ -273,7 +274,22 @@ class CategoryController extends Controller
                     'message' => 'Category not found',
                 ]);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+    public function categories(Request $request){
+        try{
+            $data = Category::all();
+            if($data){
+                return response()->json(['status'=>"success", 'message'=>"All Category Lists", "data"=>$data]);
+            }else{
+                return response()->json(['status'=>"error", 'message'=>"No Category Found"]);
+            }
+        }catch(Exception $e){
             return response()->json([
                 'status' => 'error',
                 'message' => $e->getMessage(),
