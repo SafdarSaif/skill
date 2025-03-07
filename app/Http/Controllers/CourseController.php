@@ -4,17 +4,43 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\Category;
+
 use App\Models\StudentPayment;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Carbon;
 use App\Http\Controllers\EasebuzzPaymentController;
 use App\Models\Students;
+use Exception;
+use Illuminate\Support\Facades\Auth;
 use stdClass;
 use Illuminate\Support\Facades\Validator;
 
 class CourseController extends Controller
+
 {
+
+    /** 
+     * Api of all cources
+     */
+     public function coursesFunc(Request $request){
+        try{
+          $data = Course::with('category','users')->first();
+          if($data){
+            return response()->json(['status'=>"success", 'message'=>"All Course Lists", "data"=>$data]);
+          }else{
+            return response()->json(['status'=>"error", 'message'=>"No Course Found"]);
+          }
+        }
+        catch(Exception $e){
+             return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
+        }
+     }
+
+
     /**
      * Display a listing of the resource.
      */
@@ -164,6 +190,7 @@ class CourseController extends Controller
                 $imagePath = uploadImage($request->file('image'), 'course_images');
             }
 
+          
             // Create a new course
             $course = Course::create([
                 'name' => $request->name,
@@ -171,6 +198,7 @@ class CourseController extends Controller
                 'price' => $request->price,
                 'duration' => $request->duration,
                 'category_id' => $request->category_id,
+                'added_by'=> Auth::user()->id,
                 'image' => $imagePath,
                 'status' => 1,
             ]);
@@ -180,7 +208,7 @@ class CourseController extends Controller
                 'message' => 'Course added successfully!',
                 'data' => $course
             ], 200);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Something went wrong: ' . $e->getMessage()
@@ -262,13 +290,10 @@ class CourseController extends Controller
 
             $course = Course::findOrFail($courseID);
 
-            // Handle image upload
             if ($request->hasFile('image')) {
-                // Delete old image if exists
                 if ($course->image && file_exists(public_path('uploads/course_images/' . $course->image))) {
                     unlink(public_path('uploads/course_images/' . $course->image));
                 }
-
                 // Upload new image
                 $imagePath = uploadImage($request->file('image'), 'course_images');
                 $course->image = $imagePath;
@@ -281,6 +306,7 @@ class CourseController extends Controller
                 'price' => $request->price,
                 'duration' => $request->duration,
                 'category_id' => $request->category_id,
+                'added_by'=>Auth::user()->id,
             ]);
 
             return response()->json(['status' => 'success', 'message' => 'Course updated successfully!'], 200);
@@ -290,7 +316,7 @@ class CourseController extends Controller
                 'message' => 'Validation failed',
                 'errors' => $e->errors(),
             ], 422);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Something went wrong. Please try again.',
