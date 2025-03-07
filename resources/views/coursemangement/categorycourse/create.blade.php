@@ -1,6 +1,6 @@
 <div class="modal-body">
     <div class="text-center mb-3">
-        <h3 class="mb-2 text-primary">Add Category</h3>
+        <h3 class="mb-2 text-primary">Add  Category</h3>
         <p class="text-muted">Fill in the category details below</p>
     </div>
 

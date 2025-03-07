@@ -12,13 +12,13 @@
                             data: 'DT_RowIndex',
                         },
                         {
+                            data: 'category'
+                        },
+                        {
                             data: 'name'
                         },
                         {
                             data: 'status'
-                        },
-                        {
-                            data: 'mobile'
                         },
                         {
                             data: ''
@@ -32,7 +32,7 @@
                         },
                         {
                             // Name
-                            targets: 1,
+                            targets: 2,
                             render: function(data, type, full, meta) {
                                 var $name = full['name'];
                                 return '<span class="text-nowrap">' + $name + '</span>';
@@ -40,7 +40,7 @@
                         },
                         {
                             // Name
-                            targets: 2,
+                            targets: 3,
                             render: function(data, type, full, meta) {
                                 var $checkedStatus = full['status'] == 1 ? 'checked' : '';
                                 var $nameStatus = full['status'] == 1 ? 'Yes' : 'No';
@@ -64,10 +64,10 @@
                         },
 
                         {
-                            targets: 3,
+                            targets: 1,
                             orderable: false,
                             render: function(data, type, full, meta) {
-                                var $data = full['mobile'];
+                                var $data = full['category'];
                                 return '<span class="text-nowrap">' + $data + '</span>';
                             }
                         },
@@ -151,9 +151,9 @@
                 <thead>
                     <tr>
                         <th>No.</th>
+                        <th>Course Category</th>
                         <th>Name</th>
                         <th>Status</th>
-                        <th>Phone</th>
                         <th></th>
                     </tr>
                 </thead>
