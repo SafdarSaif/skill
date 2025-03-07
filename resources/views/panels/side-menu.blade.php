@@ -96,6 +96,21 @@
                     </a>
                 </li>
                 <li class="menu-item">
+                    <a href="{{ route('subject') }}" class="menu-link">
+                        <div data-i18n="Subjects Videos">Subjects Videos</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('subject') }}" class="menu-link">
+                        <div data-i18n="Subjects Notes">Subjects Notes</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('subject') }}" class="menu-link">
+                        <div data-i18n="Subjects E-book">Subjects E-book</div>
+                    </a>
+                </li>
+                <li class="menu-item">
                     <a href="" class="menu-link">
                         <div data-i18n="Student Course">Student Course</div>
                     </a>

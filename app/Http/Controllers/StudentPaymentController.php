@@ -71,13 +71,46 @@ class StudentPaymentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'student_id' => 'required|integer|exists:students,id',
+    //         'course_id' => 'required|integer|exists:courses,id',
+    //         // 'transaction_id' => 'required|string|unique:payments,transaction_id',
+    //         'transaction_id' => 'required|string|unique:student_payments,transaction_id',
+    //         'payment_status' => 'required|in:pending,completed,failed',
+    //         'payment_confirmation_date' => 'nullable|date',
+    //     ]);
+
+    //     try {
+    //         $payment = new StudentPayment();
+    //         $payment->student_id = $request->student_id;
+    //         $payment->course_id = $request->course_id;
+    //         $payment->transaction_id = $request->transaction_id;
+    //         $payment->payment_status = $request->payment_status;
+    //         $payment->payment_confirmation_date = $request->payment_confirmation_date;
+    //         $payment->save();
+
+    //         return response()->json([
+    //             'status' => 'success',
+    //             'message' => 'Payment recorded successfully!',
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Failed to record payment: ' . $e->getMessage(),
+    //         ], 500);
+    //     }
+    // }
+
+
     public function store(Request $request)
     {
         $request->validate([
             'student_id' => 'required|integer|exists:students,id',
             'amount' => 'required|decimal',
             'course_id' => 'required|integer|exists:courses,id',
-            // 'transaction_id' => 'required|string|unique:payments,transaction_id',
+            'amount' => 'required|numeric|min:0',
             'transaction_id' => 'required|string|unique:student_payments,transaction_id',
             'payment_status' => 'required|in:pending,completed,failed',
             'payment_confirmation_date' => 'nullable|date',
@@ -87,6 +120,7 @@ class StudentPaymentController extends Controller
             $payment = new StudentPayment();
             $payment->student_id = $request->student_id;
             $payment->course_id = $request->course_id;
+            $payment->amount = $request->amount; 
             $payment->transaction_id = $request->transaction_id;
             $payment->payment_status = $request->payment_status;
             $payment->payment_confirmation_date = $request->payment_confirmation_date;
@@ -103,7 +137,6 @@ class StudentPaymentController extends Controller
             ], 500);
         }
     }
-
 
     /**
      * Display the specified resource.

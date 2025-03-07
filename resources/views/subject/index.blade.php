@@ -34,8 +34,7 @@
                             title: 'Actions'
                         },
                     ],
-                    columnDefs: [
-                        {
+                    columnDefs: [{
                             targets: 4,
                             render: function(data, type, full, meta) {
                                 var $checkedStatus = full['status'] == 1 ? 'checked' : '';
@@ -58,6 +57,22 @@
                                     '</label>';
                             }
                         },
+                        // {
+                        //     targets: -1,
+                        //     searchable: false,
+                        //     orderable: false,
+                        //     render: function(data, type, full, meta) {
+                        //         return (
+                        //             '<span class="text-nowrap">' +
+                        //             '<button class="btn btn-sm btn-icon me-2" onclick="edit(\'/subject/edit/' +
+                        //             full['id'] + '\', \'modal-lg\')">' +
+                        //             '<i class="ti ti-edit"></i></button>' +
+                        //             '<button class="btn btn-sm btn-icon delete-record" onclick="destry(\'/subject/destroy/' +
+                        //             full['id'] + '\', \'subjects-table\')">' +
+                        //             '<i class="ti ti-trash"></i></button></span>'
+                        //         );
+                        //     }
+                        // }
                         {
                             targets: -1,
                             searchable: false,
@@ -66,14 +81,26 @@
                                 return (
                                     '<span class="text-nowrap">' +
                                     '<button class="btn btn-sm btn-icon me-2" onclick="edit(\'/subject/edit/' +
-                                    full['id'] + '\', \'modal-lg\')">' +
+                                    full['id'] + '\', \'modal-lg\')" title="Edit">' +
                                     '<i class="ti ti-edit"></i></button>' +
-                                    '<button class="btn btn-sm btn-icon delete-record" onclick="destry(\'/subject/destroy/' +
-                                    full['id'] + '\', \'subjects-table\')">' +
-                                    '<i class="ti ti-trash"></i></button></span>'
+                                    '<button class="btn btn-sm btn-icon me-2 delete-record" onclick="destry(\'/subject/destroy/' +
+                                    full['id'] + '\', \'subjects-table\')" title="Delete">' +
+                                    '<i class="ti ti-trash"></i></button>' +
+                                    '<button class="btn btn-sm btn-icon me-2" onclick="manageVideos(' +
+                                    full['id'] + ')" title="Videos">' +
+                                    '<i class="ti ti-video"></i></button>' +
+                                    '<button class="btn btn-sm btn-icon me-2" onclick="manageNotes(' +
+                                    full['id'] + ')" title="Notes">' +
+                                    '<i class="ti ti-file"></i></button>' +
+                                    '<button class="btn btn-sm btn-icon" onclick="manageEbook(' +
+                                    full['id'] + ')" title="E-Book">' +
+                                    '<i class="ti ti-book"></i></button>' +
+                                    '</span>'
                                 );
                             }
                         }
+
+
                     ],
                     aaSorting: false,
                     dom: '<"row mx-1"' +
