@@ -23,9 +23,13 @@ class CourseController extends Controller
     /** 
      * Api of all cources
      */
-     public function coursesFunc(Request $request){
+     public function coursesFunc(Request $request,$column='',$value=''){
         try{
-          $data = Course::with('category','users')->first();
+            $data = Course::with('category','users')->get();
+            if($column!='')
+            {
+                $data = $data->where($column,$value);
+            }
           if($data){
             return response()->json(['status'=>"success", 'message'=>"All Course Lists", "data"=>$data]);
           }else{
