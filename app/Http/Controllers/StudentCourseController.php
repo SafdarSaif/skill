@@ -42,6 +42,7 @@ class StudentCourseController extends Controller
     }
 
 
+
     /**
      * Show the form for creating a new resource.
      */
@@ -49,10 +50,10 @@ class StudentCourseController extends Controller
     {
         $student = Students::pluck('name', 'id');
         $course = Course::pluck('name', 'id');
-        $studentpayment = StudentPayment::pluck('transaction_id', 'id');
+        // $studentpayment = StudentPayment::pluck('transaction_id', 'id');
 
 
-        return view('studentcourse.create', compact('student', 'course', 'studentpayment'));
+        return view('studentcourse.create', compact('student', 'course'));
     }
 
     /**
@@ -119,8 +120,6 @@ class StudentCourseController extends Controller
         $student = Students::pluck('name', 'id');
         $course = Course::pluck('name', 'id');
         $studentpayment = StudentPayment::pluck('transaction_id', 'id');
-
-
         return view('studentcourse.edit', compact('student', 'course', 'studentpayment', 'studentcourse'));
     }
 
@@ -134,16 +133,16 @@ class StudentCourseController extends Controller
             'course_id' => 'required|exists:courses,id',
             'payment_id' => 'required|exists:student_payments,id',
         ]);
-    
+
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
                 'message' => $validator->errors()->first()
             ], 422);
         }
-    
+
         $studentCourse = StudentCourse::findOrFail($studentcourseId);
-    
+
         $payment = StudentPayment::find($request->payment_id);
         if (!$payment || $payment->payment_status !== 'completed') {
             return response()->json([
@@ -151,14 +150,14 @@ class StudentCourseController extends Controller
                 'message' => 'Payment is not completed. Enrollment cannot be updated.'
             ], 422);
         }
-    
+
         try {
             $studentCourse->update([
                 'student_id' => $request->student_id,
                 'course_id' => $request->course_id,
                 'student_payment_id' => $request->payment_id,
             ]);
-    
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'Student course enrollment updated successfully!',
@@ -171,7 +170,6 @@ class StudentCourseController extends Controller
             ], 500);
         }
     }
-    
 
     /**
      * Remove the specified resource from storage.

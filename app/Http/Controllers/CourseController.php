@@ -4,14 +4,47 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\Category;
+
+use App\Models\StudentPayment;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Carbon;
+use App\Http\Controllers\EasebuzzPaymentController;
+use App\Models\Students;
+use Exception;
+use Illuminate\Support\Facades\Auth;
+use stdClass;
 use Illuminate\Support\Facades\Validator;
 
-
 class CourseController extends Controller
+
 {
+
+    /** 
+     * Api of all cources
+     */
+     public function coursesFunc(Request $request,$column='',$value=''){
+        try{
+            $data = Course::with('category','users')->get();
+            if($column!='')
+            {
+                $data = $data->where($column,$value);
+            }
+          if($data){
+            return response()->json(['status'=>"success", 'message'=>"All Course Lists", "data"=>$data]);
+          }else{
+            return response()->json(['status'=>"error", 'message'=>"No Course Found"]);
+          }
+        }
+        catch(Exception $e){
+             return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
+        }
+     }
+
+
     /**
      * Display a listing of the resource.
      */
@@ -34,6 +67,59 @@ class CourseController extends Controller
         return view('coursemangement.course.index');
     }
 
+
+    public function payStuCourseFee($studentId,$courseId)
+    {
+
+        try {
+
+            // $request->validate([
+            //     'student_id' => 'required|integer|exists:students,id',
+            //     'course_id' => 'required|integer|exists:courses,id',
+            // ]);
+            $request = new stdClass;
+            $request->course_id = $courseId;
+            $request->student_id = $studentId;
+            $courseArr = Course::find($request->course_id); // course details
+            if (!$courseArr) {
+                return response()->json(['status' => 'error', 'message' => 'Course not found!']);
+            }
+
+            $studentArr = Students::find($request->student_id); // student details
+            if (!$studentArr) {
+                return response()->json(['status' => 'error', 'message' => 'Student not found!']);
+            }
+
+            $transication_id = 'TXN-' . time() . rand(1000, 9999);
+            $data = [
+                'student_id' => $request->student_id,
+                'course_id' => $courseArr->id,
+                'amount' => floatval($courseArr->price),
+                'payment_status' => "pending",
+                'transaction_id' => $transication_id,
+            ];
+            // StudentPayment::create($data);
+
+            $paymentdata = [
+                'txnid' => trim($transication_id),
+                'amount' => floatval($courseArr->price),
+                "proinfo" => "Course Payment",
+                "name" => trim($studentArr->name),
+                "email" => trim($studentArr->email),
+                "mobile" => trim($studentArr->mobile)
+            ];
+            $procced_payment = EasebuzzPaymentController::initiatePayment($paymentdata);
+            return $procced_payment;
+            // return response()->json(['status' => 'success', 'message' => 'Payment Added Successfully', 'view'=>]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An error occurred during the payment process!',
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -108,6 +194,7 @@ class CourseController extends Controller
                 $imagePath = uploadImage($request->file('image'), 'course_images');
             }
 
+          
             // Create a new course
             $course = Course::create([
                 'name' => $request->name,
@@ -115,6 +202,7 @@ class CourseController extends Controller
                 'price' => $request->price,
                 'duration' => $request->duration,
                 'category_id' => $request->category_id,
+                'added_by'=> Auth::user()->id,
                 'image' => $imagePath,
                 'status' => 1,
             ]);
@@ -124,7 +212,7 @@ class CourseController extends Controller
                 'message' => 'Course added successfully!',
                 'data' => $course
             ], 200);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Something went wrong: ' . $e->getMessage()
@@ -206,13 +294,10 @@ class CourseController extends Controller
 
             $course = Course::findOrFail($courseID);
 
-            // Handle image upload
             if ($request->hasFile('image')) {
-                // Delete old image if exists
                 if ($course->image && file_exists(public_path('uploads/course_images/' . $course->image))) {
                     unlink(public_path('uploads/course_images/' . $course->image));
                 }
-
                 // Upload new image
                 $imagePath = uploadImage($request->file('image'), 'course_images');
                 $course->image = $imagePath;
@@ -225,6 +310,7 @@ class CourseController extends Controller
                 'price' => $request->price,
                 'duration' => $request->duration,
                 'category_id' => $request->category_id,
+                'added_by'=>Auth::user()->id,
             ]);
 
             return response()->json(['status' => 'success', 'message' => 'Course updated successfully!'], 200);
@@ -234,7 +320,7 @@ class CourseController extends Controller
                 'message' => 'Validation failed',
                 'errors' => $e->errors(),
             ], 422);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Something went wrong. Please try again.',
@@ -281,5 +367,11 @@ class CourseController extends Controller
                 'message' => $e->getMessage(),
             ]);
         }
+    }
+
+    public function getCourseAmount($courseId)
+    {
+        $courseAmount = Course::where('id',$courseId)->pluck('price')->first();
+        return response()->json(['status'=>'success','price'=>$courseAmount]);
     }
 }
