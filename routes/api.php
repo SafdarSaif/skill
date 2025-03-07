@@ -1,8 +1,12 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OTPController;
 use App\Http\Controllers\StudentPaymentController;
 use App\Http\Controllers\StudentsController;
+use App\Http\Controllers\CourseController;
+use App\Http\Controllers\EasebuzzPaymentController;
+
 use App\Models\Students;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -17,5 +21,11 @@ Route::get('/students-details/{mobile_no}',[StudentsController::class,'getStuden
 Route::post('/students-registration',[StudentsController::class,'registerStudent']);
 Route::get('/students-all-details/{mobile_no}',[StudentsController::class,'StudentAllDetaills']);
 Route::get('/students-payment/{mobile_no}',[StudentPaymentController::class,'StudentPayment']);
-Route::post('/pay-student-course-fee',[StudentPaymentController::class,'payStuCourseFee']);
+Route::get('/pay-student-course-fee/{student_id}/{course_id}',[CourseController::class,'payStuCourseFee']);
+Route::get('/all-categories',[CategoryController::class,'categories']);
+
+
+Route::post('/pay', [EasebuzzPaymentController::class, 'initiatePayment'])->name('easebuzz.pay');
+Route::post('/payment-success', [EasebuzzPaymentController::class, 'paymentSuccess'])->name('easebuzz.success');
+Route::post('/payment-failure', [EasebuzzPaymentController::class, 'paymentFailure'])->name('easebuzz.failure');
 

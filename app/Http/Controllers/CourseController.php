@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\Category;
+use App\Models\StudentPayment;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Carbon;
+use App\Http\Controllers\EasebuzzPaymentController;
+use App\Models\Students;
+use stdClass;
 
 class CourseController extends Controller
 {
@@ -45,6 +49,59 @@ class CourseController extends Controller
         return view('coursemangement.course.index');
     }
 
+
+    public function payStuCourseFee($studentId,$courseId)
+    {
+
+        try {
+
+            // $request->validate([
+            //     'student_id' => 'required|integer|exists:students,id',
+            //     'course_id' => 'required|integer|exists:courses,id',
+            // ]);
+            $request = new stdClass;
+            $request->course_id = $courseId;
+            $request->student_id = $studentId;
+            $courseArr = Course::find($request->course_id); // course details
+            if (!$courseArr) {
+                return response()->json(['status' => 'error', 'message' => 'Course not found!']);
+            }
+
+            $studentArr = Students::find($request->student_id); // student details
+            if (!$studentArr) {
+                return response()->json(['status' => 'error', 'message' => 'Student not found!']);
+            }
+
+            $transication_id = 'TXN-' . time() . rand(1000, 9999);
+            $data = [
+                'student_id' => $request->student_id,
+                'course_id' => $courseArr->id,
+                'amount' => floatval($courseArr->price),
+                'payment_status' => "pending",
+                'transaction_id' => $transication_id,
+            ];
+            // StudentPayment::create($data);
+
+            $paymentdata = [
+                'txnid' => trim($transication_id),
+                'amount' => floatval($courseArr->price),
+                "proinfo" => "Course Payment",
+                "name" => trim($studentArr->name),
+                "email" => trim($studentArr->email),
+                "mobile" => trim($studentArr->mobile)
+            ];
+            $procced_payment = EasebuzzPaymentController::initiatePayment($paymentdata);
+            return $procced_payment;
+            // return response()->json(['status' => 'success', 'message' => 'Payment Added Successfully', 'view'=>]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An error occurred during the payment process!',
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
 
     /**
      * Show the form for creating a new resource.

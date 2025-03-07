@@ -171,4 +171,10 @@ class CategoryController extends Controller
             ]);
         }
     }
+    public function categories(Request $request){
+        $data = Category::all();
+        
+        dd($data);
+       
+    }
 }

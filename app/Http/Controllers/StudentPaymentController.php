@@ -40,10 +40,7 @@ class StudentPaymentController extends Controller
 
         return view('studentpayment.index', compact('students', 'courses'));
     }
-    public function payStuCourseFee(Request $request)
-    {
-     echo "karuna"; die;    
-    }
+    
     public static function StudentPayment($mobile)
     {
         try {
@@ -55,7 +52,7 @@ class StudentPaymentController extends Controller
                 return response()->json(['status' => 'success', 'message' => 'Student not found']);
             }
         } catch (\Exception $e) {
-            return response()->json(['message' => 'An error occurred while fetching student payment details'], 500);
+            return response()->json(['status' => 'error','message' => 'An error occurred while fetching student payment details'], 500);
         }
     }
 
@@ -78,6 +75,7 @@ class StudentPaymentController extends Controller
     {
         $request->validate([
             'student_id' => 'required|integer|exists:students,id',
+            'amount' => 'required|decimal',
             'course_id' => 'required|integer|exists:courses,id',
             // 'transaction_id' => 'required|string|unique:payments,transaction_id',
             'transaction_id' => 'required|string|unique:student_payments,transaction_id',
