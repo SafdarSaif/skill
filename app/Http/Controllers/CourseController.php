@@ -11,26 +11,14 @@ use Illuminate\Support\Carbon;
 use App\Http\Controllers\EasebuzzPaymentController;
 use App\Models\Students;
 use stdClass;
+use Illuminate\Support\Facades\Validator;
 
 class CourseController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    // public function index(Request $request)
-    // {
-    //     if ($request->ajax()) {
-    //         $data = Course::orderBy('id', 'desc')->get();
-
-    //         return DataTables::of($data)
-    //             ->addIndexColumn()
-    //             ->editColumn('created_at', function ($data) {
-    //                 return Carbon::createFromFormat('Y-m-d H:i:s', $data->created_at)->format('d-m-Y h:i A');
-    //             })
-    //             ->make(true);
-    //     }
-    //     return view('coursemangement.course.index');
-    // }
+    
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -116,38 +104,89 @@ class CourseController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    // public function store(Request $request)
+    // {
+    //     try {
+    //         $request->validate([
+    //             'name' => 'required|string|max:255',
+    //             'description' => 'nullable|string',
+    //             'price' => 'required|numeric|min:0',
+    //             'duration' => 'required|string|max:100',
+    //             'category_id' => 'required|exists:categories,id',
+    //             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', 
+    //         ]);
+
+    //         $data = $request->all();
+    //         $data['status'] = 1;
+
+    //         Course::create($data);
+
+    //         return response()->json(['status' => 'success', 'message' => 'Course added successfully!'], 201);
+    //     } catch (\Illuminate\Validation\ValidationException $e) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Validation failed',
+    //             'errors' => $e->errors(),
+    //         ], 422);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Something went wrong. Please try again.',
+    //             'error' => $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
+
+
     public function store(Request $request)
     {
+        // Validate the request
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|min:2|max:255',
+            'description' => 'nullable|max:500',
+            'price' => 'required|numeric|min:0',
+            'duration' => 'required|string|max:100',
+            'category_id' => 'required|exists:categories,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
+
         try {
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'description' => 'nullable|string',
-                'price' => 'required|numeric|min:0',
-                'duration' => 'required|string|max:100',
-                'category_id' => 'required|exists:categories,id',
+            // Handle image upload
+            $imagePath = null;
+            if ($request->hasFile('image')) {
+                $imagePath = uploadImage($request->file('image'), 'course_images');
+            }
+
+            // Create a new course
+            $course = Course::create([
+                'name' => $request->name,
+                'description' => $request->description,
+                'price' => $request->price,
+                'duration' => $request->duration,
+                'category_id' => $request->category_id,
+                'image' => $imagePath,
+                'status' => 1,
             ]);
 
-            $data = $request->all();
-            $data['status'] = 1;
-
-            Course::create($data);
-
-            return response()->json(['status' => 'success', 'message' => 'Course added successfully!'], 201);
-        } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
-                'status' => 'error',
-                'message' => 'Validation failed',
-                'errors' => $e->errors(),
-            ], 422);
+                'status' => 'success',
+                'message' => 'Course added successfully!',
+                'data' => $course
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Something went wrong. Please try again.',
-                'error' => $e->getMessage()
+                'message' => 'Something went wrong: ' . $e->getMessage()
             ], 500);
         }
     }
-
 
     /**
      * Display the specified resource.
@@ -172,19 +211,70 @@ class CourseController extends Controller
     /**
      * Update the specified resource in storage.
      */
+    // public function update(Request $request, $courseID)
+    // {
+    //     try {
+    //         $request->validate([
+    //             'name' => 'required|string|max:255',
+    //             'description' => 'nullable|string',
+    //             'price' => 'required|numeric|min:0',
+    //             'duration' => 'required|string|max:100',
+    //             'category_id' => 'required|exists:categories,id',
+    //         ]);
+
+    //         $course = Course::findOrFail($courseID);
+
+    //         $course->update([
+    //             'name' => $request->name,
+    //             'description' => $request->description,
+    //             'price' => $request->price,
+    //             'duration' => $request->duration,
+    //             'category_id' => $request->category_id,
+    //         ]);
+
+    //         return response()->json(['status' => 'success', 'message' => 'Course updated successfully!'], 200);
+    //     } catch (\Illuminate\Validation\ValidationException $e) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Validation failed',
+    //             'errors' => $e->errors(),
+    //         ], 422);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Something went wrong. Please try again.',
+    //             'error' => $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
     public function update(Request $request, $courseID)
     {
         try {
+            // Validate input
             $request->validate([
                 'name' => 'required|string|max:255',
                 'description' => 'nullable|string',
                 'price' => 'required|numeric|min:0',
                 'duration' => 'required|string|max:100',
                 'category_id' => 'required|exists:categories,id',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             ]);
 
             $course = Course::findOrFail($courseID);
 
+            // Handle image upload
+            if ($request->hasFile('image')) {
+                // Delete old image if exists
+                if ($course->image && file_exists(public_path('uploads/course_images/' . $course->image))) {
+                    unlink(public_path('uploads/course_images/' . $course->image));
+                }
+
+                // Upload new image
+                $imagePath = uploadImage($request->file('image'), 'course_images');
+                $course->image = $imagePath;
+            }
+
+            // Update other fields
             $course->update([
                 'name' => $request->name,
                 'description' => $request->description,
@@ -204,10 +294,11 @@ class CourseController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Something went wrong. Please try again.',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
+
 
     /**
      * Remove the specified resource from storage.

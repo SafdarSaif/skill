@@ -33,6 +33,16 @@
             <textarea class="form-control" id="description" name="description">{{ $subject->description }}</textarea>
         </div>
 
+         <!--  Image -->
+         <div class="col-md-12">
+            <label for="edit-image" class="form-label">Image</label>
+            <input type="file" name="image" id="edit-image" class="form-control">
+            <div class="mt-2">
+                <img id="edit-image-preview" src="{{ asset($subject->image) }}" alt="News Image" class="img-thumbnail"
+                    width="150">
+            </div>
+        </div>
+
         <!-- Submit Buttons -->
         <div class="col-12 text-center mt-3">
             <button type="submit" class="btn btn-primary">Update</button>

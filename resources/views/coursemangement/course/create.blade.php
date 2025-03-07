@@ -30,6 +30,11 @@
             <label for="description" class="form-label">Description</label>
             <textarea name="description" id="description" class="form-control" rows="3" placeholder="Enter course description"></textarea>
         </div>
+         <!-- Image Upload -->
+         <div class="col-md-12">
+            <label for="image" class="form-label">Course Image <span class="text-danger">*</span></label>
+            <input type="file" name="image" id="image" class="form-control" accept="image/*" required>
+        </div>
 
         <!-- Price & Duration -->
         <div class="col-md-6">

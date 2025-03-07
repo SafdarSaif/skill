@@ -32,6 +32,16 @@
             <label for="edit_description" class="form-label">Description</label>
             <textarea name="description" id="edit_description" class="form-control" rows="3">{{ $course->description }}</textarea>
         </div>
+        
+        <!--  Image -->
+        <div class="col-md-12">
+            <label for="edit-image" class="form-label">Image</label>
+            <input type="file" name="image" id="edit-image" class="form-control">
+            <div class="mt-2">
+                <img id="edit-image-preview" src="{{ asset($course->image) }}" alt="News Image" class="img-thumbnail"
+                    width="150">
+            </div>
+        </div>
 
         <!-- Price & Duration -->
         <div class="col-md-6">

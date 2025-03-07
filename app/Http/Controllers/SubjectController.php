@@ -50,12 +50,16 @@ class SubjectController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    
+
     public function store(Request $request)
     {
+        // Validate the request
         $validator = Validator::make($request->all(), [
             'course_id'   => 'required|exists:courses,id',
             'name'        => 'required|string|min:3|max:255|unique:subjects,name',
-            'description' => 'nullable|string',
+            'description' => 'nullable|string|max:500',
+            'image'       => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048', // Image validation
         ]);
 
         if ($validator->fails()) {
@@ -66,10 +70,16 @@ class SubjectController extends Controller
         }
 
         try {
+            $imagePath = null;
+            if ($request->hasFile('image')) {
+                $imagePath = uploadImage($request->file('image'), 'subject_images'); // Custom helper function
+            }
+
             $subject = Subject::create([
                 'course_id'   => $request->course_id,
                 'name'        => $request->name,
                 'description' => $request->description,
+                'image'       => $imagePath,
             ]);
 
             return response()->json([
@@ -80,11 +90,10 @@ class SubjectController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Something went wrong! ' . $e->getMessage()
+                'message' => 'Something went wrong: ' . $e->getMessage()
             ], 500);
         }
     }
-
 
     /**
      * Display the specified resource.
@@ -114,6 +123,7 @@ class SubjectController extends Controller
             'course_id'   => 'required|exists:courses,id',
             'name'        => 'required|string|min:3|max:255|unique:subjects,name,' . $subjectId,
             'description' => 'nullable|string',
+            'image'       => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048', // Image validation
         ]);
 
         if ($validator->fails()) {
@@ -126,10 +136,24 @@ class SubjectController extends Controller
         $subject = Subject::findOrFail($subjectId);
 
         try {
+            // Handle Image Upload
+            if ($request->hasFile('image')) {
+                // Delete old image if exists
+                if ($subject->image) {
+                    deleteImage($subject->image); // Custom helper function to remove old image
+                }
+                // Upload new image
+                $imagePath = uploadImage($request->file('image'), 'subject_images');
+            } else {
+                $imagePath = $subject->image; // Keep existing image if no new one is uploaded
+            }
+
+            // Update Subject
             $subject->update([
                 'course_id'   => $request->course_id,
                 'name'        => $request->name,
                 'description' => $request->description,
+                'image'       => $imagePath,
             ]);
 
             return response()->json([
@@ -144,6 +168,7 @@ class SubjectController extends Controller
             ], 500);
         }
     }
+
 
 
 
