@@ -22,6 +22,18 @@
             <textarea name="description" id="edit-description" class="form-control" rows="3">{{ $category->description }}</textarea>
         </div>
 
+
+
+         <!-- News Image -->
+         <div class="col-md-12">
+            <label for="edit-image" class="form-label">Image</label>
+            <input type="file" name="image" id="edit-image" class="form-control">
+            <div class="mt-2">
+                <img id="edit-image-preview" src="{{ asset($category->image) }}" alt="News Image" class="img-thumbnail"
+                    width="150">
+            </div>
+        </div>
+
         <!-- Submit Buttons -->
         <div class="col-12 text-center mt-3">
             <button type="submit" class="btn btn-primary">Update</button>
