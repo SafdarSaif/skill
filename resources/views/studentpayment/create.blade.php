@@ -112,5 +112,26 @@
                 });
             }
         });
+
+        // get course Amount
+        $('#course_id').on('change',function(){
+            $.ajax({
+                url:"/course/course-amount/"+$(this).val(),
+                type:'get',
+                success:function(res)
+                {
+                    if(res.status=='success')
+                    {
+                        $('#amount').val(res.price);
+                        $('#amount').prop('readonly',true);
+                    }
+                    else
+                    {
+                        $('#amount').val();
+                        $('#amount').prop('readonly',false);
+                    }
+                }
+            })
+        })
     });
 </script>
