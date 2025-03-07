@@ -82,7 +82,7 @@ class OTPController extends Controller
 
     public function verifyOtp($otp,$mobileNo)
     {
-        $checkOtp = OTP::where(['otp'=>$otp,'mobile_number'=>$mobileNo])->where('is_used',false)->count();
+        $checkOtp = OTP::where(['otp'=>$otp,'mobile_number'=>$mobileNo])->where('is_used',false)->where('expire_at','>',Carbon::now())->count();
         if($checkOtp)
         {
             OTP::where(['otp'=>$otp,'mobile_number'=>$mobileNo])->update(['is_used'=>true]);

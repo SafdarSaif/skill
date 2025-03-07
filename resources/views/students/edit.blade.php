@@ -23,6 +23,31 @@
                         <input type="date" id="dob" name="dob" class="form-control"
                             value="{{ old('dob', $student->dob) }}" required>
                     </div>
+
+
+                    <!--  Image -->
+                    <div class="col-md-6">
+                        <label for="edit-image" class="form-label">Student Photo</label>
+                        <input type="file" name="image" id="edit-image" class="form-control">
+                        <div class="mt-2">
+                            <img id="edit-image-preview" src="{{ asset($student->image) }}" alt="News Image"
+                                class="img-thumbnail" width="150">
+                        </div>
+                    </div>
+
+                    {{-- <div class="col-md-6 mb-3">
+                        <label class="form-label" for="signature">Signature</label>
+                        <input type="file" id="signature" name="signature" class="form-control" accept="image/*"
+                            required>
+                    </div> --}}
+                    <div class="col-md-6">
+                        <label for="edit-image" class="form-label">Signature</label>
+                        <input type="file" name="signature" id="edit-image" class="form-control">
+                        <div class="mt-2">
+                            <img id="edit-image-preview" src="{{ asset($student->signature) }}" alt="News Image"
+                                class="img-thumbnail" width="150">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -112,10 +137,10 @@
                 <h5 class="mb-3">Educational Details</h5>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label" for="heighest_qualification">Highest Qualification</label>
-                        <input type="text" id="heighest_qualification" name="heighest_qualification"
+                        <label class="form-label" for="highest_qualification">Highest Qualification</label>
+                        <input type="text" id="highest_qualification" name="highest_qualification"
                             class="form-control"
-                            value="{{ old('heighest_qualification', $student->heighest_qualification) }}" required>
+                            value="{{ old('highest_qualification', $student->heighest_qualification) }}" required>
                     </div>
                 </div>
             </div>
@@ -176,7 +201,7 @@
             country: {
                 required: true
             },
-            heighest_qualification: {
+            highest_qualification: {
                 required: true
             }
         },

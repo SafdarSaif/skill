@@ -23,6 +23,9 @@ Route::get('/students-all-details/{mobile_no}',[StudentsController::class,'Stude
 Route::get('/students-payment/{mobile_no}',[StudentPaymentController::class,'StudentPayment']);
 Route::get('/pay-student-course-fee/{student_id}/{course_id}',[CourseController::class,'payStuCourseFee']);
 Route::get('/all-categories',[CategoryController::class,'categories']);
+Route::get('/all-courses/{column}/{value}',[CourseController::class,'coursesFunc']);
+Route::get('/all-courses',[CourseController::class,'coursesFunc']);
+Route::post('/api/category-courses',[CategoryController::class,'getCategoryCourses']);
 
 
 Route::post('/pay', [EasebuzzPaymentController::class, 'initiatePayment'])->name('easebuzz.pay');

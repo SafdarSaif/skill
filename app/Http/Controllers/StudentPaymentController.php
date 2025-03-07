@@ -169,4 +169,14 @@ class StudentPaymentController extends Controller
     {
         //
     }
+
+    public function getPyamentByStudentIdCourseId($studentId,$courseId)
+    {
+        $transactionData = StudentPayment::where('course_id',$courseId)->where('student_id',$studentId)->get();
+        if($transactionData->isNotEmpty())
+        {
+            return response()->json(['status'=>'success','payments'=>$transactionData]);
+        }
+        return response()->json(['status'=>'error']);
+    }
 }

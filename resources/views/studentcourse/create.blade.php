@@ -10,7 +10,7 @@
         <!-- Student ID -->
         <div class="col-md-6">
             <label for="student_id" class="form-label">Student <span class="text-danger">*</span></label>
-            <select name="student_id" id="student_id" class="form-select" required>
+            <select name="student_id" id="student_id" class="form-select transaction" required>
                 <option value="">Select Student</option>
                 @foreach ($student as $id => $name)
                     <option value="{{ $id }}">{{ $name }}</option>
@@ -21,7 +21,7 @@
         <!-- Course ID -->
         <div class="col-md-6">
             <label for="course_id" class="form-label">Course <span class="text-danger">*</span></label>
-            <select name="course_id" id="course_id" class="form-select" required>
+            <select name="course_id" id="course_id" class="form-select transaction" required>
                 <option value="">Select Course</option>
                 @foreach ($course as $id => $name)
                     <option value="{{ $id }}">{{ $name }}</option>
@@ -34,9 +34,7 @@
             <label for="payment_id" class="form-label">Payment <span class="text-danger">*</span></label>
             <select name="payment_id" id="payment_id" class="form-select" >
                 <option value="">Select Payment</option>
-                @foreach ($studentpayment as $id => $name)
-                    <option value="{{ $id }}">{{ $name }}</option>
-                @endforeach
+                
             </select>
         </div>
 
@@ -109,5 +107,35 @@
                 });
             }
         });
+
+        ////get transactions according to student and course
+
+        $('.transaction').on('change',function(){
+            if($('#student_id').val() && $('#course_id').val())
+            {
+                debugger;
+                $.ajax({
+                url:'/payemnt/get-payment-according-to-student-and-course/'+$('#student_id').val()+'/'+$('#course_id').val(),
+                success:function(res)
+                {
+                    if(res.status=='success')
+                    {
+                        var option = '';
+                        $('#payment_id').prop('disabled',false);
+                        $.each(res.payments,function(key,val){
+                            option += '<option value='+val.id+'>'+val.transaction_id+' ( ₹'+val.amount+')</option>';
+                        });
+                        $('#payment_id').append(option);
+                    }
+                    else
+                    {
+                        var option = '<option>Payment Not Made Yet</option>';
+                        $('#payment_id').html(option);
+                        $('#payment_id').prop('disabled',true);
+                    }
+                }
+            })   
+            }
+        })
     });
 </script>

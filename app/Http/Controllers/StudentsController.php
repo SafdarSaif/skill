@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Carbon;
 use App\Http\Controllers\OTPController;
+use Illuminate\Support\Facades\Validator;
+
 
 
 class StudentsController extends Controller
@@ -52,9 +54,9 @@ class StudentsController extends Controller
             $student = Students::where('mobile', $mobile)->first();
             if ($student->count()) {
                 $studata = Students::where('mobile', $mobile)->with('studentCourses')->first();
-                return response()->json(['status'=>'success', 'data'=>$studata]);
+                return response()->json(['status' => 'success', 'data' => $studata]);
             } else {
-                return response()->json(['status' => 'error','message'=> 'No student found with this mobile number']);
+                return response()->json(['status' => 'error', 'message' => 'No student found with this mobile number']);
             }
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
@@ -67,7 +69,7 @@ class StudentsController extends Controller
         // dd($request);
         $mobile = $request->mobile;
         try {
-            $student = Students::where('mobile', )->first();
+            $student = Students::where('mobile',)->first();
 
             if ($student) {
                 return response()->json(['status' => 'error', 'message' => 'Student already registered with this ' . $request->mobile]);
@@ -85,7 +87,6 @@ class StudentsController extends Controller
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
-
     }
 
     /**
@@ -100,70 +101,121 @@ class StudentsController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
     // public function store(Request $request)
     // {
-    //     $request->validate([
-    //         'name' => 'required|string|max:255',
-    //         'email' => 'required|email|unique:students,email',
-    //         'dob' => 'required|date',
-    //         'mobile' => 'required|digits:10|unique:students,mobile',
-    //         'fathers_name' => 'required|string|max:255',
-    //         'mothers_name' => 'required|string|max:255',
-    //         'address' => 'required|string|max:500',
-    //         'state' => 'required|string',
-    //         'district' => 'required|string',
-    //         'city' => 'required|string',
-    //         'pincode' => 'required|digits:6',
-    //         'country' => 'required|string',
-    //         'heighest_qualification' => 'required|string',
-    //         'status' => 'required|boolean',
-    //     ]);
+    //     try {
+    //         $request->validate([
+    //             'name' => 'required|string|max:255',
+    //             'email' => 'required|email|unique:students,email',
+    //             'dob' => 'required|date',
+    //             'mobile' => 'required|digits:10|unique:students,mobile',
+    //             'fathers_name' => 'required|string|max:255',
+    //             'mothers_name' => 'required|string|max:255',
+    //             'address' => 'required|string|max:500',
+    //             'state' => 'required|string',
+    //             'district' => 'required|string',
+    //             'city' => 'required|string',
+    //             'pincode' => 'required|digits:6',
+    //             'country' => 'required|string',
+    //             'heighest_qualification' => 'required|string',
+    //         ]);
 
-    //     Students::create($request->all());
+    //         // Merge the request data with status = 1
+    //         $data = $request->all();
+    //         $data['status'] = 1;
 
-    //     return response()->json(['status' => 'success', 'message' => 'Student added successfully!']);
+    //         Students::create($data);
+
+    //         return response()->json(['status' => 'success', 'message' => 'Student added successfully!'], 201);
+    //     } catch (\Illuminate\Validation\ValidationException $e) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Validation failed',
+    //             'errors' => $e->errors(),
+    //         ], 422);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Something went wrong. Please try again.',
+    //             'error' => $e->getMessage()
+    //         ], 500);
+    //     }
     // }
+
     public function store(Request $request)
     {
+        // Validate the request
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|min:2|max:255',
+            'email' => 'required|email|unique:students,email',
+            'dob' => 'required|date',
+            'mobile' => 'required|digits:10|unique:students,mobile',
+            'fathers_name' => 'required|string|max:255',
+            'mothers_name' => 'required|string|max:255',
+            'address' => 'required|string|max:500',
+            'state' => 'required|string',
+            'district' => 'required|string',
+            'city' => 'required|string',
+            'pincode' => 'required|digits:6',
+            'country' => 'required|string',
+            'highest_qualification' => 'required|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'signature' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:1024',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
+
         try {
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'email' => 'required|email|unique:students,email',
-                'dob' => 'required|date',
-                'mobile' => 'required|digits:10|unique:students,mobile',
-                'fathers_name' => 'required|string|max:255',
-                'mothers_name' => 'required|string|max:255',
-                'address' => 'required|string|max:500',
-                'state' => 'required|string',
-                'district' => 'required|string',
-                'city' => 'required|string',
-                'pincode' => 'required|digits:6',
-                'country' => 'required|string',
-                'heighest_qualification' => 'required|string',
+            // Handle image upload
+            $imagePath = null;
+            if ($request->hasFile('image')) {
+                $imagePath = $this->uploadImage($request->file('image'), 'students/images');
+            }
+
+            // Handle signature upload
+            $signaturePath = null;
+            if ($request->hasFile('signature')) {
+                $signaturePath = $this->uploadImage($request->file('signature'), 'students/signatures');
+            }
+
+            // Create a new student record
+            $student = Students::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'dob' => $request->dob,
+                'mobile' => $request->mobile,
+                'fathers_name' => $request->fathers_name,
+                'mothers_name' => $request->mothers_name,
+                'address' => $request->address,
+                'state' => $request->state,
+                'district' => $request->district,
+                'city' => $request->city,
+                'pincode' => $request->pincode,
+                'country' => $request->country,
+                'highest_qualification' => $request->highest_qualification,
+                'image' => $imagePath,
+                'signature' => $signaturePath,
+                'status' => 1, // Default active status
             ]);
 
-            // Merge the request data with status = 1
-            $data = $request->all();
-            $data['status'] = 1;
-
-            Students::create($data);
-
-            return response()->json(['status' => 'success', 'message' => 'Student added successfully!'], 201);
-        } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
-                'status' => 'error',
-                'message' => 'Validation failed',
-                'errors' => $e->errors(),
-            ], 422);
+                'status' => 'success',
+                'message' => 'Student added successfully!',
+                'data' => $student
+            ], 201);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Something went wrong. Please try again.',
-                'error' => $e->getMessage()
+                'message' => 'Something went wrong: ' . $e->getMessage()
             ], 500);
         }
     }
-
 
 
     /**
@@ -176,11 +228,11 @@ class StudentsController extends Controller
     }
 
     public function profile($id)
-{
-    $student = Students::with('studentCourses.course')->findOrFail($id);
+    {
+        $student = Students::with('studentCourses.course')->findOrFail($id);
 
-    return view('students.profile', compact('student'));
-}
+        return view('students.profile', compact('student'));
+    }
 
 
     /**
@@ -215,36 +267,57 @@ class StudentsController extends Controller
             'city' => 'required|string',
             'pincode' => 'required|digits:6',
             'country' => 'required|string',
-            'heighest_qualification' => 'required|string',
+            'highest_qualification' => 'required|string', // Fixed typo
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'signature' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:1024',
         ]);
-
+    
         try {
             // Find student record
             $student = Students::findOrFail($studentId);
-
-            // Update each field manually (instead of mass assignment)
-            $student->name = $validated['name'];
-            $student->email = $validated['email'];
-            $student->dob = $validated['dob'];
-            $student->mobile = $validated['mobile'];
-            $student->fathers_name = $validated['fathers_name'];
-            $student->mothers_name = $validated['mothers_name'];
-            $student->address = $validated['address'];
-            $student->state = $validated['state'];
-            $student->district = $validated['district'];
-            $student->city = $validated['city'];
-            $student->pincode = $validated['pincode'];
-            $student->country = $validated['country'];
-            $student->heighest_qualification = $validated['heighest_qualification'];
-
-            $student->save(); // Save the updated student data
-
-            return response()->json(['status' => 'success', 'message' => 'Student updated successfully!']);
+    
+            // Handle image upload
+            if ($request->hasFile('image')) {
+                $imagePath = $this->uploadImage($request->file('image'), 'students/images');
+                $student->image = $imagePath;
+            }
+    
+            // Handle signature upload
+            if ($request->hasFile('signature')) {
+                $signaturePath = $this->uploadImage($request->file('signature'), 'students/signatures');
+                $student->signature = $signaturePath;
+            }
+    
+            // Update student details
+            $student->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'dob' => $request->dob,
+                'mobile' => $request->mobile,
+                'fathers_name' => $request->fathers_name,
+                'mothers_name' => $request->mothers_name,
+                'address' => $request->address,
+                'state' => $request->state,
+                'district' => $request->district,
+                'city' => $request->city,
+                'pincode' => $request->pincode,
+                'country' => $request->country,
+                'highest_qualification' => $request->highest_qualification,
+            ]);
+    
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Student updated successfully!',
+                'data' => $student
+            ], 200);
         } catch (\Exception $e) {
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong: ' . $e->getMessage()
+            ], 500);
         }
     }
-
+    
 
 
 
