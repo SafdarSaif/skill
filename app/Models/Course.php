@@ -16,7 +16,8 @@ class Course extends Model
         'duration',
         'category_id',
         'image',
-        'status'
+        'status',
+        'added_by'
     ];
 
     /**
@@ -33,9 +34,14 @@ class Course extends Model
         return $this->belongsTo(Course::class, 'course_id');
     }
 
+    public function users()
+    {
+        return $this->belongsTo(User::class, 'added_by');
+    }
+
     public function students()
-{
-    return $this->belongsToMany(Students::class, 'student_courses', 'course_id', 'student_id');
-}
+    {
+        return $this->belongsToMany(Students::class, 'student_courses', 'course_id', 'student_id');
+    }
 
 }
