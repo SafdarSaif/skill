@@ -19,10 +19,11 @@ class OTPController extends Controller
             
             $otp = self::generateOtp($checkStudent);
             
-            $isOtpSend = self::sendOtpToUser($otp,$mobileNo);
+            // $isOtpSend = self::sendOtpToUser($otp,$mobileNo);
             
-            
+            $isOtpSend =true;
             if($isOtpSend)
+            // if($isOtpSend)
             {
                 return response()->json([
                     'status' => 'success',

@@ -1,6 +1,6 @@
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
     <div class="app-brand demo ">
-        {{-- <img src="/public/assets/img/logo/logo.png" alt="" style="height: 41px"> --}}
+        {{-- <img src="/assets/img/logo/logo.png" alt="" style="height: 41px"> --}}
         <h4>Skill App</h4>
 
         <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
@@ -96,10 +96,25 @@
                     </a>
                 </li>
                 <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <div data-i18n="Subjects Videos">Subjects Videos</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <div data-i18n="Subjects Notes">Subjects Notes</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <div data-i18n="Subjects E-book">Subjects E-book</div>
+                    </a>
+                </li>
+                {{-- <li class="menu-item">
                     <a href="" class="menu-link">
                         <div data-i18n="Student Course">Student Course</div>
                     </a>
-                </li>
+                </li> --}}
 
             </ul>
         </li>

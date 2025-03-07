@@ -1,0 +1,59 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+class EasebuzzPaymentController extends Controller
+{
+    public static $merchantKey;
+    public static $salt;
+    public static $baseUrl;
+    public static function init()
+    {
+        self::$merchantKey = env('EASEBUZZ_MERCHANT_KEY');
+        self::$salt = env('EASEBUZZ_SALT');
+        self::$baseUrl = env('EASEBUZZ_ENV') === 'production'
+            ? 'https://pay.easebuzz.in'
+            : 'https://testpay.easebuzz.in';
+    }
+
+    public static function initiatePayment($data){
+        self::init();
+        $postdata = [
+            'key'=>self::$merchantKey,
+            'txnid'=> $data['txnid'],
+            'amount'=> $data['amount'],
+            'productinfo'=>$data['proinfo'],  
+            'firstname'=> $data['name'],
+            'email'=> $data['email'],
+            'phone'=> $data['mobile'],
+            'surl' => route('easebuzz.success'),
+            'furl' => route('easebuzz.failure'),
+            'udf1' => '', 'udf2' => '', 'udf3' => '', 'udf4' => '', 'udf5' => ''
+        ];
+        $baseUrl = self::$baseUrl;
+        // dd($baseUrl);
+        $postdata['hash'] = self::generateHash($postdata);
+        return view('easebuzz.payment', compact('postdata', 'baseUrl'));
+
+    }
+
+    private static function generateHash($data){
+        self::init();
+
+        $hashSequence = $data['key'] . '|' . $data['txnid'] . '|' . $data['amount'] . '|' . 
+        $data['productinfo'] . '|' . $data['firstname'] . '|' . $data['email'] . 
+        '|||||||||||' . self::$salt;
+        return hash('sha512', $hashSequence);
+    }
+    public function paymentSuccess(Request $request)
+    {
+        return response()->json(['status' => 'success', 'message' => 'Payment successful!', 'data' => $request->all()]);
+    }
+
+    public function paymentFailure(Request $request)
+    {
+        return response()->json(['status' => 'failed', 'message' => 'Payment failed!', 'data' => $request->all()]);
+    }
+}

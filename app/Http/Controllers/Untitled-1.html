@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Easebuzz Payment</title>
+</head>
+
+<body onload="document.getElementById('easebuzz_payment_form').submit();">
+    <h3>Redirecting to Easebuzz...</h3>
+    <form id="easebuzz_payment_form" method="POST" action="https://pay.easebuzz.in/payment/initiateLink">
+        <input type="hidden" name="key" value="3XDM1KLGSE">
+        <input type="hidden" name="txnid" value="TXN-17412648478379">
+        <input type="hidden" name="amount" value="5000">
+        <input type="hidden" name="productinfo" value="Course Payment">
+        <input type="hidden" name="firstname" value="Karuna Patel">
+        <input type="hidden" name="email" value="karun3as@gmsail.com">
+        <input type="hidden" name="phone" value="9559248499">
+        <input type="hidden" name="surl" value="http://127.0.0.1:8000/api/payment-success">
+        <input type="hidden" name="furl" value="http://127.0.0.1:8000/api/payment-failure">
+        <input type="hidden" name="udf1" value="">
+        <input type="hidden" name="udf2" value="">
+        <input type="hidden" name="udf3" value="">
+        <input type="hidden" name="udf4" value="">
+        <input type="hidden" name="udf5" value="">
+        <input type="hidden" name="hash" value="8b89f25d338807ac647b6cb7b0f9f11881ea1a38c2ee42e14a667db667bffb0cadfa2ba849fadb66a586006a6bf1b4c01a01dbfb432df661df829aa2ea51efdc">
+    </form>
+</body>
+
+</html>
