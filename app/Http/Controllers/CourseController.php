@@ -40,7 +40,7 @@ class CourseController extends Controller
      */
     public function create()
     {
-        $category = Category::pluck('name', 'id');
+        $category = Category::where('status', 1)->pluck('name', 'id');
 
         return view('coursemangement.course.create', compact('category'));
     }
@@ -145,7 +145,7 @@ class CourseController extends Controller
      */
     public function edit($courseID)
     {
-        $category = Category::pluck('name', 'id');
+        $category = Category::where('status', 1)->pluck('name', 'id');
         $course = Course::findOrFail($courseID);
 
 

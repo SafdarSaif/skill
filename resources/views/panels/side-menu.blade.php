@@ -81,6 +81,11 @@
             <ul class="menu-sub">
 
                 <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <div data-i18n="Course Type">Course Type</div>
+                    </a>
+                </li>
+                <li class="menu-item">
                     <a href="{{ route('category') }}" class="menu-link">
                         <div data-i18n="Course Category">Course Category</div>
                     </a>
