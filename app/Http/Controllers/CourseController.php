@@ -338,4 +338,10 @@ class CourseController extends Controller
             ]);
         }
     }
+
+    public function getCourseAmount($courseId)
+    {
+        $courseAmount = Course::where('id',$courseId)->pluck('price')->first();
+        return response()->json(['status'=>'success','price'=>$courseAmount]);
+    }
 }

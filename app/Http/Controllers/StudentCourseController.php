@@ -50,10 +50,10 @@ class StudentCourseController extends Controller
     {
         $student = Students::pluck('name', 'id');
         $course = Course::pluck('name', 'id');
-        $studentpayment = StudentPayment::pluck('transaction_id', 'id');
+        // $studentpayment = StudentPayment::pluck('transaction_id', 'id');
 
 
-        return view('studentcourse.create', compact('student', 'course', 'studentpayment'));
+        return view('studentcourse.create', compact('student', 'course'));
     }
 
     /**
