@@ -21,6 +21,11 @@
             <label for="description" class="form-label">Description</label>
             <textarea name="description" id="description" class="form-control" rows="3"></textarea>
         </div>
+        <div class="col-md-12 mb-3">
+            <label for="image" class="form-label">Category Image</label>
+            <input type="file" name="image" id="image" class="form-control" accept="image/*">
+            <img id="preview-image" src="" class="mt-2 d-none" width="100" height="100" alt="Preview">
+        </div>
 
         <!-- Submit Buttons -->
         <div class="col-12 text-center mt-3">
