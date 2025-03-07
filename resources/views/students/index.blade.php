@@ -71,6 +71,24 @@
                                 return '<span class="text-nowrap">' + $data + '</span>';
                             }
                         },
+                        // {
+                        //     // Actions
+                        //     targets: -1,
+                        //     searchable: false,
+                        //     title: 'Actions',
+                        //     orderable: false,
+                        //     render: function(data, type, full, meta) {
+                        //         return (
+                        //             '<a href="/student/' + full['id'] + '" class="btn btn-sm btn-info">View</a>' +
+                        //             '<span class="text-nowrap"><button class="btn btn-sm btn-icon me-2" onclick="edit(&#39;/student/edit/' +
+                        //             full['id'] +
+                        //             '&#39; , &#39;modal-xl&#39;)"><i class="ti ti-edit"></i></button>' +
+                        //             '<button class="btn btn-sm btn-icon delete-record"onclick="destry(&#39;/student/destroy/' +
+                        //             full['id'] +
+                        //             '&#39; , &#39;student-table&#39;)"><i class="ti ti-trash"></i></button></span>'
+                        //         );
+                        //     }
+                        // }
                         {
                             // Actions
                             targets: -1,
@@ -79,16 +97,22 @@
                             orderable: false,
                             render: function(data, type, full, meta) {
                                 return (
-                                    '<a href="/student/' + full['id'] + '" class="btn btn-sm btn-info">View</a>' +
-                                    '<span class="text-nowrap"><button class="btn btn-sm btn-icon me-2" onclick="edit(&#39;/student/edit/' +
+                                    '<span class="text-nowrap">' +
+                                    '<button class="btn btn-sm btn-icon btn-info me-2" onclick="window.location.href=\'/student/' +
+                                    full['id'] + '\'">' +
+                                    '<i class="ti ti-eye"></i>' +
+                                    '</button>' +
+                                    '<button class="btn btn-sm btn-icon me-2" onclick="edit(\'/student/edit/' +
                                     full['id'] +
-                                    '&#39; , &#39;modal-xl&#39;)"><i class="ti ti-edit"></i></button>' +
-                                    '<button class="btn btn-sm btn-icon delete-record"onclick="destry(&#39;/student/destroy/' +
+                                    '\' , \'modal-xl\')"><i class="ti ti-edit"></i></button>' +
+                                    '<button class="btn btn-sm btn-icon delete-record" onclick="destry(\'/student/destroy/' +
                                     full['id'] +
-                                    '&#39; , &#39;student-table&#39;)"><i class="ti ti-trash"></i></button></span>'
+                                    '\' , \'student-table\')"><i class="ti ti-trash"></i></button>' +
+                                    '</span>'
                                 );
                             }
                         }
+
                     ],
                     aaSorting: false,
                     dom: '<"row mx-1"' +

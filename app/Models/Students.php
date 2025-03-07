@@ -26,7 +26,10 @@ class Students extends Model
         'pincode',
         'country',
         'heighest_qualification',
-        'status'
+        'status',
+        'image',
+        'signature',
+
     ];
 
 

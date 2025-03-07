@@ -33,8 +33,8 @@
             <textarea class="form-control" id="description" name="description">{{ $subject->description }}</textarea>
         </div>
 
-         <!--  Image -->
-         <div class="col-md-12">
+        <!--  Image -->
+        <div class="col-md-12">
             <label for="edit-image" class="form-label">Image</label>
             <input type="file" name="image" id="edit-image" class="form-control">
             <div class="mt-2">
