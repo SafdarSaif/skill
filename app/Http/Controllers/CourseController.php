@@ -51,6 +51,7 @@ class CourseController extends Controller
     
     public function index(Request $request)
     {
+        
         if ($request->ajax()) {
             $data = Course::with('category')->orderBy('id', 'desc')->get();
 
@@ -170,6 +171,8 @@ class CourseController extends Controller
 
     public function store(Request $request)
     {
+        
+     
         // Validate the request
         $validator = Validator::make($request->all(), [
             'name' => 'required|min:2|max:255',
@@ -194,7 +197,7 @@ class CourseController extends Controller
                 $imagePath = uploadImage($request->file('image'), 'course_images');
             }
 
-          
+         
             // Create a new course
             $course = Course::create([
                 'name' => $request->name,
@@ -206,7 +209,6 @@ class CourseController extends Controller
                 'image' => $imagePath,
                 'status' => 1,
             ]);
-
             return response()->json([
                 'status' => 'success',
                 'message' => 'Course added successfully!',
