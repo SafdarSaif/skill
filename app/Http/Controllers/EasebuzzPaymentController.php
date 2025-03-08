@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Http;
 class EasebuzzPaymentController extends Controller
 {
     public static $merchantKey;
@@ -33,10 +33,9 @@ class EasebuzzPaymentController extends Controller
             'udf1' => '', 'udf2' => '', 'udf3' => '', 'udf4' => '', 'udf5' => ''
         ];
         $baseUrl = self::$baseUrl;
-        // dd($baseUrl);
         $postdata['hash'] = self::generateHash($postdata);
+        
         return view('easebuzz.payment', compact('postdata', 'baseUrl'));
-
     }
 
     private static function generateHash($data){
