@@ -81,7 +81,7 @@
             <ul class="menu-sub">
 
                 <li class="menu-item">
-                    <a href="#" class="menu-link">
+                    <a href="{{ route('coursetype') }}" class="menu-link">
                         <div data-i18n="Course Type">Course Type</div>
                     </a>
                 </li>
@@ -101,7 +101,7 @@
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="#" class="menu-link">
+                    <a href="{{ route('subjectvideo') }}" class="menu-link">
                         <div data-i18n="Subjects Videos">Subjects Videos</div>
                     </a>
                 </li>
