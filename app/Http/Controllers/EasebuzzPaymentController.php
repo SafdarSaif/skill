@@ -53,6 +53,7 @@ class EasebuzzPaymentController extends Controller
     }
     public function paymentSuccess(Request $request)
     {
+        
         return response()->json(['status' => 'success', 'message' => 'Payment successful!', 'data' => $request->all()]);
     }
 
