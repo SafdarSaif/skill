@@ -56,8 +56,7 @@ class EasebuzzPaymentController extends Controller
     }
     public function paymentSuccess(Request $request)
     {
-        Log::info('Payment Success:', $request->all()); 
-
+        
         return response()->json(['status' => 'success', 'message' => 'Payment successful!', 'data' => $request->all()]);
     }
 

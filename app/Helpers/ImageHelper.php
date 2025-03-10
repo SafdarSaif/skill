@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\File;
 if (!function_exists('uploadImage')) {
     function uploadImage($image, $folder, $oldImagePath = null)
     {
-        $uploadPath = public_path("assets/uploads/{$folder}");
+        $uploadPath = public_path("assets/uploads/images/{$folder}");
 
         // Delete old image if exists
         if ($oldImagePath && File::exists(public_path($oldImagePath))) {
@@ -20,7 +20,7 @@ if (!function_exists('uploadImage')) {
 
         $image->move($uploadPath, $filename);
 
-        return "/assets/uploads/{$folder}/{$filename}";
+        return "/assets/uploads/images/{$folder}/{$filename}";
     }
 }
 
