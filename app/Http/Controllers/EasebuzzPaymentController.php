@@ -36,17 +36,22 @@ class EasebuzzPaymentController extends Controller
             'udf1' => '', 'udf2' => '', 'udf3' => '', 'udf4' => '', 'udf5' => ''
         ];
         $baseUrl = self::$baseUrl;
+           
         $postdata['hash'] = self::generateHash($postdata);
-        
-        return view('easebuzz.payment', compact('postdata', 'baseUrl'));
+        $response = Http::asForm()->post('https://pay.easebuzz.in/payment/initiateLink', $postdata);
+        return $response->json();
     }
 
-    private static function generateHash($data){
+
+
+    
+    private static function generateHash($data)
+    {
         self::init();
 
-        $hashSequence = $data['key'] . '|' . $data['txnid'] . '|' . $data['amount'] . '|' . 
-        $data['productinfo'] . '|' . $data['firstname'] . '|' . $data['email'] . 
-        '|||||||||||' . self::$salt;
+        $hashSequence = $data['key'] . '|' . $data['txnid'] . '|' . $data['amount'] . '|' .
+            $data['productinfo'] . '|' . $data['firstname'] . '|' . $data['email'] .
+            '|||||||||||' . self::$salt;
         return hash('sha512', $hashSequence);
     }
     public function paymentSuccess(Request $request)

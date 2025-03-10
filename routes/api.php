@@ -23,7 +23,7 @@ Route::get('/students-details/{mobile_no}',[StudentsController::class,'getStuden
 Route::post('/students-registration',[StudentsController::class,'registerStudent']);
 Route::get('/students-all-details/{mobile_no}',[StudentsController::class,'StudentAllDetaills']);
 Route::get('/students-payment/{mobile_no}',[StudentPaymentController::class,'StudentPayment']);
-Route::post('/pay-student-course-fee',[CourseController::class,'payStuCourseFee']);
+Route::get('/pay-student-course-fee/{student_id}/{course_id}',[CourseController::class,'payStuCourseFee']);
 Route::get('/all-categories',[CategoryController::class,'categories']);
 Route::get('/all-courses/{column}/{value}',[CourseController::class,'coursesFunc']);
 Route::get('/all-courses',[CourseController::class,'coursesFunc']);
