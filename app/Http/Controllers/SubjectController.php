@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Subject;
 use App\Models\Course;
+use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Carbon;
@@ -209,4 +210,24 @@ class SubjectController extends Controller
             ]);
         }
     }
+
+    public function getCourseSubjects()
+    {
+        try {
+            $data = Subject::with('course')->get();
+            if ($data) {
+                return response()->json(['data' => $data, "status" => "success", "message" => "All Subject List"]);
+            } else {
+                return response()->json(['status' => "error", "message" => "Subject not found!"]);
+            }
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
+        }
+
+    }
+
+
 }

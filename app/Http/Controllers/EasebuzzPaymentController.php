@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+
+use Illuminate\Support\Facades\Log;
 
 class EasebuzzPaymentController extends Controller
 {
@@ -33,10 +36,9 @@ class EasebuzzPaymentController extends Controller
             'udf1' => '', 'udf2' => '', 'udf3' => '', 'udf4' => '', 'udf5' => ''
         ];
         $baseUrl = self::$baseUrl;
-        // dd($baseUrl);
         $postdata['hash'] = self::generateHash($postdata);
+        
         return view('easebuzz.payment', compact('postdata', 'baseUrl'));
-
     }
 
     private static function generateHash($data){
@@ -49,11 +51,16 @@ class EasebuzzPaymentController extends Controller
     }
     public function paymentSuccess(Request $request)
     {
+        Log::info('Payment Success:', $request->all()); 
+
         return response()->json(['status' => 'success', 'message' => 'Payment successful!', 'data' => $request->all()]);
     }
 
     public function paymentFailure(Request $request)
     {
+        
+        Log::info('Payment Failure:', $request->all());
+
         return response()->json(['status' => 'failed', 'message' => 'Payment failed!', 'data' => $request->all()]);
     }
 }

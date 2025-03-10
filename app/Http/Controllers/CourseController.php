@@ -69,18 +69,11 @@ class CourseController extends Controller
     }
 
 
-    public function payStuCourseFee($studentId,$courseId)
+    public function payStuCourseFee(Request $request)
     {
 
         try {
 
-            // $request->validate([
-            //     'student_id' => 'required|integer|exists:students,id',
-            //     'course_id' => 'required|integer|exists:courses,id',
-            // ]);
-            $request = new stdClass;
-            $request->course_id = $courseId;
-            $request->student_id = $studentId;
             $courseArr = Course::find($request->course_id); // course details
             if (!$courseArr) {
                 return response()->json(['status' => 'error', 'message' => 'Course not found!']);
@@ -99,7 +92,7 @@ class CourseController extends Controller
                 'payment_status' => "pending",
                 'transaction_id' => $transication_id,
             ];
-            // StudentPayment::create($data);
+            StudentPayment::create($data);
 
             $paymentdata = [
                 'txnid' => trim($transication_id),
@@ -109,11 +102,11 @@ class CourseController extends Controller
                 "email" => trim($studentArr->email),
                 "mobile" => trim($studentArr->mobile)
             ];
-            $procced_payment = EasebuzzPaymentController::initiatePayment($paymentdata);
-            return $procced_payment;
-            // return response()->json(['status' => 'success', 'message' => 'Payment Added Successfully', 'view'=>]);
+           return $procced_payment = EasebuzzPaymentController::initiatePayment($paymentdata);
 
-        } catch (\Exception $e) {
+            // return response()->json(['status' => 'success', 'message' => 'Payment Added Successfully', 'data'=>$paymentdata,'api-resp'=>  $procced_payment]);
+
+        } catch (Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'An error occurred during the payment process!',
