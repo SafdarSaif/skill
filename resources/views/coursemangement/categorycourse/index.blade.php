@@ -9,18 +9,33 @@
             if (dataTableCategory.length) {
                 dt_category = dataTableCategory.DataTable({
                     ajax: "{{ route('category') }}",
-                    columns: [
-                        { data: 'DT_RowIndex', title: 'No.' },
-                        { data: 'name', title: 'Category Name' },
-                        { data: 'image', title: 'Image' },
-                        { data: 'status', title: 'Status' },
-                        { data: '', title: 'Actions' }
-                    ],
-                    columnDefs: [
+                    columns: [{
+                            data: 'DT_RowIndex',
+                            title: 'No.'
+                        },
                         {
+                            data: 'name',
+                            title: 'Category Name'
+                        },
+                        {
+                            data: 'image',
+                            title: 'Image'
+                        },
+                        {
+                            data: 'status',
+                            title: 'Status'
+                        },
+                        {
+                            data: '',
+                            title: 'Actions'
+                        }
+                    ],
+                    columnDefs: [{
                             targets: 2, // Image column
                             render: function(data, type, full, meta) {
-                                return data ? `<img src="${data}" alt="News Image" width="50" height="50">` : 'No Image';
+                                return data ?
+                                    `<img src="${data}" alt="News Image" width="50" height="50">` :
+                                    'No Image';
                             }
                         },
                         {
@@ -28,7 +43,8 @@
                             render: function(data, type, full, meta) {
                                 var checked = full['status'] == 1 ? 'checked' : '';
                                 var statusText = full['status'] == 1 ? 'Active' : 'Inactive';
-                                var isDisabled = `onclick="updateActiveStatus('/category/status/${full['id']}', 'category-table')"`;
+                                var isDisabled =
+                                    `onclick="updateActiveStatus('/category/status/${full['id']}', 'category-table')"`;
 
                                 return `<label class="switch">
                                     <input type="checkbox" ${isDisabled} ${checked} class="switch-input">
@@ -49,7 +65,7 @@
                                     <button class="btn btn-sm btn-icon me-2" onclick="edit('/category/edit/${full['id']}', 'modal-lg')">
                                         <i class="ti ti-edit"></i>
                                     </button>
-                                    <button class="btn btn-sm btn-icon delete-record" onclick="destroy('/category/destroy/${full['id']}', 'category-table')">
+                                    <button class="btn btn-sm btn-icon delete-record" onclick="destry('/category/destroy/${full['id']}', 'category-table')">
                                         <i class="ti ti-trash"></i>
                                     </button>
                                 </span>`;
@@ -91,7 +107,8 @@
                             type: 'column',
                             renderer: function(api, rowIdx, columns) {
                                 var data = $.map(columns, function(col, i) {
-                                    return col.title !== '' ? '<tr data-dt-row="' + col.rowIndex +
+                                    return col.title !== '' ? '<tr data-dt-row="' + col
+                                        .rowIndex +
                                         '" data-dt-column="' + col.columnIndex + '">' +
                                         '<td>' + col.title + ':</td> ' +
                                         '<td>' + col.data + '</td>' +

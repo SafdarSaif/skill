@@ -14,6 +14,8 @@ use App\Http\Controllers\NewsUpdateController;
 use App\Http\Controllers\SliderController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\StudentQueryController;
+use App\Http\Controllers\CourseTypeController;
+use App\Http\Controllers\SubjectVideoController;
 
 
 // Route::get('/', function () {
@@ -78,7 +80,13 @@ Route::get('/student/{id}', [StudentsController::class, 'show'])->name('student.
 // Route::post('/student', [StudentsController::class, 'show'])->name('student.show');
 
 
-
+Route::get('/coursetype', [CourseTypeController::class, 'index'])->name('coursetype');
+Route::get('/coursetype/create', [CourseTypeController::class, 'create'])->name('coursetype.create');
+Route::post('/coursetype/store', [CourseTypeController::class, 'store'])->name('coursetype.store');
+Route::get('/coursetype/edit/{id}', [CourseTypeController::class, 'edit'])->name('coursetype.edit');
+Route::post('/coursetype/update/{id}', [CourseTypeController::class, 'update'])->name('coursetype.update');
+Route::delete('/coursetype/destroy/{id}', [CourseTypeController::class, 'destroy'])->name('coursetype.destroy');
+Route::get('coursetype/status/{id}', [CourseTypeController::class, 'status'])->name('coursetype.status');
 
 
 
@@ -161,3 +169,12 @@ Route::get('/studentquery/edit/{id}', [StudentQueryController::class, 'edit'])->
 Route::post('/studentquery/update/{id}', [StudentQueryController::class, 'update'])->name('studentquery.update');
 Route::delete('/studentquery/destroy/{id}', [StudentQueryController::class, 'destroy'])->name('studentquery.destroy');
 Route::get('studentquery/status/{id}', [StudentQueryController::class, 'status'])->name('studentquery.status');
+
+
+Route::get('/subjectvideo', [SubjectVideoController::class, 'index'])->name('subjectvideo');
+Route::get('/subjectvideo/create', [SubjectVideoController::class, 'create'])->name('subjectvideo.create');
+Route::post('/subjectvideo/store', [SubjectVideoController::class, 'store'])->name('subjectvideo.store');
+Route::get('/subjectvideo/edit/{id}', [SubjectVideoController::class, 'edit'])->name('subjectvideo.edit');
+Route::post('/subjectvideo/update/{id}', [SubjectVideoController::class, 'update'])->name('subjectvideo.update');
+Route::delete('/subjectvideo/destroy/{id}', [SubjectVideoController::class, 'destroy'])->name('subjectvideo.destroy');
+Route::get('subjectvideo/status/{id}', [SubjectVideoController::class, 'status'])->name('subjectvideo.status');

@@ -59,7 +59,7 @@ class SubjectController extends Controller
             'course_id'   => 'required|exists:courses,id',
             'name'        => 'required|string|min:3|max:255|unique:subjects,name',
             'description' => 'nullable|string|max:500',
-            'image'       => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048', // Image validation
+            'image'       => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048', 
         ]);
 
         if ($validator->fails()) {
@@ -72,7 +72,7 @@ class SubjectController extends Controller
         try {
             $imagePath = null;
             if ($request->hasFile('image')) {
-                $imagePath = uploadImage($request->file('image'), 'subject_images'); // Custom helper function
+                $imagePath = uploadImage($request->file('image'), 'subject_images'); 
             }
 
             $subject = Subject::create([

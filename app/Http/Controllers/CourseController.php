@@ -23,32 +23,31 @@ class CourseController extends Controller
     /** 
      * Api of all cources
      */
-     public function coursesFunc(Request $request,$column='',$value=''){
-        try{
-            $data = Course::with('category','users')->get();
-            if($column!='')
-            {
-                $data = $data->where($column,$value);
+    public function coursesFunc(Request $request, $column = '', $value = '')
+    {
+        try {
+            $data = Course::with('category', 'users')->get();
+            if ($column != '') {
+                $data = $data->where($column, $value);
             }
-          if($data){
-            return response()->json(['status'=>"success", 'message'=>"All Course Lists", "data"=>$data]);
-          }else{
-            return response()->json(['status'=>"error", 'message'=>"No Course Found"]);
-          }
-        }
-        catch(Exception $e){
-             return response()->json([
+            if ($data) {
+                return response()->json(['status' => "success", 'message' => "All Course Lists", "data" => $data]);
+            } else {
+                return response()->json(['status' => "error", 'message' => "No Course Found"]);
+            }
+        } catch (Exception $e) {
+            return response()->json([
                 'status' => 'error',
                 'message' => $e->getMessage(),
             ]);
         }
-     }
+    }
 
 
     /**
      * Display a listing of the resource.
      */
-    
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -68,7 +67,7 @@ class CourseController extends Controller
     }
 
 
-    public function payStuCourseFee($studentId,$courseId)
+    public function payStuCourseFee($studentId, $courseId)
     {
 
         try {
@@ -134,39 +133,7 @@ class CourseController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    // public function store(Request $request)
-    // {
-    //     try {
-    //         $request->validate([
-    //             'name' => 'required|string|max:255',
-    //             'description' => 'nullable|string',
-    //             'price' => 'required|numeric|min:0',
-    //             'duration' => 'required|string|max:100',
-    //             'category_id' => 'required|exists:categories,id',
-    //             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', 
-    //         ]);
-
-    //         $data = $request->all();
-    //         $data['status'] = 1;
-
-    //         Course::create($data);
-
-    //         return response()->json(['status' => 'success', 'message' => 'Course added successfully!'], 201);
-    //     } catch (\Illuminate\Validation\ValidationException $e) {
-    //         return response()->json([
-    //             'status' => 'error',
-    //             'message' => 'Validation failed',
-    //             'errors' => $e->errors(),
-    //         ], 422);
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'status' => 'error',
-    //             'message' => 'Something went wrong. Please try again.',
-    //             'error' => $e->getMessage()
-    //         ], 500);
-    //     }
-    // }
-
+    
 
     public function store(Request $request)
     {
@@ -194,7 +161,7 @@ class CourseController extends Controller
                 $imagePath = uploadImage($request->file('image'), 'course_images');
             }
 
-          
+
             // Create a new course
             $course = Course::create([
                 'name' => $request->name,
@@ -202,7 +169,7 @@ class CourseController extends Controller
                 'price' => $request->price,
                 'duration' => $request->duration,
                 'category_id' => $request->category_id,
-                'added_by'=> Auth::user()->id,
+                'added_by' => Auth::user()->id,
                 'image' => $imagePath,
                 'status' => 1,
             ]);
@@ -243,42 +210,6 @@ class CourseController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    // public function update(Request $request, $courseID)
-    // {
-    //     try {
-    //         $request->validate([
-    //             'name' => 'required|string|max:255',
-    //             'description' => 'nullable|string',
-    //             'price' => 'required|numeric|min:0',
-    //             'duration' => 'required|string|max:100',
-    //             'category_id' => 'required|exists:categories,id',
-    //         ]);
-
-    //         $course = Course::findOrFail($courseID);
-
-    //         $course->update([
-    //             'name' => $request->name,
-    //             'description' => $request->description,
-    //             'price' => $request->price,
-    //             'duration' => $request->duration,
-    //             'category_id' => $request->category_id,
-    //         ]);
-
-    //         return response()->json(['status' => 'success', 'message' => 'Course updated successfully!'], 200);
-    //     } catch (\Illuminate\Validation\ValidationException $e) {
-    //         return response()->json([
-    //             'status' => 'error',
-    //             'message' => 'Validation failed',
-    //             'errors' => $e->errors(),
-    //         ], 422);
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'status' => 'error',
-    //             'message' => 'Something went wrong. Please try again.',
-    //             'error' => $e->getMessage()
-    //         ], 500);
-    //     }
-    // }
     public function update(Request $request, $courseID)
     {
         try {
@@ -310,7 +241,7 @@ class CourseController extends Controller
                 'price' => $request->price,
                 'duration' => $request->duration,
                 'category_id' => $request->category_id,
-                'added_by'=>Auth::user()->id,
+                'added_by' => Auth::user()->id,
             ]);
 
             return response()->json(['status' => 'success', 'message' => 'Course updated successfully!'], 200);
@@ -371,7 +302,7 @@ class CourseController extends Controller
 
     public function getCourseAmount($courseId)
     {
-        $courseAmount = Course::where('id',$courseId)->pluck('price')->first();
-        return response()->json(['status'=>'success','price'=>$courseAmount]);
+        $courseAmount = Course::where('id', $courseId)->pluck('price')->first();
+        return response()->json(['status' => 'success', 'price' => $courseAmount]);
     }
 }
