@@ -72,7 +72,7 @@ class CourseController extends Controller
     {
 
         try {
-
+             
             $courseArr = Course::find($request->course_id); // course details
             if (!$courseArr) {
                 return response()->json(['status' => 'error', 'message' => 'Course not found!']);
@@ -91,7 +91,7 @@ class CourseController extends Controller
                 'payment_status' => "pending",
                 'transaction_id' => $transication_id,
             ];
-            StudentPayment::create($data);
+            // StudentPayment::create($data);
 
             $paymentdata = [
                 'txnid' => trim($transication_id),
@@ -101,9 +101,9 @@ class CourseController extends Controller
                 "email" => trim($studentArr->email),
                 "mobile" => trim($studentArr->mobile)
             ];
-           return $procced_payment = EasebuzzPaymentController::initiatePayment($paymentdata);
+            $procced_payment = EasebuzzPaymentController::initiatePayment($paymentdata);
 
-            // return response()->json(['status' => 'success', 'message' => 'Payment Added Successfully', 'data'=>$paymentdata,'api-resp'=>  $procced_payment]);
+            return response()->json(['status' => 'success', 'message' => 'Payment Added Successfully', 'data'=>$paymentdata,'api-resp'=>  $procced_payment]);
 
         } catch (Exception $e) {
             return response()->json([
