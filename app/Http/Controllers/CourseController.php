@@ -102,7 +102,7 @@ class CourseController extends Controller
             ];
             $procced_payment = EasebuzzPaymentController::initiatePayment($paymentdata);
 
-            return response()->json(['status' => 'pending', 'message' => 'Payment is in process', 'data'=>$paymentdata,'api-resp'=>  $procced_payment]);
+            return response()->json(['status' => 'pending', 'message' => 'Payment is in process', 'data'=>$paymentdata,'api_response'=>  $procced_payment]);
 
         } catch (Exception $e) {
             return response()->json([
