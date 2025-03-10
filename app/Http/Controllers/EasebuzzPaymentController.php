@@ -38,13 +38,12 @@ class EasebuzzPaymentController extends Controller
         $baseUrl = self::$baseUrl;
            
         $postdata['hash'] = self::generateHash($postdata);
+        $postdata['split_payments'] = json_encode(array("Edtech Innovate Pvt Ltd." => $data['amount']));
+        
         $response = Http::asForm()->post('https://pay.easebuzz.in/payment/initiateLink', $postdata);
         return $response->json();
     }
 
-
-
-    
     private static function generateHash($data)
     {
         self::init();
@@ -56,6 +55,7 @@ class EasebuzzPaymentController extends Controller
     }
     public function paymentSuccess(Request $request)
     {
+        
         
         return response()->json(['status' => 'success', 'message' => 'Payment successful!', 'data' => $request->all()]);
     }
