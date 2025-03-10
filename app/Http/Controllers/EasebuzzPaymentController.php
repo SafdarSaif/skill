@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
+use App\Models\StudentCourse;
+use App\Models\StudentPayment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
@@ -55,9 +58,42 @@ class EasebuzzPaymentController extends Controller
     }
     public function paymentSuccess(Request $request)
     {
+        $payment = StudentPayment::where('transaction_id',$request->txnid)->first();
+        if($payment){
+            $payment->update([
+                'payment_status' => "completed",
+                'payment_confirmation_date' => now(),
+            ]);
+        }else{
+            $payment = StudentPayment::create([
+                'student_id' => $request->student_id,
+                'course_id' => $request->course_id,
+                'amount' => $request->amount ?? 0,
+                'payment_status' => "completed",
+                'transaction_id' => $request->txnid,
+                'payment_confirmation_date' => now(),
+            ]);
+        }
         
+        if ($payment) {
+            StudentCourse::updateOrCreate(
+                [
+                    'student_id' => $payment->student_id,
+                    'course_id' => $payment->course_id,
+                ],
+                [
+                    'student_payment_id' => $payment->id,
+                    'status' => 1,
+                ]
+            );
+        }
+ 
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Payment successful!',
+            'data' => $payment,
+        ]);
         
-        return response()->json(['status' => 'success', 'message' => 'Payment successful!', 'data' => $request->all()]);
     }
 
     public function paymentFailure(Request $request)
