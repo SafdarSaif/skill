@@ -214,7 +214,7 @@ class SubjectController extends Controller
     public function getCourseSubjects()
     {
         try {
-            $data = Subject::with('course')->get();
+            $data = Subject::with('course')->get()->toArray();
             if ($data) {
                 return response()->json(['data' => $data, "status" => "success", "message" => "All Subject List"]);
             } else {
