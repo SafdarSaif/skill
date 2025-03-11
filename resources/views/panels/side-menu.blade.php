@@ -106,12 +106,13 @@
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="#" class="menu-link">
+                    <a href="{{ route('subjectnote') }}" class="menu-link">
+                        
                         <div data-i18n="Subjects Notes">Subjects Notes</div>
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="#" class="menu-link">
+                    <a href="{{ route('ebook') }}"  class="menu-link">
                         <div data-i18n="Subjects E-book">Subjects E-book</div>
                     </a>
                 </li>

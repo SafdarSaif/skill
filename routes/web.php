@@ -16,6 +16,8 @@ use App\Http\Controllers\FaqController;
 use App\Http\Controllers\StudentQueryController;
 use App\Http\Controllers\CourseTypeController;
 use App\Http\Controllers\SubjectVideoController;
+use App\Http\Controllers\SubjectNoteController;
+use App\Http\Controllers\EbookController;
 
 
 // Route::get('/', function () {
@@ -178,3 +180,22 @@ Route::get('/subjectvideo/edit/{id}', [SubjectVideoController::class, 'edit'])->
 Route::post('/subjectvideo/update/{id}', [SubjectVideoController::class, 'update'])->name('subjectvideo.update');
 Route::delete('/subjectvideo/destroy/{id}', [SubjectVideoController::class, 'destroy'])->name('subjectvideo.destroy');
 Route::get('subjectvideo/status/{id}', [SubjectVideoController::class, 'status'])->name('subjectvideo.status');
+
+
+Route::get('/subjectnote', [SubjectNoteController::class, 'index'])->name('subjectnote');
+Route::get('/subjectnote/create', [SubjectNoteController::class, 'create'])->name('subjectnote.create');
+Route::post('/subjectnote/store', [SubjectNoteController::class, 'store'])->name('subjectnote.store');
+Route::get('/subjectnote/edit/{id}', [SubjectNoteController::class, 'edit'])->name('subjectnote.edit');
+Route::post('/subjectnote/update/{id}', [SubjectNoteController::class, 'update'])->name('subjectnote.update');
+Route::delete('/subjectnote/destroy/{id}', [SubjectNoteController::class, 'destroy'])->name('subjectnote.destroy');
+Route::get('subjectnote/status/{id}', [SubjectNoteController::class, 'status'])->name('subjectnote.status');
+
+
+
+Route::get('/ebook', [EbookController::class, 'index'])->name('ebook');
+Route::get('/ebook/create', [EbookController::class, 'create'])->name('ebook.create');
+Route::post('/ebook/store', [EbookController::class, 'store'])->name('ebook.store');
+Route::get('/ebook/edit/{id}', [EbookController::class, 'edit'])->name('ebook.edit');
+Route::post('/ebook/update/{id}', [EbookController::class, 'update'])->name('ebook.update');
+Route::delete('/ebook/destroy/{id}', [EbookController::class, 'destroy'])->name('ebook.destroy');
+Route::get('ebook/status/{id}', [EbookController::class, 'status'])->name('ebook.status');

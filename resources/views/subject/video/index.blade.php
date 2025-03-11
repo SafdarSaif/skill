@@ -38,13 +38,16 @@
                             title: 'Actions'
                         }
                     ],
-                    columnDefs: [{
+                    columnDefs: [
+                        {
                             targets: 5,
                             render: function(data, type, full, meta) {
                                 if (full['upload_type'] === 'youtube') {
-                                    return '<iframe width="200" height="100" src="' + full[
-                                            'video_url'] +
-                                        '" frameborder="0" allowfullscreen></iframe>';
+                                    // return '<iframe width="200" height="100" src="' + full[
+                                    //         'video_url'] +
+                                    //     '" frameborder="0" allowfullscreen></iframe>';
+                                    return '<a href="' + full['video_url'] + '" target="_blank">' + full['video_url'] + '</a>';
+
                                 } else {
                                     return '<video width="200" controls><source src="' + full[
                                         'video_url'] + '" type="video/mp4"></video>';
@@ -61,7 +64,7 @@
                                     '<button class="btn btn-sm btn-icon me-2" onclick="edit(\'/subjectvideo/edit/' +
                                     full['id'] + '\', \'modal-lg\')" title="Edit">' +
                                     '<i class="ti ti-edit"></i></button>' +
-                                    '<button class="btn btn-sm btn-icon me-2 delete-record" onclick="destroy(\'/subjectvideo/destroy/' +
+                                    '<button class="btn btn-sm btn-icon me-2 delete-record" onclick="destry(\'/subjectvideo/destroy/' +
                                     full['id'] + '\', \'videos-table\')" title="Delete">' +
                                     '<i class="ti ti-trash"></i></button>' +
                                     '</span>'
