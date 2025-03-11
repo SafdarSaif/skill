@@ -55,6 +55,8 @@
         })
     }
 
+    
+
     function updateActiveStatus(url, table) {
         $.ajax({
             url: url,

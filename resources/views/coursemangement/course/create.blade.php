@@ -10,7 +10,7 @@
         <!-- Course Type-->
         <div class="col-md-6">
             <label for="type_id" class="form-label">Course Type <span class="text-danger">*</span></label>
-            <select name="course_type_id" id="type_id" class="form-select" required>
+            <select name="type_id" id="type_id" class="form-select" required>
                 <option value="">Select Category</option>
                 @foreach ($courseType as $id =>$name)
                 <option value="{{ $id }}">{{ $name }}</option>

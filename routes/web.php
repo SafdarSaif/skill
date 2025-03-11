@@ -181,6 +181,9 @@ Route::post('/subjectvideo/update/{id}', [SubjectVideoController::class, 'update
 Route::delete('/subjectvideo/destroy/{id}', [SubjectVideoController::class, 'destroy'])->name('subjectvideo.destroy');
 Route::get('subjectvideo/status/{id}', [SubjectVideoController::class, 'status'])->name('subjectvideo.status');
 
+Route::get('/subjectvideo/{id}', [SubjectVideoController::class, 'show'])->name('subjectvideo.show');
+
+
 
 Route::get('/subjectnote', [SubjectNoteController::class, 'index'])->name('subjectnote');
 Route::get('/subjectnote/create', [SubjectNoteController::class, 'create'])->name('subjectnote.create');

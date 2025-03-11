@@ -116,9 +116,14 @@ class SubjectVideoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(SubjectVideo $subjectVideo)
+    public function show($id)
     {
-        //
+        $video = SubjectVideo::findOrFail($id);
+
+        return response()->json([
+            'video_url'   => $video->video_url,
+            'upload_type' => $video->upload_type,
+        ]);
     }
 
     /**

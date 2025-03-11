@@ -129,13 +129,15 @@ class CourseController extends Controller
         $category = Category::where('status', 1)->pluck('name', 'id');
         $courseType = CourseType::where('status', 1)->pluck('name', 'id');
 
-        return view('coursemangement.course.create', compact('category','courseType'));
+        return view('coursemangement.course.create', compact('category', 'courseType'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    
+
+
+
 
     public function store(Request $request)
     {
@@ -146,7 +148,7 @@ class CourseController extends Controller
             'price' => 'required|numeric|min:0',
             'duration' => 'required|string|max:100',
             'category_id' => 'required|exists:categories,id',
-            'course_type_id' => 'required|exists:course_types,id',
+            'type_id' => 'required|exists:course_types,id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
@@ -164,7 +166,6 @@ class CourseController extends Controller
                 $imagePath = uploadImage($request->file('image'), 'course_images');
             }
 
-
             // Create a new course
             $course = Course::create([
                 'name' => $request->name,
@@ -172,7 +173,7 @@ class CourseController extends Controller
                 'price' => $request->price,
                 'duration' => $request->duration,
                 'category_id' => $request->category_id,
-                'course_type_id' => $request->course_type_id,
+                'type_id' => $request->type_id,
                 'added_by' => Auth::user()->id,
                 'image' => $imagePath,
                 'status' => 1,
@@ -205,10 +206,11 @@ class CourseController extends Controller
     public function edit($courseID)
     {
         $category = Category::where('status', 1)->pluck('name', 'id');
+        $courseType = CourseType::where('status', 1)->pluck('name', 'id');
         $course = Course::findOrFail($courseID);
 
 
-        return view('coursemangement.course.edit', compact('category', 'course'));
+        return view('coursemangement.course.edit', compact('category', 'course', 'courseType'));
     }
 
     /**
@@ -224,6 +226,7 @@ class CourseController extends Controller
                 'price' => 'required|numeric|min:0',
                 'duration' => 'required|string|max:100',
                 'category_id' => 'required|exists:categories,id',
+                'type_id' => 'required|exists:course_types,id',
                 'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             ]);
 
@@ -245,6 +248,7 @@ class CourseController extends Controller
                 'price' => $request->price,
                 'duration' => $request->duration,
                 'category_id' => $request->category_id,
+                'type_id' => $request->type_id,
                 'added_by' => Auth::user()->id,
             ]);
 

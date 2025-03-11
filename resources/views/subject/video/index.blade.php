@@ -54,6 +54,14 @@
                                 }
                             }
                         },
+                        // {
+                        //     targets: 5,
+                        //     render: function(data, type, full, meta) {
+                        //         return `<button class="btn btn-primary btn-sm" onclick="showVideo(${full['id']})">Watch Video</button>`;
+                        //     }
+                        // },
+
+
                         {
                             targets: -1,
                             searchable: false,
@@ -122,6 +130,32 @@
             }
         });
     </script>
+    {{-- <script>
+        function showVideo(videoId) {
+            $.ajax({
+                url: `/subjectvideo/${videoId}`,
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    let videoContent = '';
+
+                    if (data.upload_type === 'youtube') {
+                        videoContent =
+                            `<iframe width="100%" height="400" src="${data.video_url}" frameborder="0" allowfullscreen></iframe>`;
+                    } else {
+                        videoContent =
+                            `<video width="100%" controls><source src="${data.video_url}" type="video/mp4"></video>`;
+                    }
+
+                    $('#videoContainer').html(videoContent);
+                    $('#videoModal').modal('show');
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching video:', error);
+                }
+            });
+        }
+    </script> --}}
 
     <h4 class="mb-4">Subject Videos</h4>
     <div class="card">

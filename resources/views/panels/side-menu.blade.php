@@ -86,11 +86,11 @@
             </ul>
         </li>
 
-        <!-- Content Management -->
+        <!-- Learning Materials Hub -->
         <li class="menu-item {{ Route::is('subjectvideo*', 'subjectnote*', 'ebook*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons ti ti-file-text"></i>
-                <div data-i18n="Content Management">Content Management</div>
+                <div data-i18n="Learning Materials Hub">Learning Materials Hub</div>
             </a>
             <ul class="menu-sub">
                 <li class="menu-item {{ Route::is('subjectvideo') ? 'active' : '' }}">
