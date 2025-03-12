@@ -25,4 +25,19 @@ class Subject extends Model
     {
         return $this->belongsTo(Course::class);
     }
+
+    public function videos()
+    {
+        return $this->hasMany(SubjectVideo::class);
+    }
+
+    public function notes()
+    {
+        return $this->hasMany(SubjectNote::class);
+    }
+
+    // public function eBooks()
+    // {
+    //     return $this->hasMany(Subject)
+    // }
 }

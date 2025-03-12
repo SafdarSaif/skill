@@ -94,4 +94,14 @@ class OTPController extends Controller
             return response()->json(['status'=>'error','message'=>'Invalid OTP']);
         }
     }
+
+    public function reSendOtp($mobileNo)
+    {
+        $studentOtp = OTP::where(['mobile_number'=>$mobileNo])->where('is_used',false)->where('expire_at','>',Carbon::now())->get('id');
+        foreach($studentOtp as $requestedOtp)
+        {
+            OTP::where('id',$requestedOtp->id)->update(['is_used'=>true]);
+        }
+        return self::getOtp($mobileNo);
+    }
 }
