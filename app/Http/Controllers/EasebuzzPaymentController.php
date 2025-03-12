@@ -21,25 +21,30 @@ class EasebuzzPaymentController extends Controller
             : 'https://testpay.easebuzz.in';
     }
 
-    public static function initiatePayment($data){
+    public static function initiatePayment($data)
+    {
         self::init();
         $postdata = [
-            'key'=>self::$merchantKey,
-            'txnid'=> $data['txnid'],
-            'amount'=> $data['amount'],
-            'productinfo'=>$data['proinfo'],  
-            'firstname'=> $data['name'],
-            'email'=> $data['email'],
-            'phone'=> $data['mobile'],
+            'key' => self::$merchantKey,
+            'txnid' => $data['txnid'],
+            'amount' => $data['amount'],
+            'productinfo' => $data['proinfo'],
+            'firstname' => $data['name'],
+            'email' => $data['email'],
+            'phone' => $data['mobile'],
             'surl' => route('easebuzz.success'),
             'furl' => route('easebuzz.failure'),
-            'udf1' => '', 'udf2' => '', 'udf3' => '', 'udf4' => '', 'udf5' => ''
+            'udf1' => '',
+            'udf2' => '',
+            'udf3' => '',
+            'udf4' => '',
+            'udf5' => ''
         ];
         $baseUrl = self::$baseUrl;
-           
+
         $postdata['hash'] = self::generateHash($postdata);
         $postdata['split_payments'] = json_encode(array("Edtech Innovate Pvt Ltd." => $data['amount']));
-        
+
         $response = Http::asForm()->post('https://pay.easebuzz.in/payment/initiateLink', $postdata);
         return $response->json();
     }
@@ -55,13 +60,13 @@ class EasebuzzPaymentController extends Controller
     }
     public function paymentSuccess(Request $request)
     {
-        $payment = StudentPayment::where('transaction_id',$request->txnid)->first();
-        if($payment){
+        $payment = StudentPayment::where('transaction_id', $request->txnid)->first();
+        if ($payment) {
             $payment->update([
                 'payment_status' => "completed",
                 'payment_confirmation_date' => now(),
             ]);
-        }else{
+        } else {
             $payment = StudentPayment::create([
                 'student_id' => $request->student_id,
                 'course_id' => $request->course_id,
@@ -71,7 +76,7 @@ class EasebuzzPaymentController extends Controller
                 'payment_confirmation_date' => now(),
             ]);
         }
-        
+
         if ($payment) {
             StudentCourse::updateOrCreate(
                 [
@@ -84,17 +89,38 @@ class EasebuzzPaymentController extends Controller
                 ]
             );
         }
- 
+
         return response()->json([
             'status' => 'success',
             'message' => 'Payment successful!',
             'data' => $payment,
         ]);
-        
+
     }
 
     public function paymentFailure(Request $request)
     {
-        return response()->json(['status' => 'failed', 'message' => 'Payment failed!', 'data' => $request->all()]);
+        $payment = StudentPayment::where('transaction_id', $request->txnid)->first();
+        if ($payment) {
+            $payment->update([
+                'payment_status' => "failed",
+                'payment_confirmation_date' => now(),
+            ]);
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Payment failed. Your transaction could not be completed.',
+                'transaction_id' => $request->txnid,
+                'data' => $payment,
+            ]);
+        } else {
+
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Transaction ID not found. Please verify your payment details.',
+                'transaction_id' => $request->txnid,
+                'data' => $request->all()
+            ], 404);
+        }
+
     }
 }

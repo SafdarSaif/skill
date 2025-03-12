@@ -69,7 +69,7 @@ class StudentsController extends Controller
         // dd($request);
         $mobile = $request->mobile;
         try {
-            $student = Students::where('mobile',)->first();
+            $student = Students::where('mobile', )->first();
 
             if ($student) {
                 return response()->json(['status' => 'error', 'message' => 'Student already registered with this ' . $request->mobile]);
@@ -166,7 +166,7 @@ class StudentsController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                'status'  => 'error',
+                'status' => 'error',
                 'message' => $validator->errors()->first()
             ], 422);
         }
@@ -271,23 +271,23 @@ class StudentsController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'signature' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:1024',
         ]);
-    
+
         try {
             // Find student record
             $student = Students::findOrFail($studentId);
-    
+
             // Handle image upload
             if ($request->hasFile('image')) {
                 $imagePath = $this->uploadImage($request->file('image'), 'students/images');
                 $student->image = $imagePath;
             }
-    
+
             // Handle signature upload
             if ($request->hasFile('signature')) {
                 $signaturePath = $this->uploadImage($request->file('signature'), 'students/signatures');
                 $student->signature = $signaturePath;
             }
-    
+
             // Update student details
             $student->update([
                 'name' => $request->name,
@@ -304,7 +304,7 @@ class StudentsController extends Controller
                 'country' => $request->country,
                 'highest_qualification' => $request->highest_qualification,
             ]);
-    
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'Student updated successfully!',
@@ -317,7 +317,49 @@ class StudentsController extends Controller
             ], 500);
         }
     }
-    
+
+    public function updateStudents(Request $request)
+    {
+ 
+        try {
+            $data = [
+                'name' => $request->name,
+                'email' => $request->email,
+                'dob' => $request->dob,
+                'mobile' => $request->mobile,
+                'fathers_name' => $request->fathers_name,
+                'mothers_name' => $request->mothers_name,
+                'address' => $request->address,
+                'state' => $request->state,
+                'district' => $request->district,
+                'city' => $request->city,
+                'pincode' => $request->pincode,
+                'country' => $request->country,
+                'heighest_qualification' => $request->heighest_qualification,
+            ];
+            $student = Students::findOrFail($request->id);
+            if ($student) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Student Not Found!',
+                    'data' =>$request->all()
+                ], 200);
+            }
+            $student->update($data);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Student updated successfully!',
+                'data' => $data
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong: ' . $e->getMessage()
+            ], 500);
+        }
+
+    }
 
 
 

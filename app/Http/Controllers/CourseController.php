@@ -91,6 +91,7 @@ class CourseController extends Controller
                 'amount' => floatval($courseArr->price),
                 'payment_status' => "pending",
                 'transaction_id' => $transication_id,
+                'payment_confirmation_date' => now(),
             ];
             StudentPayment::create($data);
 

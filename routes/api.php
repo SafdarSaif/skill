@@ -29,7 +29,7 @@ Route::get('/all-courses/{column}/{value}',[CourseController::class,'coursesFunc
 Route::get('/all-courses',[CourseController::class,'coursesFunc']);
 Route::post('/category-courses',[CategoryController::class,'getCategoryCourses']);
 Route::get('/course-wise-subjects', [SubjectController::class,'getCourseSubjects']);
-
+Route::post('/student-update', [StudentsController::class,'updateStudents']);
 
 
 Route::post('/pay', [EasebuzzPaymentController::class, 'initiatePayment'])->name('easebuzz.pay');
