@@ -38,19 +38,31 @@
                             title: 'Actions'
                         }
                     ],
-                    columnDefs: [{
+                    columnDefs: [
+                        // {
+                        //     targets: 5,
+                        //     render: function(data, type, full, meta) {
+                        //         if (full['upload_type'] === 'youtube') {
+                        //             // return '<iframe width="200" height="100" src="' + full[
+                        //             //         'video_url'] +
+                        //             //     '" frameborder="0" allowfullscreen></iframe>';
+                        //             return '<a href="' + full['video_url'] + '" target="_blank">' + full['video_url'] + '</a>';
+
+                        //         } else {
+                        //             return '<video width="200" controls><source src="' + full[
+                        //                 'video_url'] + '" type="video/mp4"></video>';
+                        //         }
+                        //     }
+                        // },
+                        {
                             targets: 5,
                             render: function(data, type, full, meta) {
-                                if (full['upload_type'] === 'youtube') {
-                                    return '<iframe width="200" height="100" src="' + full[
-                                            'video_url'] +
-                                        '" frameborder="0" allowfullscreen></iframe>';
-                                } else {
-                                    return '<video width="200" controls><source src="' + full[
-                                        'video_url'] + '" type="video/mp4"></video>';
-                                }
+                                return `<button class="btn btn-sm btn-primary" onclick="showVideo('${full.video_url}', '${full.upload_type}')">See Upload</button>`;
                             }
                         },
+
+
+
                         {
                             targets: -1,
                             searchable: false,
@@ -61,7 +73,7 @@
                                     '<button class="btn btn-sm btn-icon me-2" onclick="edit(\'/subjectvideo/edit/' +
                                     full['id'] + '\', \'modal-lg\')" title="Edit">' +
                                     '<i class="ti ti-edit"></i></button>' +
-                                    '<button class="btn btn-sm btn-icon me-2 delete-record" onclick="destroy(\'/subjectvideo/destroy/' +
+                                    '<button class="btn btn-sm btn-icon me-2 delete-record" onclick="destry(\'/subjectvideo/destroy/' +
                                     full['id'] + '\', \'videos-table\')" title="Delete">' +
                                     '<i class="ti ti-trash"></i></button>' +
                                     '</span>'
@@ -119,6 +131,20 @@
             }
         });
     </script>
+    <script>
+        function showVideo(videoUrl, uploadType) {
+    let videoContent = '';
+
+    if (uploadType === 'youtube') {
+        videoContent = `<iframe width="100%" height="400" src="${videoUrl}" frameborder="0" allowfullscreen></iframe>`;
+    } else {
+        videoContent = `<video width="100%" controls><source src="${videoUrl}" type="video/mp4"></video>`;
+    }
+
+    $('#videoContainer').html(videoContent);
+    $('#videoModal').modal('show');
+}
+    </script>
 
     <h4 class="mb-4">Subject Videos</h4>
     <div class="card">
@@ -136,6 +162,24 @@
                     </tr>
                 </thead>
             </table>
+        </div>
+    </div>
+
+
+
+    
+    <!-- Video Modal (Place it here, before ) -->
+    <div class="modal fade" id="videoModal" tabindex="-1" aria-labelledby="videoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="videoModalLabel">Watch Video</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="videoContainer" class="text-center"></div>
+                </div>
+            </div>
         </div>
     </div>
 @endsection

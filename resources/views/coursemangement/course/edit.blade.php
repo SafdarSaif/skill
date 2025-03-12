@@ -10,13 +10,28 @@
         <!-- Hidden Course ID -->
         <input type="hidden" name="course_id" value="{{ $course->id }}">
 
+        <!-- Course Type-->
+        <div class="col-md-6">
+            <label for="type_id" class="form-label">Course Type <span class="text-danger">*</span></label>
+            <select name="type_id" id="type_id" class="form-select" required>
+                <option value="">Select Course Type</option>
+                @foreach ($courseType as $id => $name)
+                    <option value="{{ $id }}" {{ $course->type_id == $id ? 'selected' : '' }}>
+                        {{ $name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+
         <!-- Category -->
         <div class="col-md-6">
             <label for="edit_category_id" class="form-label">Category <span class="text-danger">*</span></label>
             <select name="category_id" id="edit_category_id" class="form-select" required>
                 <option value="">Select Category</option>
                 @foreach ($category as $id => $name)
-                    <option value="{{ $id }}" {{ $course->category_id == $id ? 'selected' : '' }}>{{ $name }}</option>
+                    <option value="{{ $id }}" {{ $course->category_id == $id ? 'selected' : '' }}>
+                        {{ $name }}</option>
                 @endforeach
             </select>
         </div>
@@ -24,7 +39,8 @@
         <!-- Course Name -->
         <div class="col-md-6">
             <label for="edit_name" class="form-label">Course Name <span class="text-danger">*</span></label>
-            <input type="text" name="name" id="edit_name" class="form-control" required value="{{ $course->name }}">
+            <input type="text" name="name" id="edit_name" class="form-control" required
+                value="{{ $course->name }}">
         </div>
 
         <!-- Description -->
@@ -32,7 +48,7 @@
             <label for="edit_description" class="form-label">Description</label>
             <textarea name="description" id="edit_description" class="form-control" rows="3">{{ $course->description }}</textarea>
         </div>
-        
+
         <!--  Image -->
         <div class="col-md-12">
             <label for="edit-image" class="form-label">Image</label>
@@ -46,12 +62,14 @@
         <!-- Price & Duration -->
         <div class="col-md-6">
             <label for="edit_price" class="form-label">Price (₹) <span class="text-danger">*</span></label>
-            <input type="number" name="price" id="edit_price" class="form-control" required min="0" step="0.01" value="{{ $course->price }}">
+            <input type="number" name="price" id="edit_price" class="form-control" required min="0"
+                step="0.01" value="{{ $course->price }}">
         </div>
 
         <div class="col-md-6">
             <label for="edit_duration" class="form-label">Duration <span class="text-danger">*</span></label>
-            <input type="text" name="duration" id="edit_duration" class="form-control" required value="{{ $course->duration }}">
+            <input type="text" name="duration" id="edit_duration" class="form-control" required
+                value="{{ $course->duration }}">
         </div>
 
         <!-- Submit Buttons -->
@@ -64,21 +82,41 @@
 
 <!-- jQuery AJAX Validation & Submission -->
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
         $("#edit-course-form").validate({
             rules: {
-                name: { required: true },
-                price: { required: true, number: true, min: 0 },
-                duration: { required: true },
-                category_id: { required: true }
+                name: {
+                    required: true
+                },
+                price: {
+                    required: true,
+                    number: true,
+                    min: 0
+                },
+                duration: {
+                    required: true
+                },
+                category_id: {
+                    required: true
+                }
             },
             messages: {
-                name: { required: "Please enter course name" },
-                price: { required: "Please enter price", number: "Enter a valid number", min: "Price cannot be negative" },
-                duration: { required: "Please enter duration" },
-                category_id: { required: "Please select a category" }
+                name: {
+                    required: "Please enter course name"
+                },
+                price: {
+                    required: "Please enter price",
+                    number: "Enter a valid number",
+                    min: "Price cannot be negative"
+                },
+                duration: {
+                    required: "Please enter duration"
+                },
+                category_id: {
+                    required: "Please select a category"
+                }
             },
-            submitHandler: function (form) {
+            submitHandler: function(form) {
                 $(':input[type="submit"]').prop('disabled', true);
                 var formData = new FormData(form);
                 formData.append("_token", "{{ csrf_token() }}");
@@ -90,7 +128,7 @@
                     processData: false,
                     contentType: false,
                     dataType: 'json',
-                    success: function (response) {
+                    success: function(response) {
                         $(':input[type="submit"]').prop('disabled', false);
                         if (response.status === 'success') {
                             toastr.success(response.message);
@@ -100,7 +138,7 @@
                             toastr.error(response.message);
                         }
                     },
-                    error: function (response) {
+                    error: function(response) {
                         $(':input[type="submit"]').prop('disabled', false);
                         toastr.error(response.responseJSON.message);
                     }
