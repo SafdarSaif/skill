@@ -26,10 +26,12 @@ class CourseController extends Controller
     public function coursesFunc(Request $request, $column = '', $value = '')
     {
         try {
-            $data = Course::with('category', 'users')->get();
-            if ($column != '') {
-                $data = $data->where($column, $value);
+            $query = Course::with('category', 'users');
+            if (!empty($column) && !empty($value)) {
+                $query->where($column, $value);
             }
+            
+            $data = $query->get()->toArray();
             if ($data) {
                 return response()->json(['status' => "success", 'message' => "All Course Lists", "data" => $data]);
             } else {
