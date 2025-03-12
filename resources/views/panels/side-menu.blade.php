@@ -153,6 +153,12 @@
                         <div data-i18n="Student Queries">Student Queries</div>
                     </a>
                 </li>
+                <li class="menu-item {{ Route::is('contact') ? 'active' : '' }}">
+                    <a href="{{ route('contact') }}" class="menu-link">
+                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                        <div data-i18n="Student Queries">Contact & Support</div>
+                    </a>
+                </li>
             </ul>
         </li>
 

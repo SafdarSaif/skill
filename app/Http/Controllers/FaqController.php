@@ -11,6 +11,32 @@ use Illuminate\Support\Facades\Validator;
 
 class FaqController extends Controller
 {
+
+    /**
+     * Get all FAQs for API request
+     */
+    public function getFaqs()
+    {
+        try {
+            $faqs = Faq::where('status', 1)->get()->toArray();
+            return response()->json([
+                'status' => 'success',
+                'data' => $faqs
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong! ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    
+
+
+
+
+
+
     /**
      * Display a listing of the resource.
      */

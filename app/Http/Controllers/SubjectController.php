@@ -51,7 +51,7 @@ class SubjectController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    
+
 
     public function store(Request $request)
     {
@@ -60,7 +60,7 @@ class SubjectController extends Controller
             'course_id'   => 'required|exists:courses,id',
             'name'        => 'required|string|min:3|max:255|unique:subjects,name',
             'description' => 'nullable|string|max:500',
-            'image'       => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048', 
+            'image'       => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -73,7 +73,7 @@ class SubjectController extends Controller
         try {
             $imagePath = null;
             if ($request->hasFile('image')) {
-                $imagePath = uploadImage($request->file('image'), 'subject_images'); 
+                $imagePath = uploadImage($request->file('image'), 'subject_images');
             }
 
             $subject = Subject::create([
@@ -211,14 +211,41 @@ class SubjectController extends Controller
         }
     }
 
-    public function getCourseSubjects()
+    // public function getCourseSubjects()
+    // {
+    //     try {
+    //         $data = Subject::with('course')->get()->toArray();
+    //         if ($data) {
+    //             return response()->json(['data' => $data, "status" => "success", "message" => "All Subject List"]);
+    //         } else {
+    //             return response()->json(['status' => "error", "message" => "Subject not found!"]);
+    //         }
+    //     } catch (Exception $e) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => $e->getMessage(),
+    //         ]);
+    //     }
+
+    // }
+
+
+
+    public function getCourseSubjects(Request $request, $column = '', $value = '')
     {
         try {
-            $data = Subject::with('course')->get()->toArray();
-            if ($data) {
-                return response()->json(['data' => $data, "status" => "success", "message" => "All Subject List"]);
+            $query = Subject::with('course');
+
+            if (!empty($column) && !empty($value)) {
+                $query->where($column, $value);
+            }
+
+            $data = $query->get()->toArray();
+
+            if (!empty($data)) {
+                return response()->json(['status' => "success", 'message' => "All Subject List", "data" => $data]);
             } else {
-                return response()->json(['status' => "error", "message" => "Subject not found!"]);
+                return response()->json(['status' => "error", 'message' => "No Subject Found"]);
             }
         } catch (Exception $e) {
             return response()->json([
@@ -226,8 +253,5 @@ class SubjectController extends Controller
                 'message' => $e->getMessage(),
             ]);
         }
-
     }
-
-
 }

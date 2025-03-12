@@ -6,7 +6,10 @@ use App\Http\Controllers\StudentPaymentController;
 use App\Http\Controllers\StudentsController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EasebuzzPaymentController;
+use App\Http\Controllers\FaqController;
+use App\Http\Controllers\NewsUpdateController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\ContactController;
 // use App\Http\Controllers\EasebuzzController;
 
 use App\Models\Students;
@@ -29,7 +32,14 @@ Route::get('/all-courses/{column}/{value}',[CourseController::class,'coursesFunc
 Route::get('/all-courses',[CourseController::class,'coursesFunc']);
 Route::post('/category-courses',[CategoryController::class,'getCategoryCourses']);
 Route::get('/course-wise-subjects', [SubjectController::class,'getCourseSubjects']);
+Route::get('/course-wise-subjects/{column}/{value}', [SubjectController::class,'getCourseSubjects']);
 Route::post('/student-update', [StudentsController::class,'updateStudents']);
+
+// API for Content
+Route::get('/all-faq', [FaqController::class, 'getFaqs'])->name('all-faq');
+Route::get('/all-news', [NewsUpdateController::class, 'getNew'])->name('all-news');
+Route::post('/store-leads', [ContactController::class, 'store'])->name('store-leads');
+
 
 
 Route::post('/pay', [EasebuzzPaymentController::class, 'initiatePayment'])->name('easebuzz.pay');

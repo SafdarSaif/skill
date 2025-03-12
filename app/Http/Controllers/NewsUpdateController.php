@@ -10,6 +10,28 @@ use Illuminate\Support\Facades\Validator;
 
 class NewsUpdateController extends Controller
 {
+
+    /**
+     * Get all News for API request
+     */
+    public function getNew()
+    {
+        try {
+            $news = NewsUpdate::where('status', 1)->get()->toArray();
+            return response()->json([
+                'status' => 'success',
+                'data' => $news
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong! ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+
     /**
      * Display a listing of the resource.
      */
