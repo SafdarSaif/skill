@@ -39,27 +39,28 @@
                         }
                     ],
                     columnDefs: [
-                        {
-                            targets: 5,
-                            render: function(data, type, full, meta) {
-                                if (full['upload_type'] === 'youtube') {
-                                    // return '<iframe width="200" height="100" src="' + full[
-                                    //         'video_url'] +
-                                    //     '" frameborder="0" allowfullscreen></iframe>';
-                                    return '<a href="' + full['video_url'] + '" target="_blank">' + full['video_url'] + '</a>';
-
-                                } else {
-                                    return '<video width="200" controls><source src="' + full[
-                                        'video_url'] + '" type="video/mp4"></video>';
-                                }
-                            }
-                        },
                         // {
                         //     targets: 5,
                         //     render: function(data, type, full, meta) {
-                        //         return `<button class="btn btn-primary btn-sm" onclick="showVideo(${full['id']})">Watch Video</button>`;
+                        //         if (full['upload_type'] === 'youtube') {
+                        //             // return '<iframe width="200" height="100" src="' + full[
+                        //             //         'video_url'] +
+                        //             //     '" frameborder="0" allowfullscreen></iframe>';
+                        //             return '<a href="' + full['video_url'] + '" target="_blank">' + full['video_url'] + '</a>';
+
+                        //         } else {
+                        //             return '<video width="200" controls><source src="' + full[
+                        //                 'video_url'] + '" type="video/mp4"></video>';
+                        //         }
                         //     }
                         // },
+                        {
+                            targets: 5,
+                            render: function(data, type, full, meta) {
+                                return `<button class="btn btn-sm btn-primary" onclick="showVideo('${full.video_url}', '${full.upload_type}')">See Upload</button>`;
+                            }
+                        },
+
 
 
                         {
@@ -130,32 +131,20 @@
             }
         });
     </script>
-    {{-- <script>
-        function showVideo(videoId) {
-            $.ajax({
-                url: `/subjectvideo/${videoId}`,
-                type: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    let videoContent = '';
+    <script>
+        function showVideo(videoUrl, uploadType) {
+    let videoContent = '';
 
-                    if (data.upload_type === 'youtube') {
-                        videoContent =
-                            `<iframe width="100%" height="400" src="${data.video_url}" frameborder="0" allowfullscreen></iframe>`;
-                    } else {
-                        videoContent =
-                            `<video width="100%" controls><source src="${data.video_url}" type="video/mp4"></video>`;
-                    }
+    if (uploadType === 'youtube') {
+        videoContent = `<iframe width="100%" height="400" src="${videoUrl}" frameborder="0" allowfullscreen></iframe>`;
+    } else {
+        videoContent = `<video width="100%" controls><source src="${videoUrl}" type="video/mp4"></video>`;
+    }
 
-                    $('#videoContainer').html(videoContent);
-                    $('#videoModal').modal('show');
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error fetching video:', error);
-                }
-            });
-        }
-    </script> --}}
+    $('#videoContainer').html(videoContent);
+    $('#videoModal').modal('show');
+}
+    </script>
 
     <h4 class="mb-4">Subject Videos</h4>
     <div class="card">
@@ -173,6 +162,24 @@
                     </tr>
                 </thead>
             </table>
+        </div>
+    </div>
+
+
+
+    
+    <!-- Video Modal (Place it here, before ) -->
+    <div class="modal fade" id="videoModal" tabindex="-1" aria-labelledby="videoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="videoModalLabel">Watch Video</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="videoContainer" class="text-center"></div>
+                </div>
+            </div>
         </div>
     </div>
 @endsection
