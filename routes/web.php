@@ -16,6 +16,9 @@ use App\Http\Controllers\FaqController;
 use App\Http\Controllers\StudentQueryController;
 use App\Http\Controllers\CourseTypeController;
 use App\Http\Controllers\SubjectVideoController;
+use App\Http\Controllers\SubjectNoteController;
+use App\Http\Controllers\EbookController;
+use App\Http\Controllers\ContactController;
 
 
 // Route::get('/', function () {
@@ -160,6 +163,14 @@ Route::post('/faq/update/{id}', [FaqController::class, 'update'])->name('faq.upd
 Route::delete('/faq/destroy/{id}', [FaqController::class, 'destroy'])->name('faq.destroy');
 Route::get('faq/status/{id}', [FaqController::class, 'status'])->name('faq.status');
 
+Route::get('/contact', [ContactController::class, 'index'])->name('contact');
+// Route::get('/contact/create', [ContactController::class, 'create'])->name('contact.create');
+// Route::post('/contact/store', [ContactController::class, 'store'])->name('contact.store');
+// Route::get('/contact/edit/{id}', [ContactController::class, 'edit'])->name('contact.edit');
+// Route::post('/contact/update/{id}', [ContactController::class, 'update'])->name('contact.update');
+// Route::delete('/contact/destroy/{id}', [ContactController::class, 'destroy'])->name('contact.destroy');
+// Route::get('contact/status/{id}', [ContactController::class, 'status'])->name('contact.status');
+
 
 
 Route::get('/studentquery', [StudentQueryController::class, 'index'])->name('studentquery');
@@ -178,3 +189,25 @@ Route::get('/subjectvideo/edit/{id}', [SubjectVideoController::class, 'edit'])->
 Route::post('/subjectvideo/update/{id}', [SubjectVideoController::class, 'update'])->name('subjectvideo.update');
 Route::delete('/subjectvideo/destroy/{id}', [SubjectVideoController::class, 'destroy'])->name('subjectvideo.destroy');
 Route::get('subjectvideo/status/{id}', [SubjectVideoController::class, 'status'])->name('subjectvideo.status');
+
+Route::get('/subjectvideo/{id}', [SubjectVideoController::class, 'show'])->name('subjectvideo.show');
+
+
+
+Route::get('/subjectnote', [SubjectNoteController::class, 'index'])->name('subjectnote');
+Route::get('/subjectnote/create', [SubjectNoteController::class, 'create'])->name('subjectnote.create');
+Route::post('/subjectnote/store', [SubjectNoteController::class, 'store'])->name('subjectnote.store');
+Route::get('/subjectnote/edit/{id}', [SubjectNoteController::class, 'edit'])->name('subjectnote.edit');
+Route::post('/subjectnote/update/{id}', [SubjectNoteController::class, 'update'])->name('subjectnote.update');
+Route::delete('/subjectnote/destroy/{id}', [SubjectNoteController::class, 'destroy'])->name('subjectnote.destroy');
+Route::get('subjectnote/status/{id}', [SubjectNoteController::class, 'status'])->name('subjectnote.status');
+
+
+
+Route::get('/ebook', [EbookController::class, 'index'])->name('ebook');
+Route::get('/ebook/create', [EbookController::class, 'create'])->name('ebook.create');
+Route::post('/ebook/store', [EbookController::class, 'store'])->name('ebook.store');
+Route::get('/ebook/edit/{id}', [EbookController::class, 'edit'])->name('ebook.edit');
+Route::post('/ebook/update/{id}', [EbookController::class, 'update'])->name('ebook.update');
+Route::delete('/ebook/destroy/{id}', [EbookController::class, 'destroy'])->name('ebook.destroy');
+Route::get('ebook/status/{id}', [EbookController::class, 'status'])->name('ebook.status');

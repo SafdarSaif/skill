@@ -152,6 +152,12 @@
             }
         });
     </script>
+    <script>
+        function manageNotes(subjectId) {
+            var url = "{{ route('subjectnote') }}?id=" + subjectId;
+            window.location.href = url;
+        }
+    </script>
 
     <h4 class="mb-4">Subjects List</h4>
     <div class="card">

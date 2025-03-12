@@ -15,6 +15,7 @@ class Course extends Model
         'price',
         'duration',
         'category_id',
+        'type_id',
         'image',
         'status',
         'added_by'
@@ -23,6 +24,11 @@ class Course extends Model
     /**
      * Get the category associated with the course.
      */
+
+     public function type()
+     {
+         return $this->belongsTo(CourseType::class, 'type_id');
+     }
 
     public function category()
     {

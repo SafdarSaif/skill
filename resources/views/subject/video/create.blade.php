@@ -107,191 +107,6 @@
 </div>
 
 <!-- jQuery Script for Dynamic Field Display -->
-{{-- <script>
-    $(document).ready(function() {
-        $('#upload_type').change(function() {
-            if ($(this).val() === 'youtube') {
-                $('#youtube_field').show();
-                $('#video_url').prop('required', true);
-                $('#local_field').hide();
-                $('#video_file').prop('required', false);
-            } else {
-                $('#local_field').show();
-                $('#video_file').prop('required', true);
-                $('#youtube_field').hide();
-                $('#video_url').prop('required', false);
-            }
-        });
-
-        // Form Validation
-        $("#subject-video-form").validate({
-            rules: {
-                subject_id: {
-                    required: true
-                },
-                name: {
-                    required: true,
-                    minlength: 3
-                },
-                user_id: {
-                    required: true
-                },
-                upload_type: {
-                    required: true
-                },
-                video_url: {
-                    required: function() {
-                        return $("#upload_type").val() === "youtube";
-                    },
-                    url: true,
-                    pattern: /^https?:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+$/ 
-                video_file: {
-                    required: function() {
-                        return $("#upload_type").val() === "local";
-                    },
-                    extension: "mp4|avi|mkv|mov"
-                }
-            },
-            messages: {
-                subject_id: "Please select a subject",
-                name: {
-                    required: "Please enter a video name",
-                    minlength: "Video name must be at least 3 characters long"
-                },
-                user_id: "Please select an uploader",
-                upload_type: "Please select an upload type",
-                video_url: {
-                    required: "Please enter a YouTube embedded URL.",
-                    url: "Enter a valid URL.",
-                    pattern: "Only YouTube embedded URLs are allowed (e.g., https://www.youtube.com/embed/VIDEO_ID)."
-                },
-                video_file: "Please upload a valid video file (mp4, avi, mkv, mov)"
-            },
-            submitHandler: function(form) {
-                $(':input[type="submit"]').prop('disabled', true);
-                var formData = new FormData(form);
-                formData.append("_token", "{{ csrf_token() }}");
-
-                $.ajax({
-                    url: $(form).attr('action'),
-                    type: $(form).attr('method'),
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    dataType: 'json',
-                    success: function(response) {
-                        $(':input[type="submit"]').prop('disabled', false);
-                        if (response.status === 'success') {
-                            toastr.success(response.message);
-                            $(".modal").modal('hide');
-                            $('#videos-table').DataTable().ajax.reload();
-                        } else {
-                            toastr.error(response.message);
-                        }
-                    },
-                    error: function(response) {
-                        $(':input[type="submit"]').prop('disabled', false);
-                        toastr.error(response.responseJSON.message);
-                    }
-                });
-            }
-        });
-    });
-</script> --}}
-
-
-{{-- <script>
-    $(document).ready(function() {
-        $('#upload_type').change(function() {
-            if ($(this).val() === 'youtube') {
-                $('#youtube_field').show();
-                $('#video_url').prop('required', true);
-                $('#local_field').hide();
-                $('#video_file').prop('required', false);
-            } else {
-                $('#local_field').show();
-                $('#video_file').prop('required', true);
-                $('#youtube_field').hide();
-                $('#video_url').prop('required', false);
-            }
-        });
-
-        // Form Validation
-        $("#subject-video-form").validate({
-            rules: {
-                subject_id: {
-                    required: true
-                },
-                name: {
-                    required: true,
-                    minlength: 3
-                },
-                user_id: {
-                    required: true
-                },
-                upload_type: {
-                    required: true
-                },
-                video_url: {
-                    required: function() {
-                        return $("#upload_type").val() === "youtube";
-                    },
-                    url: true,
-                    pattern: /^https?:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+$/
-                }, // **Fixed missing comma**
-                video_file: {
-                    required: function() {
-                        return $("#upload_type").val() === "local";
-                    },
-                    extension: "mp4|avi|mkv|mov"
-                }
-            },
-            messages: {
-                subject_id: "Please select a subject",
-                name: {
-                    required: "Please enter a video name",
-                    minlength: "Video name must be at least 3 characters long"
-                },
-                user_id: "Please select an uploader",
-                upload_type: "Please select an upload type",
-                video_url: {
-                    required: "Please enter a YouTube embedded URL.",
-                    url: "Enter a valid URL.",
-                    pattern: "Only YouTube embedded URLs are allowed (e.g., https://www.youtube.com/embed/VIDEO_ID)."
-                },
-                video_file: "Please upload a valid video file (mp4, avi, mkv, mov)"
-            },
-            submitHandler: function(form) {
-                $(':input[type="submit"]').prop('disabled', true);
-                var formData = new FormData(form);
-                formData.append("_token", "{{ csrf_token() }}");
-
-                $.ajax({
-                    url: $(form).attr('action'),
-                    type: $(form).attr('method'),
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    dataType: 'json',
-                    success: function(response) {
-                        $(':input[type="submit"]').prop('disabled', false);
-                        if (response.status === 'success') {
-                            toastr.success(response.message);
-                            $(".modal").modal('hide');
-                            $('#videos-table').DataTable().ajax.reload();
-                        } else {
-                            toastr.error(response.message);
-                        }
-                    },
-                    error: function(response) {
-                        $(':input[type="submit"]').prop('disabled', false);
-                        toastr.error(response.responseJSON.message);
-                    }
-                });
-            }
-        });
-    });
-</script> --}}
 
 <script>
     $(document).ready(function() {
@@ -309,7 +124,7 @@
             }
         });
 
-        // Form Validation
+        // Form Submission via AJAX
         $("#subject-video-form").validate({
             rules: {
                 subject_id: {
@@ -329,32 +144,30 @@
                     required: function() {
                         return $("#upload_type").val() === "youtube";
                     },
-                    url: true,
-                    pattern: /^https?:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+$/
-                },
-                video_file: {
-                    required: function() {
-                        return $("#upload_type").val() === "local";
-                    },
-                    extension: "mp4|avi|mkv|mov"
+                    url: true
                 }
             },
             messages: {
-                subject_id: "Please select a subject",
+                subject_id: {
+                    required: "Please select a subject"
+                },
                 name: {
                     required: "Please enter a video name",
                     minlength: "Video name must be at least 3 characters long"
                 },
-                user_id: "Please select an uploader",
-                upload_type: "Please select an upload type",
-                video_url: {
-                    required: "Please enter a YouTube embedded URL.",
-                    url: "Enter a valid URL.",
-                    pattern: "Only YouTube embedded URLs are allowed (e.g., https://www.youtube.com/embed/VIDEO_ID)."
+                user_id: {
+                    required: "Please select an uploader"
                 },
-                video_file: "Please upload a valid video file (mp4, avi, mkv, mov)"
+                upload_type: {
+                    required: "Please select an upload type"
+                },
+                video_url: {
+                    required: "Please enter a YouTube video URL",
+                    url: "Please enter a valid URL"
+                }
             },
             submitHandler: function(form) {
+                $(':input[type="submit"]').prop('disabled', true);
                 var formData = new FormData(form);
                 formData.append("_token", "{{ csrf_token() }}");
 
@@ -365,28 +178,19 @@
                     processData: false,
                     contentType: false,
                     dataType: 'json',
-                    beforeSend: function() {
-                        $(':input[type="submit"]').prop('disabled', true);
-                    },
                     success: function(response) {
                         $(':input[type="submit"]').prop('disabled', false);
                         if (response.status === 'success') {
                             toastr.success(response.message);
                             $(".modal").modal('hide');
-                            $('#videos-table').DataTable().ajax.reload();
+                            $('#subjects-video-table').DataTable().ajax.reload();
                         } else {
                             toastr.error(response.message);
                         }
                     },
-                    error: function(xhr) {
+                    error: function(response) {
                         $(':input[type="submit"]').prop('disabled', false);
-                        var response = xhr.responseJSON;
-                        if (response && response.message) {
-                            toastr.error(response.message);
-                        } else {
-                            toastr.error(
-                                "An unexpected error occurred. Please try again.");
-                        }
+                        toastr.error(response.responseJSON.message);
                     }
                 });
             }

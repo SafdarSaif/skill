@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\SubjectVideo;
+use App\Models\SubjectNote;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Subject;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 
-class SubjectVideoController extends Controller
+
+class SubjectNoteController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,7 +20,7 @@ class SubjectVideoController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = SubjectVideo::with(['subject', 'user'])
+            $data = SubjectNote::with(['subject', 'user'])
                 ->orderBy('id', 'desc')
                 ->get();
 
@@ -37,7 +39,7 @@ class SubjectVideoController extends Controller
                 ->make(true);
         }
 
-        return view('subject.video.index');
+        return view('subject.notes.index');
     }
 
     /**
@@ -48,66 +50,66 @@ class SubjectVideoController extends Controller
         $subjects = Subject::pluck('name', 'id');
         $users = User::pluck('name', 'id');
 
-        return view('subject.video.create', compact('subjects', 'users'));
+        return view('subject.notes.create', compact('subjects', 'users'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-
-
     public function store(Request $request)
     {
-        // Validate the request
         $validator = Validator::make($request->all(), [
             'subject_id'  => 'required|exists:subjects,id',
-            'name'        => 'required|string|min:3|max:255|unique:subject_videos,name',
-            'description' => 'nullable|string|max:500',
-            'duration'    => 'nullable|regex:/^([0-9]{2}):([0-9]{2}):([0-9]{2})$/',
+            'name'        => 'required|string|min:3|max:255',
+            'description' => 'nullable|string|max:1000',
             'user_id'     => 'required|exists:users,id',
-            'position'    => 'required|integer|in:0,1',
-            'upload_type' => 'required|in:youtube,local',
-            // 'video_url'   => 'nullable|required_if:upload_type,youtube|url|regex:/^https?:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+$/',
-            'video_url'   => 'nullable|required_if:upload_type,youtube|url',
-            'video_file'  => 'nullable|required_if:upload_type,local|mimes:mp4,avi,mkv,mov|max:51200',
+            'upload_type' => 'required|in:url,pdf', 
+            'note_link'   => 'nullable|url|required_if:upload_type,url', 
+            'note_file'   => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx|max:51200|required_if:upload_type,pdf', 
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'status'  => 'error',
-                'message' => $validator->errors()->first()
+                'message' => $validator->errors()->first(),
+                'errors'  => $validator->errors()
             ], 422);
         }
 
         try {
-            $videoUrl = null;
+            $noteUrl = null;
+            $filePath = null;
 
-            if ($request->upload_type === 'youtube') {
-                $videoUrl = $request->video_url;
-            } elseif ($request->hasFile('video_file')) {
-                $videoUrl = uploadFile($request->file('video_file'), 'subject_videos');
+            if ($request->upload_type === 'url') {
+                $noteUrl = $request->note_link;
+            } elseif ($request->hasFile('note_file')) {
+                $filePath = uploadFile($request->file('note_file'), 'subject_notes');
             }
 
-            $subjectVideo = SubjectVideo::create([
+            $subjectNote = SubjectNote::create([
                 'subject_id'  => $request->subject_id,
                 'name'        => $request->name,
                 'description' => $request->description,
-                'duration'    => $request->duration,
                 'user_id'     => $request->user_id,
-                'position'    => $request->position,
                 'upload_type' => $request->upload_type,
-                'video_url'   => $videoUrl,
+                'url'         => $noteUrl,
+                'file_path'   => $filePath, 
             ]);
 
             return response()->json([
                 'status'  => 'success',
-                'message' => 'Subject video added successfully!',
-                'data'    => $subjectVideo
-            ], 200);
+                'message' => 'Subject note added successfully!',
+                'data'    => $subjectNote
+            ], 201);
         } catch (\Exception $e) {
+            Log::error('Error adding subject note: ' . $e->getMessage(), [
+                'request' => $request->all(),
+                'trace'   => $e->getTraceAsString()
+            ]);
+
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Something went wrong: ' . $e->getMessage()
+                'message' => 'Something went wrong. Please try again later.',
             ], 500);
         }
     }
@@ -116,100 +118,100 @@ class SubjectVideoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(SubjectNote $subjectNote)
     {
-        $video = SubjectVideo::findOrFail($id);
-
-        return response()->json([
-            'video_url'   => $video->video_url,
-            'upload_type' => $video->upload_type,
-        ]);
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($subjectvideoId)
+    public function edit($noteId)
     {
-        $video = SubjectVideo::findOrFail($subjectvideoId);
+        $note = SubjectNote::findOrFail($noteId);
         $subjects = Subject::pluck('name', 'id');
         $users = User::pluck('name', 'id');
-        return view('subject.video.edit', compact('video', 'subjects', 'users'));
+        return view('subject.notes.edit', compact('note', 'subjects', 'users'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $subjectvideoId)
+    public function update(Request $request, $noteId)
     {
-        $subjectVideo = SubjectVideo::findOrFail($subjectvideoId);
-
         $validator = Validator::make($request->all(), [
             'subject_id'  => 'required|exists:subjects,id',
-            'name'        => 'required|string|min:3|max:255|unique:subject_videos,name,' . $subjectvideoId,
-            'description' => 'nullable|string|max:500',
-            'duration'    => 'nullable|regex:/^([0-9]{2}):([0-9]{2}):([0-9]{2})$/',
+            'name'        => 'required|string|min:3|max:255',
+            'description' => 'nullable|string|max:1000',
             'user_id'     => 'required|exists:users,id',
-            'position'    => 'required|integer|in:0,1',
-            'upload_type' => 'required|in:youtube,local',
-            'video_url'   => 'nullable|required_if:upload_type,youtube|url|regex:/^https?:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+$/',
-            'video_file'  => 'nullable|required_if:upload_type,local|mimes:mp4,avi,mkv,mov|max:51200',
+            'upload_type' => 'required|in:url,pdf', 
+            'note_link'   => 'nullable|url|required_if:upload_type,url', 
+            'note_file'   => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx|max:51200|required_if:upload_type,pdf', 
         ]);
-
+    
         if ($validator->fails()) {
             return response()->json([
                 'status'  => 'error',
-                'message' => $validator->errors()->first()
+                'message' => $validator->errors()->first(),
+                'errors'  => $validator->errors()
             ], 422);
         }
-
+    
         try {
-            $videoUrl = $subjectVideo->video_url;
-
-            if ($request->upload_type === 'youtube') {
-                $videoUrl = $request->video_url;
-            } elseif ($request->hasFile('video_file')) {
-                if ($subjectVideo->upload_type === 'local' && $subjectVideo->video_url) {
-                    deleteFile($subjectVideo->video_url);
+            $subjectNote = SubjectNote::findOrFail($noteId);
+    
+            $noteUrl = $subjectNote->url;
+            $filePath = $subjectNote->file_path;
+    
+            if ($request->upload_type === 'url') {
+                $noteUrl = $request->note_link;
+                $filePath = null; 
+            } elseif ($request->hasFile('note_file')) {
+                if ($subjectNote->file_path) {
+                    deleteFile('uploads/subject_notes/' . $subjectNote->file_path);
                 }
-                $videoUrl = uploadFile($request->file('video_file'), 'subject_videos');
+    
+                $filePath = uploadFile($request->file('note_file'), 'subject_notes');
+                $noteUrl = null; 
             }
-
-            // Update the subject video
-            $subjectVideo->update([
+    
+            $subjectNote->update([
                 'subject_id'  => $request->subject_id,
                 'name'        => $request->name,
                 'description' => $request->description,
-                'duration'    => $request->duration,
                 'user_id'     => $request->user_id,
-                'position'    => $request->position,
                 'upload_type' => $request->upload_type,
-                'video_url'   => $videoUrl,
+                'url'         => $noteUrl,
+                'file_path'   => $filePath,
             ]);
-
+    
             return response()->json([
                 'status'  => 'success',
-                'message' => 'Subject video updated successfully!',
-                'data'    => $subjectVideo
+                'message' => 'Subject note updated successfully!',
+                'data'    => $subjectNote
             ], 200);
         } catch (\Exception $e) {
+            Log::error('Error updating subject note: ' . $e->getMessage(), [
+                'request' => $request->all(),
+                'trace'   => $e->getTraceAsString()
+            ]);
+    
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Something went wrong: ' . $e->getMessage()
+                'message' => 'Something went wrong. Please try again later.',
             ], 500);
         }
     }
-
-
+    
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($subjectvideoId)
+    public function destroy($noteId)
     { {
             try {
-                $subjectVideo = SubjectVideo::destroy($subjectvideoId);
-                return ['status' => 'success', 'message' => 'Subject Video deleted successfully!'];
+                $SubjectNote = SubjectNote::destroy($noteId);
+                return ['status' => 'success', 'message' => 'Subject Note deleted successfully!'];
             } catch (\Throwable $e) {
                 return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
             }
@@ -218,13 +220,13 @@ class SubjectVideoController extends Controller
     public function status($id)
     {
         try {
-            $subject = Subject::findOrFail($id);
-            if ($subject) {
-                $subject->status = $subject->status == 1 ? 0 : 1;
-                $subject->save();
+            $SubjectNote = SubjectNote::findOrFail($id);
+            if ($SubjectNote) {
+                $SubjectNote->status = $SubjectNote->status == 1 ? 0 : 1;
+                $SubjectNote->save();
                 return response()->json([
                     'status' => 'success',
-                    'message' => $subject->name . ' status updated successfully!',
+                    'message' => $SubjectNote->name . ' status updated successfully!',
                 ]);
             } else {
                 return response()->json([

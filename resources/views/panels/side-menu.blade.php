@@ -1,477 +1,195 @@
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
-    <div class="app-brand demo ">
-        {{-- <img src="/assets/img/logo/logo.png" alt="" style="height: 41px"> --}}
-        <h4>Skill App</h4>
-
+    <!-- Logo Section -->
+    <div class="app-brand demo">
+        <div class="d-flex align-items-center">
+            <i class="ti ti-apps fs-3 text-primary"></i>
+            <h4 class="mb-0 ms-2">Skill App</h4>
+        </div>
         <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
             <i class="ti menu-toggle-icon d-none d-xl-block align-middle"></i>
             <i class="ti ti-x d-block d-xl-none ti-md align-middle"></i>
         </a>
     </div>
-
+    
     <div class="menu-inner-shadow"></div>
 
-
-
-    <ul class="menu-inner py-1">
-        <!-- Dashboards -->
-        <li class="menu-item active open">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons ti ti-smart-home"></i>
-                <div data-i18n="Dashboards">Dashboards</div>
-                <div class="badge bg-danger rounded-pill ms-auto">5</div>
-            </a>
-            <ul class="menu-sub">
-
-                <!-- <li class="menu-item active">
-                    <a href="index-2.html" class="menu-link">
-                        <div data-i18n="Analytics">Analytics</div>
-                    </a>
-                </li> -->
-                <!-- <li class="menu-item">
-                    <a href="dashboards-crm.html" class="menu-link">
-                        <div data-i18n="CRM">CRM</div>
-                    </a>
-                </li> -->
-                <!-- <li class="menu-item">
-                    <a href="app-ecommerce-dashboard.html" class="menu-link">
-                        <div data-i18n="eCommerce">eCommerce</div>
-                    </a>
-                </li> -->
-                <!-- <li class="menu-item">
-                    <a href="app-logistics-dashboard.html" class="menu-link">
-                        <div data-i18n="Logistics">Logistics</div>
-                    </a>
-                </li> -->
-                <!-- <li class="menu-item">
-                    <a href="app-academy-dashboard.html" class="menu-link">
-                        <div data-i18n="Academy">Academy</div>
-                    </a>
-                </li> -->
-            </ul>
+    <ul class="menu-inner py-3">
+        <!-- Main Navigation Header -->
+        <li class="menu-header small text-uppercase">
+            <span class="menu-header-text">Main Navigation</span>
         </li>
 
-        <!-- Layouts -->
-        <li class="menu-item">
+        <!-- Dashboard -->
+        <li class="menu-item {{ Route::is('dashboard') ? 'active' : '' }}">
+            <a href="{{ route('dashboard') }}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-smart-home"></i>
+                <div data-i18n="Dashboard">Dashboard</div>
+            </a>
+        </li>
+
+        <!-- Admission Management -->
+        <li class="menu-item {{ Route::is('student*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons ti ti-users"></i>
                 <div data-i18n="Admission Management">Admission Management</div>
             </a>
-
             <ul class="menu-sub">
-
-                <li class="menu-item">
+                <li class="menu-item {{ Route::is('student') ? 'active' : '' }}">
                     <a href="{{ route('student') }}" class="menu-link">
+                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                         <div data-i18n="Students">Students</div>
                     </a>
                 </li>
-                <li class="menu-item">
+                <li class="menu-item {{ Route::is('studentcourse') ? 'active' : '' }}">
                     <a href="{{ route('studentcourse') }}" class="menu-link">
+                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                         <div data-i18n="Student Course">Student Course</div>
                     </a>
                 </li>
             </ul>
         </li>
-        <li class="menu-item">
+
+        <!-- Divider -->
+        <li class="menu-divider"></li>
+
+        <!-- Course Management -->
+        <li class="menu-item {{ Route::is('coursetype*', 'category*', 'course*', 'subject*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons ti ti-layout-sidebar"></i>
+                <i class="menu-icon tf-icons ti ti-book"></i>
                 <div data-i18n="Course Management">Course Management</div>
             </a>
-
             <ul class="menu-sub">
-
-                <li class="menu-item">
+                <li class="menu-item {{ Route::is('coursetype') ? 'active' : '' }}">
                     <a href="{{ route('coursetype') }}" class="menu-link">
+                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                         <div data-i18n="Course Type">Course Type</div>
                     </a>
                 </li>
-                <li class="menu-item">
+                <li class="menu-item {{ Route::is('category') ? 'active' : '' }}">
                     <a href="{{ route('category') }}" class="menu-link">
+                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                         <div data-i18n="Course Category">Course Category</div>
                     </a>
                 </li>
-                <li class="menu-item">
+                <li class="menu-item {{ Route::is('course') ? 'active' : '' }}">
                     <a href="{{ route('course') }}" class="menu-link">
+                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                         <div data-i18n="Courses">Courses</div>
                     </a>
                 </li>
-                <li class="menu-item">
+                <li class="menu-item {{ Route::is('subject') ? 'active' : '' }}">
                     <a href="{{ route('subject') }}" class="menu-link">
+                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                         <div data-i18n="Subjects">Subjects</div>
                     </a>
                 </li>
-                <li class="menu-item">
+            </ul>
+        </li>
+
+        <!-- Learning Materials Hub -->
+        <li class="menu-item {{ Route::is('subjectvideo*', 'subjectnote*', 'ebook*') ? 'active open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-file-text"></i>
+                <div data-i18n="Learning Materials Hub">Learning Materials Hub</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item {{ Route::is('subjectvideo') ? 'active' : '' }}">
                     <a href="{{ route('subjectvideo') }}" class="menu-link">
-                        <div data-i18n="Subjects Videos">Subjects Videos</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
-                        <div data-i18n="Subjects Notes">Subjects Notes</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
-                        <div data-i18n="Subjects E-book">Subjects E-book</div>
-                    </a>
-                </li>
-                {{-- <li class="menu-item">
-                    <a href="" class="menu-link">
-                        <div data-i18n="Student Course">Student Course</div>
-                    </a>
-                </li> --}}
-
-            </ul>
-        </li>
-        <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons ti ti-layout-sidebar"></i>
-                <div data-i18n="Payment Management">Payment Management</div>
-            </a>
-
-            <ul class="menu-sub">
-
-                <li class="menu-item">
-                    <a href="{{ route('payment') }}" class="menu-link">
-                        <div data-i18n="Student Payment">Student Payment</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
-
-
-       
-
-        <!-- Front Pages -->
-        <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class='menu-icon tf-icons ti ti-files'></i>
-                <div data-i18n="Content & Support System">Content & Support System</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="{{ route('news') }}" class="menu-link">
-                        <div data-i18n=" News Updates"> News Updates</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="{{ route('slider') }}" class="menu-link">
-                        <div data-i18n="Slider Management">Slider Management</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="{{ route('faq') }}" class="menu-link">
-                        <div data-i18n="FAQs Management">FAQs Management</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="{{ route('studentquery') }}" class="menu-link">
-                        <div data-i18n="Student Queries Management">Student Queries Management</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="" class="menu-link">
-                        <div data-i18n=" Contact/Support Section "> Contact/Support Section </div>
-                    </a>
-                </li>
-                {{-- <li class="menu-item">
-                    <a href="" class="menu-link" target="_blank">
-                        <div data-i18n="Exam Schedule">Exam Schedule</div>
-                    </a>
-                </li> --}}
-            </ul>
-        </li>
-
-
-        <!-- Apps & Pages -->
-        <!-- <li class="menu-header small">
-            <span class="menu-header-text" data-i18n="Apps & Pages">Apps &amp; Pages</span>
-        </li> -->
-        {{-- <li class="menu-item">
-            <a href="Settings" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons ti ti-mail"></i>
-                <div data-i18n="Settings">Settings</div>
-            </a>
-            <ul class="menu-sub">
-
-                <li class="menu-item">
-                    <a href="" class="menu-link">
-                        <div data-i18n="Vertical">Vertical</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="" class="menu-link">
-                        <div data-i18n="Admission Types">Admission Types</div>
-                    </a>
-                </li>
-
-                <li class="menu-item">
-                    <a href="" class="menu-link">
-                        <div data-i18n="Eligibility">Eligibility</div>
-                    </a>
-                </li>
-
-
-
-                <li class="menu-item">
-                    <a href="" class="menu-link">
-                        <div data-i18n="Modes">Modes</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="" class="menu-link">
-                        <div data-i18n="Schemes">Schemes</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="" class="menu-link">
-                        <div data-i18n="Admission Session">Admission Session</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="" class="menu-link">
-                        <div data-i18n="Exam Session">Exam Session</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="" class="menu-link">
-                        <div data-i18n="Program Type">Program Type</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="" class="menu-link">
-                        <div data-i18n="Fee Structure">Fee Structure</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="Admissions/Exam Schedule" class="menu-link" target="_blank">
-                        <div data-i18n="Page Access">Page Access</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <li class="menu-item">
-            <a href="" class="menu-link">
-                <i class="menu-icon tf-icons ti ti-messages"></i>
-                <div data-i18n="Notifications">Notifications</div>
-            </a>
-        </li>
-        <li class="menu-item">
-            <a href="" class="menu-link">
-                <i class="menu-icon tf-icons ti ti-messages"></i>
-                <div data-i18n="Center Notifications">Center Notifications</div>
-            </a>
-        </li>
-        <li class="menu-item">
-            <a href="" class="menu-link">
-                <i class="menu-icon tf-icons ti ti-messages"></i>
-                <div data-i18n="Student Syllabus">Student Syllabus</div>
-            </a>
-        </li>
-        <li class="menu-item">
-            <a href="" class="menu-link">
-                <i class="menu-icon tf-icons ti ti-messages"></i>
-                <div data-i18n="Student Profile">Student Profile</div>
-            </a>
-        </li> --}}
-
-        <!-- accounts menu start -->
-        {{-- <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class='menu-icon tf-icons ti ti-book'></i>
-                <div data-i18n="Accounts">Accounts</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="Accounts/Center Ledgers" class="menu-link">
-                        <div data-i18n="Center Ledgers">Center Ledgers</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="Accounts/Offline Payments" class="menu-link">
-                        <div data-i18n="Offline Payments">Offline Payments</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="Accounts/Online Payments" class="menu-link">
-                        <div data-i18n="Online Payments">Online Payments </div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="Accounts/Students Ledgers" class="menu-link">
-                        <div data-i18n="Students Ledgers">Students Ledgers</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="Accounts/Wallet Payments" class="menu-link">
-                        <div data-i18n="Wallet Payments">Wallet Payments</div>
-                    </a>
-                </li>
-            </ul>
-        </li> --}}
-        <!-- users menu end -->
-        {{-- <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class='menu-icon tf-icons ti ti-truck'></i>
-                <div data-i18n="Users">Users</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="" class="menu-link">
-                        <div data-i18n="User Managers">User Managers</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="" class="menu-link">
-                        <div data-i18n="Board Managers">Board Managers</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="" class="menu-link">
-                        <div data-i18n="Operations">Operations</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="" class="menu-link">
-                        <div data-i18n="Counsellor">Counsellor</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="Users/Sub-Counsellor" class="menu-link">
-                        <div data-i18n="Sub-Counsellor">Sub-Counsellor</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="Users/Center Masters" class="menu-link">
-                        <div data-i18n="Center Masters">Center Masters</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="Users/Centers" class="menu-link">
-                        <div data-i18n="Centers">Centers</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="Users/Sub-Centers" class="menu-link">
-                        <div data-i18n="Sub-Centers">Sub-Centers</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="Users/Accountants" class="menu-link">
-                        <div data-i18n="Accountants">Accountants</div>
-                    </a>
-                </li>
-            </ul>
-        </li> --}}
-        <!-- lms-setting menu end -->
-        {{-- <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class='menu-icon tf-icons ti ti-file-dollar'></i>
-                <div data-i18n="LMS-Settings">LMS-Settings</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="LMS-Settings/Subjects" class="menu-link">
-                        <div data-i18n="Subjects">Subjects</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="LMS-Settings/Date Sheets" class="menu-link">
-                        <div data-i18n="Date Sheets">Date Sheets</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="LMS-Settings/Assignments" class="menu-link">
-                        <div data-i18n="Assignments">Assignments</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="LMS-Settings/Assignments Review" class="menu-link">
-                        <div data-i18n="Assignments Review">Assignments Review</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="LMS-Settings/Practicals" class="menu-link">
-                        <div data-i18n="Practicals">Practicals</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="LMS-Settings/Mock Test" class="menu-link">
-                        <div data-i18n="Mock Test">Mock Test</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="LMS-Settings/Exam" class="menu-link">
-                        <div data-i18n="Exam">Exam</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="LMS-Settings/Results" class="menu-link">
-                        <div data-i18n="Results">Results</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="LMS-Settings/Queries & Feedback" class="menu-link">
-                        <div data-i18n="Queries & Feedback">Queries & Feedback</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="LMS-Settings/E-Books" class="menu-link">
-                        <div data-i18n="E-Books">E-Books</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="LMS-Settings/Videos" class="menu-link">
+                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                         <div data-i18n="Videos">Videos</div>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="LMS-Settings/Question Banks" class="menu-link">
-                        <div data-i18n="Question Banks">Question Banks</div>
+                <li class="menu-item {{ Route::is('subjectnote') ? 'active' : '' }}">
+                    <a href="{{ route('subjectnote') }}" class="menu-link">
+                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                        <div data-i18n="Notes">Notes</div>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="LMS-Settings/Dispatch" class="menu-link">
-                        <div data-i18n="Dispatch">Dispatch</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="LMS-Settings/Documents" class="menu-link">
-                        <div data-i18n="Documents">Documents</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="LMS-Settings/Contact Us" class="menu-link">
-                        <div data-i18n="Contact Us">Contact Us</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="LMS-Settings/Download Center" class="menu-link">
-                        <div data-i18n="Download Center">Download Center</div>
+                <li class="menu-item {{ Route::is('ebook') ? 'active' : '' }}">
+                    <a href="{{ route('ebook') }}" class="menu-link">
+                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                        <div data-i18n="E-books">E-books</div>
                     </a>
                 </li>
             </ul>
-        </li> --}}
-        <!-- Permission menu start -->
-        <li class="menu-item">
+        </li>
+
+        <!-- Payment Management -->
+        <li class="menu-item {{ Route::is('payment*') ? 'active' : '' }}">
+            <a href="{{ route('payment') }}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-currency-rupee"></i>
+                <div data-i18n="Payment Management">Payment Management</div>
+            </a>
+        </li>
+
+        <!-- Support System -->
+        <li class="menu-item {{ Route::is('news*', 'slider*', 'faq*', 'studentquery*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class='menu-icon tf-icons ti ti-settings'></i>
-                <div data-i18n="Permission">Permission</div>
+                <i class="menu-icon tf-icons ti ti-headset"></i>
+                <div data-i18n="Support System">Support System</div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item">
+                <li class="menu-item {{ Route::is('news') ? 'active' : '' }}">
+                    <a href="{{ route('news') }}" class="menu-link">
+                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                        <div data-i18n="News Updates">News Updates</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ Route::is('slider') ? 'active' : '' }}">
+                    <a href="{{ route('slider') }}" class="menu-link">
+                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                        <div data-i18n="Slider Management">Slider Management</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ Route::is('faq') ? 'active' : '' }}">
+                    <a href="{{ route('faq') }}" class="menu-link">
+                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                        <div data-i18n="FAQs">FAQs Management</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ Route::is('studentquery') ? 'active' : '' }}">
+                    <a href="{{ route('studentquery') }}" class="menu-link">
+                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                        <div data-i18n="Student Queries">Student Queries</div>
+                    </a>
+                </li>
+                <li class="menu-item {{ Route::is('contact') ? 'active' : '' }}">
+                    <a href="{{ route('contact') }}" class="menu-link">
+                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                        <div data-i18n="Student Queries">Contact & Support</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <!-- System Settings -->
+        <li class="menu-header small text-uppercase mt-4">
+            <span class="menu-header-text">System Settings</span>
+        </li>
+
+        <!-- Permissions -->
+        <li class="menu-item {{ Route::is('users*') ? 'active open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-shield-check"></i>
+                <div data-i18n="Permissions">Permissions</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item {{ Route::is('users') ? 'active' : '' }}">
                     <a href="{{ route('users') }}" class="menu-link">
+                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                         <div data-i18n="Users">Users</div>
                     </a>
                 </li>
-                <li class="menu-item">
+                <li class="menu-item {{ Route::is('users.permissions') ? 'active' : '' }}">
                     <a href="{{ route('users.permissions') }}" class="menu-link">
-                        <div data-i18n="User Permission">User Permission</div>
+                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                        <div data-i18n="User Permissions">User Permissions</div>
                     </a>
                 </li>
-                <li class="menu-item">
+                <li class="menu-item {{ Route::is('users.roles') ? 'active' : '' }}">
                     <a href="{{ route('users.roles') }}" class="menu-link">
-                        <div data-i18n="Role Permission">Role Permission</div>
+                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                        <div data-i18n="Role Permissions">Role Permissions</div>
                     </a>
                 </li>
             </ul>
@@ -479,6 +197,29 @@
     </ul>
 </aside>
 
+<style>
+    .menu-bullet .bullet {
+        background-color: currentColor;
+        width: 4px;
+        height: 4px;
+    }
+    .menu-item.active > .menu-link {
+        background: rgba(var(--bs-primary-rgb), 0.1);
+        color: var(--bs-primary);
+    }
+    .menu-sub .menu-item.active .menu-link {
+        font-weight: 500;
+    }
+    .menu-divider {
+        height: 1px;
+        background-color: rgba(0,0,0,0.1);
+        margin: 0.5rem 1rem;
+    }
+    .menu-header {
+        opacity: 0.6;
+        pointer-events: none;
+    }
+</style>
 
 <!-- Home Icons:
 
