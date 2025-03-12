@@ -32,6 +32,7 @@ Route::post('/category-courses',[CategoryController::class,'getCategoryCourses']
 Route::get('/course-wise-subjects', [SubjectController::class,'getCourseSubjects']);
 Route::post('/student-update', [StudentsController::class,'updateStudents']);
 
+Route::get('/subect-wise-content/{subject_id}',[SubjectController::class,'getVideoNotesBySubject']);
 
 Route::post('/pay', [EasebuzzPaymentController::class, 'initiatePayment'])->name('easebuzz.pay');
 Route::post('/payment-success', [EasebuzzPaymentController::class, 'paymentSuccess'])->name('easebuzz.success');
