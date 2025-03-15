@@ -34,6 +34,10 @@ class StudentsController extends Controller
         }
         return view('students.index');
     }
+    /**
+     * Get all course wise subjects and subject wise e-books, notes, videos API
+     */
+ 
 
     public function getStudentDetails($mobile)
     {
@@ -303,6 +307,8 @@ class StudentsController extends Controller
                 'pincode' => $request->pincode,
                 'country' => $request->country,
                 'highest_qualification' => $request->highest_qualification,
+                'image' => $imagePath,
+                'signature' => $signaturePath,
             ]);
 
             return response()->json([
@@ -320,8 +326,17 @@ class StudentsController extends Controller
 
     public function updateStudents(Request $request)
     {
- 
+        
         try {
+            $imagePath = null;
+            if ($request->hasFile('image')) {
+                $imagePath = $this->uploadImage($request->file('image'), 'students/images');
+            }
+            $signaturePath = null;
+            if ($request->hasFile('signature')) {
+                $signaturePath = $this->uploadImage($request->file('signature'), 'students/signatures');
+            }
+
             $data = [
                 'name' => $request->name,
                 'email' => $request->email,
@@ -338,19 +353,23 @@ class StudentsController extends Controller
                 'heighest_qualification' => $request->heighest_qualification,
             ];
             $student = Students::findOrFail($request->id);
+            
             if ($student) {
+                $student->update($data);
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Student updated successfully!',
+                    'data' => $data
+                ], 200);
+           
+            }else{
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Student Not Found!',
                     'data' =>$request->all()
-                ], 200);
+                ], 200);    
             }
-            $student->update($data);
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Student updated successfully!',
-                'data' => $data
-            ], 200);
+         
 
         } catch (\Exception $e) {
             return response()->json([

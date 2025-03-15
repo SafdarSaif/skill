@@ -50,4 +50,9 @@ class Course extends Model
         return $this->belongsToMany(Students::class, 'student_courses', 'course_id', 'student_id');
     }
 
+    public function subjects()
+    {
+        return $this->hasMany(Subject::class)->with('videos','notes');
+    }
+
 }

@@ -22,6 +22,7 @@ Route::get('/user', function (Request $request) {
 
 Route::get('/get-otp/{mobile_no}',[OTPController::class,'getOtp'])->name('get-otp');
 Route::get('/verify-otp/{otp}/{mobile_no}',[OTPController::class,'verifyOtp']);
+Route::get('/resend-otp/{mobile_no}',[OTPController::class,'reSendOtp']);
 Route::get('/students-details/{mobile_no}',[StudentsController::class,'getStudentDetails']);
 Route::post('/students-registration',[StudentsController::class,'registerStudent']);
 Route::get('/students-all-details/{mobile_no}',[StudentsController::class,'StudentAllDetaills']);
@@ -39,6 +40,7 @@ Route::post('/student-update', [StudentsController::class,'updateStudents']);
 Route::get('/all-faq', [FaqController::class, 'getFaqs'])->name('all-faq');
 Route::get('/all-news', [NewsUpdateController::class, 'getNew'])->name('all-news');
 Route::post('/store-leads', [ContactController::class, 'store'])->name('store-leads');
+Route::get('/subect-wise-content/{subject_id}',[SubjectController::class,'getVideoNotesBySubject']);
 
 
 
