@@ -53,3 +53,6 @@ Route::post('/easebuzz/initiate', [EasebuzzPaymentController::class, 'initiate_p
 Route::post('/easebuzz/response', [EasebuzzPaymentController::class, 'ebz_response']);
 Route::post('/easebuzz/success', [EasebuzzPaymentController::class, 'payment_success']);
 Route::post('/easebuzz/failure', [EasebuzzPaymentController::class, 'payment_failure']);
+
+Route::get('type-wise-course',[CourseController::class,'getCourseByType']);
+Route::get('type-wise-course/{course_type_id}',[CourseController::class,'getCourseByType']);
