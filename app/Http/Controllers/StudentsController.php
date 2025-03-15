@@ -34,6 +34,10 @@ class StudentsController extends Controller
         }
         return view('students.index');
     }
+    /**
+     * Get all course wise subjects and subject wise e-books, notes, videos API
+     */
+ 
 
     public function getStudentDetails($mobile)
     {
@@ -324,18 +328,14 @@ class StudentsController extends Controller
     {
         
         try {
-
             $imagePath = null;
             if ($request->hasFile('image')) {
                 $imagePath = $this->uploadImage($request->file('image'), 'students/images');
             }
-
-            // Handle signature upload
             $signaturePath = null;
             if ($request->hasFile('signature')) {
                 $signaturePath = $this->uploadImage($request->file('signature'), 'students/signatures');
             }
-
 
             $data = [
                 'name' => $request->name,

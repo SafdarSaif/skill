@@ -44,6 +44,8 @@ Route::post('/store-leads', [ContactController::class, 'store'])->name('store-le
 
 Route::get('/subect-wise-content/{subject_id}',[SubjectController::class,'getVideoNotesBySubject']);
 
+
+
 Route::post('/pay', [EasebuzzPaymentController::class, 'initiatePayment'])->name('easebuzz.pay');
 Route::post('/payment-success', [EasebuzzPaymentController::class, 'paymentSuccess'])->name('easebuzz.success');
 Route::post('/payment-failure', [EasebuzzPaymentController::class, 'paymentFailure'])->name('easebuzz.failure');
