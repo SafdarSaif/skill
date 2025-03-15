@@ -10,7 +10,7 @@
             <i class="ti ti-x d-block d-xl-none ti-md align-middle"></i>
         </a>
     </div>
-    
+
     <div class="menu-inner-shadow"></div>
 
     <ul class="menu-inner py-3">
@@ -153,6 +153,12 @@
                         <div data-i18n="Student Queries">Student Queries</div>
                     </a>
                 </li>
+                <li class="menu-item {{ Route::is('term') ? 'active' : '' }}">
+                    <a href="{{ route('term') }}" class="menu-link">
+                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                        <div data-i18n="Terms and Condition">Terms and Condition</div>
+                    </a>
+                </li>
                 <li class="menu-item {{ Route::is('contact') ? 'active' : '' }}">
                     <a href="{{ route('contact') }}" class="menu-link">
                         <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
@@ -203,18 +209,22 @@
         width: 4px;
         height: 4px;
     }
-    .menu-item.active > .menu-link {
+
+    .menu-item.active>.menu-link {
         background: rgba(var(--bs-primary-rgb), 0.1);
         color: var(--bs-primary);
     }
+
     .menu-sub .menu-item.active .menu-link {
         font-weight: 500;
     }
+
     .menu-divider {
         height: 1px;
-        background-color: rgba(0,0,0,0.1);
+        background-color: rgba(0, 0, 0, 0.1);
         margin: 0.5rem 1rem;
     }
+
     .menu-header {
         opacity: 0.6;
         pointer-events: none;

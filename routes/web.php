@@ -19,6 +19,8 @@ use App\Http\Controllers\SubjectVideoController;
 use App\Http\Controllers\SubjectNoteController;
 use App\Http\Controllers\EbookController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\PrivacyPolicyController;
+use App\Http\Controllers\TermsConditionController;
 
 
 // Route::get('/', function () {
@@ -211,3 +213,13 @@ Route::get('/ebook/edit/{id}', [EbookController::class, 'edit'])->name('ebook.ed
 Route::post('/ebook/update/{id}', [EbookController::class, 'update'])->name('ebook.update');
 Route::delete('/ebook/destroy/{id}', [EbookController::class, 'destroy'])->name('ebook.destroy');
 Route::get('ebook/status/{id}', [EbookController::class, 'status'])->name('ebook.status');
+
+
+// Term and Condition
+Route::get('/term', [TermsConditionController::class, 'index'])->name('term');
+Route::get('/term/create', [TermsConditionController::class, 'create'])->name('term.create');
+Route::post('/term/store', [TermsConditionController::class, 'store'])->name('term.store');
+Route::get('/term/edit/{id}', [TermsConditionController::class, 'edit'])->name('term.edit');
+Route::post('/term/update/{id}', [TermsConditionController::class, 'update'])->name('term.update');
+Route::delete('/term/destroy/{id}', [TermsConditionController::class, 'destroy'])->name('term.destroy');
+Route::get('term/status/{id}', [TermsConditionController::class, 'status'])->name('term.status');
