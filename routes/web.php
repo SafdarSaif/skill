@@ -18,6 +18,7 @@ use App\Http\Controllers\CourseTypeController;
 use App\Http\Controllers\SubjectVideoController;
 use App\Http\Controllers\SubjectNoteController;
 use App\Http\Controllers\EbookController;
+use App\Http\Controllers\ContactController;
 
 
 // Route::get('/', function () {
@@ -161,6 +162,14 @@ Route::get('/faq/edit/{id}', [FaqController::class, 'edit'])->name('faq.edit');
 Route::post('/faq/update/{id}', [FaqController::class, 'update'])->name('faq.update');
 Route::delete('/faq/destroy/{id}', [FaqController::class, 'destroy'])->name('faq.destroy');
 Route::get('faq/status/{id}', [FaqController::class, 'status'])->name('faq.status');
+
+Route::get('/contact', [ContactController::class, 'index'])->name('contact');
+// Route::get('/contact/create', [ContactController::class, 'create'])->name('contact.create');
+// Route::post('/contact/store', [ContactController::class, 'store'])->name('contact.store');
+// Route::get('/contact/edit/{id}', [ContactController::class, 'edit'])->name('contact.edit');
+// Route::post('/contact/update/{id}', [ContactController::class, 'update'])->name('contact.update');
+// Route::delete('/contact/destroy/{id}', [ContactController::class, 'destroy'])->name('contact.destroy');
+// Route::get('contact/status/{id}', [ContactController::class, 'status'])->name('contact.status');
 
 
 
