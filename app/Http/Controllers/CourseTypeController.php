@@ -47,7 +47,6 @@ class CourseTypeController extends Controller
         // Validate the request
         $validator = Validator::make($request->all(), [
             'name' => 'required|min:2|max:255',
-
         ]);
 
         if ($validator->fails()) {
@@ -161,7 +160,31 @@ class CourseTypeController extends Controller
             } else {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Course not found',
+                    'message' => 'Course Type not found',
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+    public function homePageStatus($id)
+    {
+        try {
+            $courseType = CourseType::findOrFail($id);
+            if ($courseType) {
+                $courseType->is_active_on_home = $courseType->is_active_on_home == 1 ? 0 : 1;
+                $courseType->save();
+                return response()->json([
+                    'status' => 'success',
+                    'message' => $courseType->name . ' updated successfully!',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Course Type not found',
                 ]);
             }
         } catch (\Exception $e) {
