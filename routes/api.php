@@ -36,16 +36,13 @@ Route::get('/course-wise-subjects', [SubjectController::class,'getCourseSubjects
 Route::get('/course-wise-subjects/{column}/{value}', [SubjectController::class,'getCourseSubjects']);
 Route::post('/student-update', [StudentsController::class,'updateStudents']);
 
-<<<<<<< HEAD
 // API for Content
 Route::get('/all-faq', [FaqController::class, 'getFaqs'])->name('all-faq');
 Route::get('/all-news', [NewsUpdateController::class, 'getNew'])->name('all-news');
 Route::post('/store-leads', [ContactController::class, 'store'])->name('store-leads');
 
 
-=======
 Route::get('/subect-wise-content/{subject_id}',[SubjectController::class,'getVideoNotesBySubject']);
->>>>>>> 2eb7a36adb61c8dc96cf0afae031435081eb6b33
 
 Route::post('/pay', [EasebuzzPaymentController::class, 'initiatePayment'])->name('easebuzz.pay');
 Route::post('/payment-success', [EasebuzzPaymentController::class, 'paymentSuccess'])->name('easebuzz.success');
