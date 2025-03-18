@@ -316,12 +316,18 @@ class CourseController extends Controller
 
     public function getCourseByType($typeId='')
     {
-        $courses = CourseType::where('is_active_on_home',1)->with('courses');
-        if($typeId!='')
-        {
-            $courses->where('id',$typeId);
+        try{
+            $courses = CourseType::where('is_active_on_home',1)->with('courses');
+            if($typeId!='')
+            {
+                $courses->where('id',$typeId);
+            }
+            $courses = $courses->get();
+            return response()->json(['status'=>'error','message'=>'All courses','data'=>$courses]);
         }
-        $courses = $courses->get();
-        dd($courses->toArray());
+        catch(Exception $e)
+        {
+            return response()->json(['status'=>'error','message'=>$e->getMessage()]);
+        }
     }
 }
