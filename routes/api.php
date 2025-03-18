@@ -10,6 +10,8 @@ use App\Http\Controllers\FaqController;
 use App\Http\Controllers\NewsUpdateController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\PrivacyPolicyController;
+use App\Http\Controllers\TermsConditionController;
 // use App\Http\Controllers\EasebuzzController;
 
 use App\Models\Students;
@@ -41,8 +43,8 @@ Route::get('/all-faq', [FaqController::class, 'getFaqs'])->name('all-faq');
 Route::get('/all-news', [NewsUpdateController::class, 'getNew'])->name('all-news');
 Route::post('/store-leads', [ContactController::class, 'store'])->name('store-leads');
 Route::get('/subect-wise-content/{subject_id}',[SubjectController::class,'getVideoNotesBySubject']);
-
-
+Route::get('/get-privacy', [PrivacyPolicyController::class, 'getPrivacy'])->name('get-privacy');
+Route::get('/get-terms', [TermsConditionController::class, 'getTerms'])->name('get-terms');
 
 Route::post('/pay', [EasebuzzPaymentController::class, 'initiatePayment'])->name('easebuzz.pay');
 Route::post('/payment-success', [EasebuzzPaymentController::class, 'paymentSuccess'])->name('easebuzz.success');

@@ -223,3 +223,14 @@ Route::get('/term/edit/{id}', [TermsConditionController::class, 'edit'])->name('
 Route::post('/term/update/{id}', [TermsConditionController::class, 'update'])->name('term.update');
 Route::delete('/term/destroy/{id}', [TermsConditionController::class, 'destroy'])->name('term.destroy');
 Route::get('term/status/{id}', [TermsConditionController::class, 'status'])->name('term.status');
+
+
+
+// Privacy Policy
+Route::get('/privacy', [PrivacyPolicyController::class, 'index'])->name('privacy');
+Route::get('/privacy/create', [PrivacyPolicyController::class, 'create'])->name('privacy.create');
+Route::post('/privacy/store', [PrivacyPolicyController::class, 'store'])->name('privacy.store');
+Route::get('/privacy/edit/{id}', [PrivacyPolicyController::class, 'edit'])->name('privacy.edit');
+Route::post('/privacy/update/{id}', [PrivacyPolicyController::class, 'update'])->name('privacy.update');
+Route::delete('/privacy/destroy/{id}', [PrivacyPolicyController::class, 'destroy'])->name('privacy.destroy');
+Route::get('privacy/status/{id}', [PrivacyPolicyController::class, 'status'])->name('privacy.status');

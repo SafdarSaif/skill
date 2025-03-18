@@ -10,6 +10,26 @@ use Illuminate\Support\Facades\Validator;
 
 class TermsConditionController extends Controller
 {
+
+    /**
+     * Get all Privacy for API request
+     */
+    public function getTerms()
+    {
+        try {
+            $term = TermsCondition::where('status', 1)->get()->toArray();
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $term
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong! ' . $e->getMessage()
+            ], 500);
+        }
+    }
     /**
      * Display a listing of the resource.
      */

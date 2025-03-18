@@ -281,20 +281,20 @@ class CategoryController extends Controller
             ]);
         }
     }
-    public function categories(Request $request){
-        try{
+    public function categories(Request $request)
+    {
+        try {
             $data = Category::all();
-            if($data){
-                return response()->json(['status'=>"success", 'message'=>"All Category Lists", "data"=>$data]);
-            }else{
-                return response()->json(['status'=>"error", 'message'=>"No Category Found"]);
+            if ($data) {
+                return response()->json(['status' => "success", 'message' => "All Category Lists", "data" => $data]);
+            } else {
+                return response()->json(['status' => "error", 'message' => "No Category Found"]);
             }
-        }catch(Exception $e){
+        } catch (Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => $e->getMessage(),
             ]);
         }
     }
-
 }

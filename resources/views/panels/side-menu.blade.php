@@ -159,6 +159,12 @@
                         <div data-i18n="Terms and Condition">Terms and Condition</div>
                     </a>
                 </li>
+                <li class="menu-item {{ Route::is('privacy') ? 'active' : '' }}">
+                    <a href="{{ route('privacy') }}" class="menu-link">
+                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                        <div data-i18n="Privacy Policy">Privacy Policy</div>
+                    </a>
+                </li>
                 <li class="menu-item {{ Route::is('contact') ? 'active' : '' }}">
                     <a href="{{ route('contact') }}" class="menu-link">
                         <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
