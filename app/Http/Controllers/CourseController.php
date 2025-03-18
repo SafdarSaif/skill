@@ -309,4 +309,21 @@ class CourseController extends Controller
         $courseAmount = Course::where('id', $courseId)->pluck('price')->first();
         return response()->json(['status' => 'success', 'price' => $courseAmount]);
     }
+
+    public function getCourseByType($typeId='')
+    {
+        try{
+            $courses = CourseType::where('is_active_on_home',1)->with('courses');
+            if($typeId!='')
+            {
+                $courses->where('id',$typeId);
+            }
+            $courses = $courses->get();
+            return response()->json(['status'=>'error','message'=>'All courses','data'=>$courses]);
+        }
+        catch(Exception $e)
+        {
+            return response()->json(['status'=>'error','message'=>$e->getMessage()]);
+        }
+    }
 }

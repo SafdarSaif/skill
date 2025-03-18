@@ -12,6 +12,7 @@
                         { data: 'DT_RowIndex' },
                         { data: 'name' },
                         { data: 'status' },
+                        { data: 'is_active_on_home' },
                         { data: '' }
                     ],
                     columnDefs: [
@@ -39,6 +40,21 @@
                                     '<span class="switch-off"><i class="ti ti-x"></i></span>' +
                                     '</span>' +
                                     '<span class="switch-label">' + (full['status'] == 1 ? 'Yes' : 'No') + '</span>' +
+                                    '</label>';
+                            }
+                        },
+                        {
+                            targets: 3,
+                            render: function(data, type, full, meta) {
+                                var checked = full['is_active_on_home'] == 1 ? 'checked' : '';
+                                return '<label class="switch">' +
+                                    '<input type="checkbox" ' + checked +
+                                    ' onclick="updateActiveStatus(\'/coursetype/is_active_on_home/' + full['id'] + '\', \'coursetype-table\')" class="switch-input">' +
+                                    '<span class="switch-toggle-slider">' +
+                                    '<span class="switch-on"><i class="ti ti-check"></i></span>' +
+                                    '<span class="switch-off"><i class="ti ti-x"></i></span>' +
+                                    '</span>' +
+                                    '<span class="switch-label">' + (full['is_active_on_home'] == 1 ? 'Yes' : 'No') + '</span>' +
                                     '</label>';
                             }
                         },
@@ -121,6 +137,7 @@
                         <th>No.</th>
                         <th>Name</th>
                         <th>Status</th>
+                        <th>Is Active On Home Page</th>
                         <th>Actions</th>
                     </tr>
                 </thead>

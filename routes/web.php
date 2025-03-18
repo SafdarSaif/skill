@@ -93,6 +93,7 @@ Route::get('/coursetype/edit/{id}', [CourseTypeController::class, 'edit'])->name
 Route::post('/coursetype/update/{id}', [CourseTypeController::class, 'update'])->name('coursetype.update');
 Route::delete('/coursetype/destroy/{id}', [CourseTypeController::class, 'destroy'])->name('coursetype.destroy');
 Route::get('coursetype/status/{id}', [CourseTypeController::class, 'status'])->name('coursetype.status');
+Route::get('coursetype/is_active_on_home/{id}', [CourseTypeController::class, 'homePageStatus'])->name('coursetype.status');
 
 
 

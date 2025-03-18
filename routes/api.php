@@ -61,3 +61,5 @@ Route::post('/easebuzz/failure', [EasebuzzPaymentController::class, 'payment_fai
 
 Route::post('/update-progress', [StudentProgressController::class, 'updateProgress'])->name('update-progress');
 Route::get('/get-progress', [StudentProgressController::class, 'getProgress'])->name('get-progress');
+Route::get('type-wise-course',[CourseController::class,'getCourseByType']);
+Route::get('type-wise-course/{course_type_id}',[CourseController::class,'getCourseByType']);
