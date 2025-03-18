@@ -12,6 +12,7 @@ use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PrivacyPolicyController;
 use App\Http\Controllers\TermsConditionController;
+use App\Http\Controllers\StudentProgressController;
 // use App\Http\Controllers\EasebuzzController;
 
 use App\Models\Students;
@@ -55,3 +56,8 @@ Route::post('/easebuzz/initiate', [EasebuzzPaymentController::class, 'initiate_p
 Route::post('/easebuzz/response', [EasebuzzPaymentController::class, 'ebz_response']);
 Route::post('/easebuzz/success', [EasebuzzPaymentController::class, 'payment_success']);
 Route::post('/easebuzz/failure', [EasebuzzPaymentController::class, 'payment_failure']);
+
+
+
+Route::post('/update-progress', [StudentProgressController::class, 'updateProgress'])->name('update-progress');
+Route::get('/get-progress', [StudentProgressController::class, 'getProgress'])->name('get-progress');

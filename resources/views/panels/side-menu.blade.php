@@ -46,6 +46,12 @@
                         <div data-i18n="Student Course">Student Course</div>
                     </a>
                 </li>
+                <li class="menu-item {{ Route::is('studentprogress') ? 'active' : '' }}">
+                    <a href="{{ route('studentprogress') }}" class="menu-link">
+                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                        <div data-i18n="Student Progress">Student Progress</div>
+                    </a>
+                </li>
             </ul>
         </li>
 

@@ -1,0 +1,37 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class StudentProgress extends Model
+{
+    use HasFactory;
+
+    protected $table = 'student_progress';
+
+    protected $fillable = [
+        'student_id', 
+        'video_id', 
+        'subject_id', 
+        'course_id', 
+        'subject_name', 
+        'total_duration', 
+        'watch_time', 
+        'progress'
+    ];
+
+
+     // Define Relationship with Student Model
+     public function student()
+     {
+         return $this->belongsTo(Students::class, 'student_id');
+     }
+ 
+     // Define Relationship with Course Model
+     public function course()
+     {
+         return $this->belongsTo(Course::class, 'course_id');
+     }
+}

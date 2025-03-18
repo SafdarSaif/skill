@@ -21,6 +21,7 @@ use App\Http\Controllers\EbookController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PrivacyPolicyController;
 use App\Http\Controllers\TermsConditionController;
+use App\Http\Controllers\StudentProgressController;
 
 
 // Route::get('/', function () {
@@ -234,3 +235,14 @@ Route::get('/privacy/edit/{id}', [PrivacyPolicyController::class, 'edit'])->name
 Route::post('/privacy/update/{id}', [PrivacyPolicyController::class, 'update'])->name('privacy.update');
 Route::delete('/privacy/destroy/{id}', [PrivacyPolicyController::class, 'destroy'])->name('privacy.destroy');
 Route::get('privacy/status/{id}', [PrivacyPolicyController::class, 'status'])->name('privacy.status');
+
+
+
+//Student Progress
+Route::get('/studentprogress', [StudentProgressController::class, 'index'])->name('studentprogress');
+Route::get('/studentprogress/create', [StudentProgressController::class, 'create'])->name('studentprogress.create');
+Route::post('/studentprogress/store', [StudentProgressController::class, 'store'])->name('studentprogress.store');
+Route::get('/studentprogress/edit/{id}', [StudentProgressController::class, 'edit'])->name('studentprogress.edit');
+Route::post('/studentprogress/update/{id}', [StudentProgressController::class, 'update'])->name('studentprogress.update');
+Route::delete('/studentprogress/destroy/{id}', [StudentProgressController::class, 'destroy'])->name('studentprogress.destroy');
+Route::get('studentprogress/status/{id}', [StudentProgressController::class, 'status'])->name('studentprogress.status');
