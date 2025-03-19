@@ -323,7 +323,7 @@ class CourseController extends Controller
                 $courses->where('id',$typeId);
             }
             $courses = $courses->get();
-            return response()->json(['status'=>'error','message'=>'All courses','data'=>$courses]);
+            return response()->json(['status'=>'success','message'=>'All courses','data'=>$courses]);
         }
         catch(Exception $e)
         {

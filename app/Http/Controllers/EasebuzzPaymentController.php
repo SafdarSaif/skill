@@ -103,12 +103,6 @@ class EasebuzzPaymentController extends Controller
 
     public function paymentFailure(Request $request)
     {
-<<<<<<< HEAD
-        
-        Log::info('Payment Failure:', $request->all());
-
-        return response()->json(['status' => 'failed', 'message' => 'Payment failed!', 'data' => $request->all()]);
-=======
         $payment = StudentPayment::where('transaction_id', $request->txnid)->first();
         if ($payment) {
             $payment->update([
@@ -131,6 +125,5 @@ class EasebuzzPaymentController extends Controller
             ], 404);
         }
 
->>>>>>> a07d4b281ffa9177039ad317d15a96865bf3f1fb
     }
 }

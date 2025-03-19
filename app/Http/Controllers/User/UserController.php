@@ -22,7 +22,8 @@ use Illuminate\Support\Facades\File;
 
 class UserController extends Controller
 {
-  public function index(Request $request){
+  public function index(Request $request)
+  {
     $user = Auth::user();
     if (Auth::check() && Auth::user()->hasPermissionTo('view users')) {
       if ($request->ajax()) {
@@ -36,7 +37,7 @@ class UserController extends Controller
             return $role;
           })
           ->editColumn('created_at', function ($data) {
-          return Carbon::createFromFormat('Y-m-d H:i:s', $data->created_at)->format('d-m-Y h:i A');
+            return Carbon::createFromFormat('Y-m-d H:i:s', $data->created_at)->format('d-m-Y h:i A');
           })
           ->make(true);
       }
@@ -57,60 +58,110 @@ class UserController extends Controller
   }
 
   public function store(UserRequest $request)
-{
+  {
     if (!Auth::check() || !Auth::user()->hasPermissionTo('create users')) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Unauthorized access!',
-        ], 403);
+      return response()->json([
+        'status' => 'error',
+        'message' => 'Unauthorized access!',
+      ], 403);
     }
 
     try {
-        // Create the user
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'mobile' => $request->mobile,
-            'password' => Hash::make($request->password),
+      // Create the user
+      $user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'mobile' => $request->mobile,
+        'password' => Hash::make($request->password),
+      ]);
+
+      // Assign Role
+      if ($request->role_id) {
+        $role = Role::find($request->role_id);
+        if ($role) {
+          $user->assignRole([$role->id]);
+        }
+      }
+
+      // Handle Avatar Upload
+      if ($request->hasFile('avatar')) {
+        $avatarPath = $this->uploadImage($request->file('avatar'), 'uploads/avatars');
+        $user->update([
+          'avatar' => $avatarPath,
+          'profile_photo_path' => $avatarPath
         ]);
+      }
 
-        // Assign Role
-        if ($request->role_id) {
-            $role = Role::find($request->role_id);
-            if ($role) {
-                $user->assignRole([$role->id]);
-            }
-        }
 
-        // Handle Avatar Upload
-        if ($request->hasFile('avatar')) {
-            $destinationPath = public_path('uploads/avatars');
+      
 
-            // Create directory if not exists
-            if (!File::exists($destinationPath)) {
-                File::makeDirectory($destinationPath, 0777, true, true);
-            }
-
-            $filename = time() . '_' . uniqid() . '.' . $request->file('avatar')->getClientOriginalExtension();
-            $request->file('avatar')->move($destinationPath, $filename);
-            $avatarPath = 'uploads/avatars/' . $filename;
-
-            // Update user avatar path
-            $user->update(['avatar' => $avatarPath]);
-        }
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'User created successfully!',
-            'user' => $user
-        ], 201);
+      return response()->json([
+        'status' => 'success',
+        'message' => 'User created successfully!',
+        'user' => $user
+      ], 201);
     } catch (\Exception $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Something went wrong: ' . $e->getMessage(),
-        ], 500);
+      return response()->json([
+        'status' => 'error',
+        'message' => 'Something went wrong: ' . $e->getMessage(),
+      ], 500);
     }
-}
+  }
+  // public function store(UserRequest $request)
+  // {
+  //   if (!Auth::check() || !Auth::user()->hasPermissionTo('create users')) {
+  //     return response()->json([
+  //       'status' => 'error',
+  //       'message' => 'Unauthorized access!',
+  //     ], 403);
+  //   }
+
+  //   try {
+
+  //     $user = User::create([
+  //       'name' => $request->name,
+  //       'email' => $request->email,
+  //       'mobile' => $request->mobile,
+  //       'password' => Hash::make($request->password),
+  //     ]);
+
+  //     // Assign Role
+  //     if ($request->role_id) {
+  //       $role = Role::find($request->role_id);
+  //       if ($role) {
+  //         $user->assignRole([$role->id]);
+  //       }
+  //     }
+
+  //     // Handle Avatar Upload
+  //     if ($request->hasFile('avatar')) {
+  //       $destinationPath = public_path('uploads/avatars');
+
+  //       // Create directory if not exists
+  //       if (!File::exists($destinationPath)) {
+  //         File::makeDirectory($destinationPath, 0777, true, true);
+  //       }
+
+  //       $filename = time() . '_' . uniqid() . '.' . $request->file('avatar')->getClientOriginalExtension();
+  //       $request->file('avatar')->move($destinationPath, $filename);
+  //       $avatarPath = 'uploads/avatars/' . $filename;
+
+  //       // Update user avatar path
+  //       $user->update(['avatar' => $avatarPath]);
+  //     }
+
+  //     return response()->json([
+  //       'status' => 'success',
+  //       'message' => 'User created successfully!',
+  //       'user' => $user
+  //     ], 201);
+  //   } catch (\Exception $e) {
+  //     return response()->json([
+  //       'status' => 'error',
+  //       'message' => 'Something went wrong: ' . $e->getMessage(),
+  //     ], 500);
+  //   }
+  // }
 
   // public function store(UserRequest $request)
   // {

@@ -10,6 +10,9 @@ use App\Http\Controllers\FaqController;
 use App\Http\Controllers\NewsUpdateController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\PrivacyPolicyController;
+use App\Http\Controllers\TermsConditionController;
+use App\Http\Controllers\StudentProgressController;
 // use App\Http\Controllers\EasebuzzController;
 
 use App\Models\Students;
@@ -41,8 +44,8 @@ Route::get('/all-faq', [FaqController::class, 'getFaqs'])->name('all-faq');
 Route::get('/all-news', [NewsUpdateController::class, 'getNew'])->name('all-news');
 Route::post('/store-leads', [ContactController::class, 'store'])->name('store-leads');
 Route::get('/subect-wise-content/{subject_id}',[SubjectController::class,'getVideoNotesBySubject']);
-
-
+Route::get('/get-privacy', [PrivacyPolicyController::class, 'getPrivacy'])->name('get-privacy');
+Route::get('/get-terms', [TermsConditionController::class, 'getTerms'])->name('get-terms');
 
 Route::post('/pay', [EasebuzzPaymentController::class, 'initiatePayment'])->name('easebuzz.pay');
 Route::post('/payment-success', [EasebuzzPaymentController::class, 'paymentSuccess'])->name('easebuzz.success');
@@ -54,5 +57,9 @@ Route::post('/easebuzz/response', [EasebuzzPaymentController::class, 'ebz_respon
 Route::post('/easebuzz/success', [EasebuzzPaymentController::class, 'payment_success']);
 Route::post('/easebuzz/failure', [EasebuzzPaymentController::class, 'payment_failure']);
 
+
+
+Route::post('/update-progress', [StudentProgressController::class, 'updateProgress'])->name('update-progress');
+Route::get('/get-progress', [StudentProgressController::class, 'getProgress'])->name('get-progress');
 Route::get('type-wise-course',[CourseController::class,'getCourseByType']);
 Route::get('type-wise-course/{course_type_id}',[CourseController::class,'getCourseByType']);

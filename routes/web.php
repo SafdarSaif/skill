@@ -19,6 +19,9 @@ use App\Http\Controllers\SubjectVideoController;
 use App\Http\Controllers\SubjectNoteController;
 use App\Http\Controllers\EbookController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\PrivacyPolicyController;
+use App\Http\Controllers\TermsConditionController;
+use App\Http\Controllers\StudentProgressController;
 
 
 // Route::get('/', function () {
@@ -212,3 +215,35 @@ Route::get('/ebook/edit/{id}', [EbookController::class, 'edit'])->name('ebook.ed
 Route::post('/ebook/update/{id}', [EbookController::class, 'update'])->name('ebook.update');
 Route::delete('/ebook/destroy/{id}', [EbookController::class, 'destroy'])->name('ebook.destroy');
 Route::get('ebook/status/{id}', [EbookController::class, 'status'])->name('ebook.status');
+
+
+// Term and Condition
+Route::get('/term', [TermsConditionController::class, 'index'])->name('term');
+Route::get('/term/create', [TermsConditionController::class, 'create'])->name('term.create');
+Route::post('/term/store', [TermsConditionController::class, 'store'])->name('term.store');
+Route::get('/term/edit/{id}', [TermsConditionController::class, 'edit'])->name('term.edit');
+Route::post('/term/update/{id}', [TermsConditionController::class, 'update'])->name('term.update');
+Route::delete('/term/destroy/{id}', [TermsConditionController::class, 'destroy'])->name('term.destroy');
+Route::get('term/status/{id}', [TermsConditionController::class, 'status'])->name('term.status');
+
+
+
+// Privacy Policy
+Route::get('/privacy', [PrivacyPolicyController::class, 'index'])->name('privacy');
+Route::get('/privacy/create', [PrivacyPolicyController::class, 'create'])->name('privacy.create');
+Route::post('/privacy/store', [PrivacyPolicyController::class, 'store'])->name('privacy.store');
+Route::get('/privacy/edit/{id}', [PrivacyPolicyController::class, 'edit'])->name('privacy.edit');
+Route::post('/privacy/update/{id}', [PrivacyPolicyController::class, 'update'])->name('privacy.update');
+Route::delete('/privacy/destroy/{id}', [PrivacyPolicyController::class, 'destroy'])->name('privacy.destroy');
+Route::get('privacy/status/{id}', [PrivacyPolicyController::class, 'status'])->name('privacy.status');
+
+
+
+//Student Progress
+Route::get('/studentprogress', [StudentProgressController::class, 'index'])->name('studentprogress');
+Route::get('/studentprogress/create', [StudentProgressController::class, 'create'])->name('studentprogress.create');
+Route::post('/studentprogress/store', [StudentProgressController::class, 'store'])->name('studentprogress.store');
+Route::get('/studentprogress/edit/{id}', [StudentProgressController::class, 'edit'])->name('studentprogress.edit');
+Route::post('/studentprogress/update/{id}', [StudentProgressController::class, 'update'])->name('studentprogress.update');
+Route::delete('/studentprogress/destroy/{id}', [StudentProgressController::class, 'destroy'])->name('studentprogress.destroy');
+Route::get('studentprogress/status/{id}', [StudentProgressController::class, 'status'])->name('studentprogress.status');
