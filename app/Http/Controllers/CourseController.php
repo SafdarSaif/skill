@@ -314,7 +314,7 @@ class CourseController extends Controller
     public function getCourseByType($typeId = '')
     {
         try {
-            $courses = CourseType::where('is_active_on_home', 1)->with('courses', 'users');
+            $courses = CourseType::where('is_active_on_home', 1)->with('courses');
             if ($typeId != '') {
                 $courses->where('id', $typeId);
             }

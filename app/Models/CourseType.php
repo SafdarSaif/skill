@@ -18,7 +18,7 @@ class CourseType extends Model
 
     public function courses()
     {
-        return $this->hasMany(Course::class,'type_id','id');
+        return $this->hasMany(Course::class,'type_id','id')->with('users');
     }
     public function users()
     {
