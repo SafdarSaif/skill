@@ -20,4 +20,8 @@ class CourseType extends Model
     {
         return $this->hasMany(Course::class,'type_id','id');
     }
+    public function users()
+    {
+        return $this->belongsTo(User::class, 'added_by');
+    }
 }
