@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Students;
+use App\Models\SubjectVideo;
 
 class StudentQueryController extends Controller
 {
@@ -33,7 +35,12 @@ class StudentQueryController extends Controller
      */
     public function create()
     {
-        return view('website.studentquery.create');
+        $student = Students::pluck('name', 'id');
+        $subjectvideo = SubjectVideo::pluck('name', 'id');
+
+        return view('website.studentquery.create',compact('student','subjectvideo'));
+
+
     }
 
     /**
