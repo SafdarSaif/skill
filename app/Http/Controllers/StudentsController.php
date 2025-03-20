@@ -8,6 +8,8 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Carbon;
 use App\Http\Controllers\OTPController;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+
 
 
 
@@ -39,18 +41,128 @@ class StudentsController extends Controller
      */
 
 
+
+    //  API buit by KP
+    // public function getStudentDetails($mobile)
+    // {
+    //     try {
+    //         $student = Students::where('mobile', $mobile)->get();
+    //         if ($student->isEmpty()) {
+    //             //modification get all enrolled courses and show which courses is completed or which are not completed with subject wise videos map with student progess
+    //             return response()->json(['status' => 'error', 'message' => 'No student found with this mobile number']);
+    //         }
+    //         // $student['on_going_courses'] = 34;
+    //         // $student['completed_courses'] = 12;
+    //         return response()->json(['status' => 'success', 'data' => $student]);
+    //     } catch (\Exception $e) {
+    //         return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    //     }
+    // }
+
+
+
+
     public function getStudentDetails($mobile)
     {
         try {
-            $student = Students::where('mobile', $mobile)->get();
-            if ($student->isEmpty()) {
+            $student = Students::where('mobile', $mobile)->with('progress')->first();
+
+            if (!$student) {
                 return response()->json(['status' => 'error', 'message' => 'No student found with this mobile number']);
             }
-            return response()->json(['status' => 'success', 'data' => $student]);
+
+            $onGoingCourses = [];
+            $completedCourses = [];
+
+            foreach ($student->progress as $course) {
+                $courseDetails = [
+                    'course_id' => $course->course_id,
+                    'subject_id' => $course->subject_id,
+                    'subject_name' => $course->subject_name,
+                    'progress' => round($course->progress, 2),
+                    'watch_time' => $course->watch_time,
+                    'total_duration' => $course->total_duration,
+                    'status' => $course->progress >= 90 ? 'Completed' : 'Ongoing'
+                ];
+
+                if ($course->progress >= 90) {
+                    $completedCourses[] = $courseDetails;
+                } else {
+                    $onGoingCourses[] = $courseDetails;
+                }
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'data' => [
+                    'student' => $student,
+                    'on_going_courses' => $onGoingCourses,
+                    'completed_courses' => $completedCourses
+                ]
+            ]);
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
     }
+
+
+    // public function getStudentDetails($mobile)
+    // {
+    //     try {
+    //         $student = Students::where('mobile', $mobile)->first();
+
+    //         if (!$student) {
+    //             return response()->json(['status' => 'error', 'message' => 'No student found with this mobile number']);
+    //         }
+
+
+    //         $courses = DB::table('student_progress')
+    //             ->where('student_id', $student->id)
+    //             ->select(
+    //                 'course_id',
+    //                 'subject_id',
+    //                 'subject_name',
+    //                 DB::raw('SUM(watch_time) as total_watch_time'),
+    //                 DB::raw('SUM(total_duration) as total_video_duration'),
+    //                 DB::raw('AVG(progress) as avg_progress')
+    //             )
+    //             ->groupBy('course_id', 'subject_id', 'subject_name')
+    //             ->get();
+
+    //         $onGoingCourses = [];
+    //         $completedCourses = [];
+
+    //         foreach ($courses as $course) {
+    //             $courseDetails = [
+    //                 'course_id' => $course->course_id,
+    //                 'subject_id' => $course->subject_id,
+    //                 'subject_name' => $course->subject_name,
+    //                 'progress' => round($course->avg_progress, 2),
+    //                 'watch_time' => $course->total_watch_time,
+    //                 'total_duration' => $course->total_video_duration,
+    //                 'status' => $course->avg_progress >= 90 ? 'Completed' : 'Ongoing'
+    //             ];
+
+    //             if ($course->avg_progress >= 90) {
+    //                 $completedCourses[] = $courseDetails;
+    //             } else {
+    //                 $onGoingCourses[] = $courseDetails;
+    //             }
+    //         }
+
+    //         return response()->json([
+    //             'status' => 'success',
+    //             'data' => [
+    //                 'student' => $student,
+    //                 'on_going_courses' => $onGoingCourses,
+    //                 'completed_courses' => $completedCourses
+    //             ]
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    //     }
+    // }
+
 
     public static function StudentAllDetaills($mobile)
     {
@@ -285,7 +397,7 @@ class StudentsController extends Controller
     }
 
 
-    // API form KP
+         // API form KP
     // public function updateStudents(Request $request)
     // {
 

@@ -105,6 +105,7 @@ Route::get('/course/edit/{id}', [CourseController::class, 'edit'])->name('course
 Route::post('/course/update/{id}', [CourseController::class, 'update'])->name('course.update');
 Route::delete('/course/destroy/{id}', [CourseController::class, 'destroy'])->name('course.destroy');
 Route::get('course/status/{id}', [CourseController::class, 'status'])->name('course.status');
+Route::get('course/banner-status/{id}', [CourseController::class, 'bannerStatus'])->name('course.banner-status');
 
 Route::get('/category', [CategoryController::class, 'index'])->name('category');
 Route::get('/category/create', [CategoryController::class, 'create'])->name('category.create');
