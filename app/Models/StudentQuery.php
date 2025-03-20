@@ -9,6 +9,15 @@ class StudentQuery extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'email', 'phone', 'query', 'status'];
+    protected $fillable = [
+        'video_id',
+        'student_id',
+        'name',
+        'email',
+        'phone',
+        'query',
+        'answer',
+        'attachment',
+    ];
 }
 
