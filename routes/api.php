@@ -44,7 +44,6 @@ Route::post('/student-update', [StudentsController::class,'updateStudents']);
 // API for Content
 Route::get('/all-faq', [FaqController::class, 'getFaqs'])->name('all-faq');
 Route::get('/all-news', [NewsUpdateController::class, 'getNew'])->name('all-news');
-Route::post('/store-leads', [ContactController::class, 'store'])->name('store-leads');
 Route::get('/subect-wise-content/{subject_id}/{student_id}',[SubjectController::class,'getVideoNotesBySubject']);
 Route::get('/get-privacy', [PrivacyPolicyController::class, 'getPrivacy'])->name('get-privacy');
 Route::get('/get-terms', [TermsConditionController::class, 'getTerms'])->name('get-terms');
@@ -70,5 +69,10 @@ Route::post('/get-query',[StudentQueryController::class,'getQuery'])->name('get-
 Route::get('/return-response/{student_id}/{video_id}',[StudentQueryController::class,'sndResponse'])->name('return-response');
 
 Route::get('/get-student-progress/{student_id}/{subject_id}/{video_id?}',[StudentProgressController::class,'getStudentProgress'])->name('get-student-progress');
+Route::get('/get-contact', [ContactController::class, 'getContact'])->name('get-contact');
+
+
+
+
 
 
