@@ -141,7 +141,6 @@ class StudentQueryController extends Controller
     // Api for student query
     public function getQuery(Request $request)
     {
-        // Validate the request data
         $validator = Validator::make($request->all(), [
             'video_id' => 'required|exists:subject_videos,id',
             'student_id' => 'required|exists:students,id',
@@ -186,6 +185,121 @@ class StudentQueryController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Failed to add student query: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // public function sndResponse(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'video_id' => 'required|exists:subject_videos,id',
+    //         'student_id' => 'required|exists:students,id',
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => $validator->errors()->first(),
+    //         ], 422);
+    //     }
+
+    //     try {
+    //         $queries = StudentQuery::where('video_id', $request->video_id)
+    //             ->where('student_id', $request->student_id)
+    //             ->get()
+    //             ->map(function ($query) {
+    //                 return [
+    //                     'id' => $query->id,
+    //                     'video_id' => $query->video_id,
+    //                     'student_id' => $query->student_id,
+    //                     'name' => $query->name,
+    //                     'email' => $query->email,
+    //                     'phone' => $query->phone,
+    //                     'query' => $query->query,
+    //                     'answer' => $query->answer,
+    //                     'attachments' => $query->attachment ? explode(',', $query->attachment) : [], // Convert to array
+    //                     'status' => $query->status,
+    //                     'created_at' => $query->created_at,
+    //                     'updated_at' => $query->updated_at
+    //                 ];
+    //             });
+
+    //         if ($queries->isEmpty()) {
+    //             return response()->json([
+    //                 'status' => 'error',
+    //                 'message' => 'No queries found for this student and video.',
+    //             ], 404);
+    //         }
+
+    //         return response()->json([
+    //             'status' => 'success',
+    //             'message' => 'Student queries retrieved successfully!',
+    //             'data' => $queries
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Failed to retrieve queries: ' . $e->getMessage(),
+    //         ], 500);
+    //     }
+    // }
+
+    public function sndResponse($student_id, $video_id)
+    {
+        try {
+            // Validate if the student and video exist
+            $validator = Validator::make(
+                ['student_id' => $student_id, 'video_id' => $video_id],
+                [
+                    'video_id' => 'required|exists:subject_videos,id',
+                    'student_id' => 'required|exists:students,id',
+                ]
+            );
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => $validator->errors()->first(),
+                ], 422);
+            }
+
+            // Fetch queries for the student and video
+            $queries = StudentQuery::where('video_id', $video_id)
+                ->where('student_id', $student_id)
+                ->get()
+                ->map(function ($query) {
+                    return [
+                        'id' => $query->id,
+                        'video_id' => $query->video_id,
+                        'student_id' => $query->student_id,
+                        'name' => $query->name,
+                        'email' => $query->email,
+                        'phone' => $query->phone,
+                        'query' => $query->query,
+                        'answer' => $query->answer,
+                        'attachments' => $query->attachment ? explode(',', $query->attachment) : [], // Convert to array
+                        'status' => $query->status,
+                        'created_at' => $query->created_at,
+                        'updated_at' => $query->updated_at
+                    ];
+                });
+
+            if ($queries->isEmpty()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'No queries found for this student and video.',
+                ], 404);
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Student queries retrieved successfully!',
+                'data' => $queries
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to retrieve queries: ' . $e->getMessage(),
             ], 500);
         }
     }

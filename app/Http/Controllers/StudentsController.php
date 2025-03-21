@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Students;
+use App\Models\StudentCourse;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Carbon;
@@ -163,17 +164,66 @@ class StudentsController extends Controller
     //     }
     // }
 
+// API by KP
+    // public static function StudentAllDetaills($mobile)
+    // {
+    //     try {
+    //         $student = Students::where('mobile', $mobile)->first();
+    //         if ($student->count()) {
+    //             $studata = Students::where('mobile', $mobile)->with('studentCourses')->first();
+    //             return response()->json(['status' => 'success', 'data' => $studata]);
+    //         } else {
+    //             return response()->json(['status' => 'error', 'message' => 'No student found with this mobile number']);
+    //         }
+    //     } catch (\Exception $e) {
+    //         return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    //     }
+    // }
+
+    
 
     public static function StudentAllDetaills($mobile)
     {
         try {
-            $student = Students::where('mobile', $mobile)->first();
-            if ($student->count()) {
-                $studata = Students::where('mobile', $mobile)->with('studentCourses')->first();
-                return response()->json(['status' => 'success', 'data' => $studata]);
-            } else {
+            $student = Students::where('mobile', $mobile)->with('progress')->first();
+
+            if (!$student) {
                 return response()->json(['status' => 'error', 'message' => 'No student found with this mobile number']);
             }
+
+            // Fetch enrolled courses from StudentCourse model
+            $enrolledCourses = StudentCourse::where('student_id', $student->id)->get();
+            // dd($enrolledCourses);
+            $onGoingCourses = [];
+            $completedCourses = [];
+
+            foreach ($student->progress as $course) {
+                $courseDetails = [
+                    'course_id' => $course->course_id,
+                    'subject_id' => $course->subject_id,
+                    'subject_name' => $course->subject_name,
+                    'progress' => round($course->progress, 2),
+                    'watch_time' => $course->watch_time,
+                    'total_duration' => $course->total_duration,
+                    'status' => $course->progress >= 90 ? 'Completed' : 'Ongoing'
+                ];
+
+                if ($course->progress >= 90) {
+                    $completedCourses[] = $courseDetails;
+                } else {
+                    $onGoingCourses[] = $courseDetails;
+                }
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'data' => [
+                    'student' => $student,
+                    'enrolled_courses' => $enrolledCourses,
+                    'on_going_courses' => $onGoingCourses,
+                    'completed_courses' => $completedCourses
+                ]
+            ]);
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
@@ -397,7 +447,7 @@ class StudentsController extends Controller
     }
 
 
-         // API form KP
+    // API form KP
     // public function updateStudents(Request $request)
     // {
 
