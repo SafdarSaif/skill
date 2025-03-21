@@ -40,4 +40,9 @@ class StudentProgress extends Model
     {
         return $this->belongsTo(Subject::class, 'subject_id');
     }
+
+    public function video()
+    {
+        return $this->belongsTo(StudentProgress::class, 'video_id');
+    }
 }

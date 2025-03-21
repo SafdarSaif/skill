@@ -44,45 +44,6 @@ class StudentQueryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    // public function store(Request $request)
-    // {
-    //     // Validate the request
-    //     $validator = Validator::make($request->all(), [
-    //         'student_name' => 'required|string|min:3|max:255',
-    //         'email'        => 'required|email|unique:student_queries,email',
-    //         'phone'        => 'required|digits:10',
-    //         'query'        => 'required|string|min:10',
-
-    //     ]);
-
-    //     if ($validator->fails()) {
-    //         return response()->json([
-    //             'status'  => 'error',
-    //             'message' => $validator->errors()->first(),
-    //         ], 422);
-    //     }
-
-    //     try {
-    //         // Create student query
-    //         $studentQuery = StudentQuery::create([
-    //             'name'  => $request->input('student_name'),
-    //             'email' => $request->input('email'),
-    //             'phone' => $request->input('phone'),
-    //             'query' => $request->input('query'), // Corrected to avoid conflict
-    //         ]);
-
-    //         return response()->json([
-    //             'status'  => 'success',
-    //             'message' => 'Student query submitted successfully!',
-    //             'data'    => $studentQuery,
-    //         ], 200);
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'status'  => 'error',
-    //             'message' => 'Something went wrong! ' . $e->getMessage(),
-    //         ], 500);
-    //     }
-    // }
 
     public function store(Request $request)
     {
@@ -324,6 +285,9 @@ class StudentQueryController extends Controller
         return view('website.studentquery.edit', compact('studentquery'));
     }
 
+
+    
+
     /**
      * Update the specified resource in storage.
      */
@@ -335,8 +299,38 @@ class StudentQueryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(StudentQuery $studentQuery)
+    public function destroy($studentqueryId)
+    { {
+            try {
+                $studentquery = StudentQuery::destroy($studentqueryId);
+                return ['status' => 'success', 'message' => 'Student deleted successfully!'];
+            } catch (\Throwable $e) {
+                return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+            }
+        }
+    }
+    public function status($id)
     {
-        //
+        try {
+            $student = Students::findOrFail($id);
+            if ($student) {
+                $student->status = $student->status == 1 ? 0 : 1;
+                $student->save();
+                return response()->json([
+                    'status' => 'success',
+                    'message' => $student->name . ' status updated successfully!',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'AdmissionType not found',
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 }

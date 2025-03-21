@@ -50,6 +50,8 @@
                                         <span class="switch-label">${statusText}</span>
                                     </label>`;
                             }
+
+                            
                         },
                         {
                             targets: -1, // Actions column

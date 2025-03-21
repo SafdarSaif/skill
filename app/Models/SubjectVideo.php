@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\StudentProgress;
 
 class SubjectVideo extends Model {
     use HasFactory;
@@ -22,5 +23,11 @@ class SubjectVideo extends Model {
     public function user() {
         return $this->belongsTo(User::class);
     }
+
+    public function progress()
+{
+    return $this->hasOne(StudentProgress::class, 'video_id', 'id');
+}
+
 }
 

@@ -45,7 +45,7 @@ Route::post('/student-update', [StudentsController::class,'updateStudents']);
 Route::get('/all-faq', [FaqController::class, 'getFaqs'])->name('all-faq');
 Route::get('/all-news', [NewsUpdateController::class, 'getNew'])->name('all-news');
 Route::post('/store-leads', [ContactController::class, 'store'])->name('store-leads');
-Route::get('/subect-wise-content/{subject_id}',[SubjectController::class,'getVideoNotesBySubject']);
+Route::get('/subect-wise-content/{subject_id}/{student_id}',[SubjectController::class,'getVideoNotesBySubject']);
 Route::get('/get-privacy', [PrivacyPolicyController::class, 'getPrivacy'])->name('get-privacy');
 Route::get('/get-terms', [TermsConditionController::class, 'getTerms'])->name('get-terms');
 

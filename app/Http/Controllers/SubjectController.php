@@ -255,16 +255,34 @@ class SubjectController extends Controller
         }
     }
 
-    public function getVideoNotesBySubject($id)
+    // public function getVideoNotesBySubject($id)
+    // {
+    //     try{
+    //         $subjects = Subject::where('id',$id)->with('videos','notes')->get();
+    //         return response()->json(['status'=>'success','data'=>$subjects]);
+    //     }
+    //     catch(Exception $e)
+    //     {
+    //         return response()->json(['status'=>'error','message'=>$e->getMessage()]);
+    //     }
+    // }
+    public function getVideoNotesBySubject($id, $studentId)
     {
-        try{
-            $subjects = Subject::where('id',$id)->with('videos','notes')->get();
-            return response()->json(['status'=>'success','data'=>$subjects]);
-        }
-        catch(Exception $e)
-        {
-            return response()->json(['status'=>'error','message'=>$e->getMessage()]);
+        try {
+            $subjects = Subject::where('id', $id)
+                ->with([
+                    'videos' => function ($query) use ($studentId) {
+                        $query->with(['progress' => function ($progressQuery) use ($studentId) {
+                            $progressQuery->where('student_id', $studentId);
+                        }]);
+                    },
+                    'notes'
+                ])
+                ->get();
+
+            return response()->json(['status' => 'success', 'data' => $subjects]);
+        } catch (Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
     }
-
 }
