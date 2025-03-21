@@ -20,11 +20,9 @@ class StudentProgressController extends Controller
     public function getStudentProgress($student_id, $subject_id, $video_id = null)
     {
         try {
-            // Base query
             $query = StudentProgress::where('student_id', $student_id)
                 ->where('subject_id', $subject_id);
 
-            // If video_id is provided, filter by it
             if ($video_id) {
                 $query->where('video_id', $video_id);
             }

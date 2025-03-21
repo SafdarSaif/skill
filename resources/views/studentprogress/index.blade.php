@@ -21,12 +21,12 @@
                             data: 'course',
                             title: 'Course Name'
                         },
-                        
+
                         {
                             data: 'subject_name',
                             title: 'Subject Name'
                         },
-                        
+
                         {
                             data: 'progress',
                             title: ' Student Progress'
@@ -70,14 +70,14 @@
                         //         var checked = full['status'] == 1 ? 'checked' : '';
                         //         var statusText = full['status'] == 1 ? 'Active' : 'Inactive';
                         //         return `
-                        //             <label class="switch">
-                        //                 <input type="checkbox" ${checked} onclick="updateActiveStatus('/studentprogress/status/${full['id']}', 'progress-table')" class="switch-input">
-                        //                 <span class="switch-toggle-slider">
-                        //                     <span class="switch-on"><i class="ti ti-check"></i></span>
-                        //                     <span class="switch-off"><i class="ti ti-x"></i></span>
-                        //                 </span>
-                        //                 <span class="switch-label">${statusText}</span>
-                        //             </label>`;
+                    //             <label class="switch">
+                    //                 <input type="checkbox" ${checked} onclick="updateActiveStatus('/studentprogress/status/${full['id']}', 'progress-table')" class="switch-input">
+                    //                 <span class="switch-toggle-slider">
+                    //                     <span class="switch-on"><i class="ti ti-check"></i></span>
+                    //                     <span class="switch-off"><i class="ti ti-x"></i></span>
+                    //                 </span>
+                    //                 <span class="switch-label">${statusText}</span>
+                    //             </label>`;
                         //     }
                         // },
                         // {
@@ -86,14 +86,14 @@
                         //     orderable: false,
                         //     render: function(data, type, full, meta) {
                         //         return `
-                        //             <span class="text-nowrap">
-                        //                 <button class="btn btn-sm btn-icon me-2" onclick="edit('/studentprogress/edit/${full['id']}', 'modal-lg')">
-                        //                     <i class="ti ti-edit"></i>
-                        //                 </button>
-                        //                 <button class="btn btn-sm btn-icon delete-record" onclick="destry('/studentprogress/destroy/${full['id']}', 'progress-table')">
-                        //                     <i class="ti ti-trash"></i>
-                        //                 </button>
-                        //             </span>`;
+                    //             <span class="text-nowrap">
+                    //                 <button class="btn btn-sm btn-icon me-2" onclick="edit('/studentprogress/edit/${full['id']}', 'modal-lg')">
+                    //                     <i class="ti ti-edit"></i>
+                    //                 </button>
+                    //                 <button class="btn btn-sm btn-icon delete-record" onclick="destry('/studentprogress/destroy/${full['id']}', 'progress-table')">
+                    //                     <i class="ti ti-trash"></i>
+                    //                 </button>
+                    //             </span>`;
                         //     }
                         // }
                     ],
