@@ -12,26 +12,32 @@ class StudentProgress extends Model
     protected $table = 'student_progress';
 
     protected $fillable = [
-        'student_id', 
-        'video_id', 
-        'subject_id', 
-        'course_id', 
-        'subject_name', 
-        'total_duration', 
-        'watch_time', 
+        'student_id',
+        'video_id',
+        'subject_id',
+        'course_id',
+        'subject_name',
+        'total_duration',
+        'watch_time',
         'progress'
     ];
 
 
-     // Define Relationship with Student Model
-     public function student()
-     {
-         return $this->belongsTo(Students::class, 'student_id');
-     }
- 
-     // Define Relationship with Course Model
-     public function course()
-     {
-         return $this->belongsTo(Course::class, 'course_id');
-     }
+    // Define Relationship with Student Model
+    public function student()
+    {
+        return $this->belongsTo(Students::class, 'student_id');
+    }
+
+    // Define Relationship with Course Model
+    public function course()
+    {
+        return $this->belongsTo(Course::class, 'course_id');
+    }
+
+    // Define Relationship with Subject Model
+    public function subject()
+    {
+        return $this->belongsTo(Subject::class, 'subject_id');
+    }
 }

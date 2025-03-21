@@ -9,7 +9,7 @@
                 dt_permission = dataTablecourse.DataTable({
                     ajax: "{{ route('course') }}",
                     columns: [{
-                            data: 'DT_RowIndex',
+                            data: 'DT_RowIndex'
                         },
                         {
                             data: 'category'
@@ -24,8 +24,11 @@
                             data: 'status'
                         },
                         {
+                            data: 'is_banner'
+                        }, // New column added
+                        {
                             data: ''
-                        },
+                        }
                     ],
                     columnDefs: [{
                             targets: 0,
@@ -37,49 +40,53 @@
                             // Name
                             targets: 2,
                             render: function(data, type, full, meta) {
-                                var $name = full['name'];
-                                return '<span class="text-nowrap">' + $name + '</span>';
+                                return '<span class="text-nowrap">' + full['name'] + '</span>';
                             }
                         },
                         {
-    // Image Column
-    targets: 3,
-    render: function(data, type, full, meta) {
-        var imageUrl = full['image'] ? full['image'] : 'default-image.jpg';
-        return '<img src="' + imageUrl + '" alt="Course Image" width="50" height="50" class="rounded">';
-    }
-},
+                            // Image Column
+                            targets: 3,
+                            render: function(data, type, full, meta) {
+                                var imageUrl = full['image'] ? full['image'] : 'default-image.jpg';
+                                return '<img src="' + imageUrl +
+                                    '" alt="Course Image" width="50" height="50" class="rounded">';
+                            }
+                        },
                         {
-                            // Name
+                            // Status
                             targets: 4,
                             render: function(data, type, full, meta) {
                                 var $checkedStatus = full['status'] == 1 ? 'checked' : '';
                                 var $nameStatus = full['status'] == 1 ? 'Yes' : 'No';
-                                var isDisabled =
-                                    'onclick="updateActiveStatus(&#39;/course/status/' +
-                                    full['id'] + '&#39;, &#39;course-table&#39;)"';
+                                var isDisabled = 'onclick="updateActiveStatus(\'/course/status/' +
+                                    full['id'] + '\', \'course-table\')"';
                                 return '<label class="switch">' +
-                                    '<input  type="checkbox" ' + isDisabled + $checkedStatus +
+                                    '<input type="checkbox" ' + isDisabled + ' ' + $checkedStatus +
                                     ' class="switch-input">' +
                                     '<span class="switch-toggle-slider">' +
-                                    '<span class="switch-on">' +
-                                    '<i class="ti ti-check"></i>' +
-                                    '</span>' +
-                                    '<span class="switch-off">' +
-                                    '<i class="ti ti-x"></i>' +
-                                    '</span>' +
+                                    '<span class="switch-on"><i class="ti ti-check"></i></span>' +
+                                    '<span class="switch-off"><i class="ti ti-x"></i></span>' +
                                     '</span>' +
                                     '<span class="switch-label">' + $nameStatus + '</span>' +
                                     '</label>';
                             }
                         },
-
                         {
-                            targets: 1,
-                            orderable: false,
+                            // Is Banner Column
+                            targets: 5,
                             render: function(data, type, full, meta) {
-                                var $data = full['category'];
-                                return '<span class="text-nowrap">' + $data + '</span>';
+                                var checked = full['is_banner'] == 1 ? 'checked' : '';
+                                return '<label class="switch">' +
+                                    '<input type="checkbox" onclick="updateActiveStatus(\'/course/banner-status/' +
+                                    full['id'] + '\', \'course-table\')" ' + checked +
+                                    ' class="switch-input">' +
+                                    '<span class="switch-toggle-slider">' +
+                                    '<span class="switch-on"><i class="ti ti-check"></i></span>' +
+                                    '<span class="switch-off"><i class="ti ti-x"></i></span>' +
+                                    '</span>' +
+                                    '<span class="switch-label">' + (full['is_banner'] == 1 ?
+                                        'Yes' : 'No') + '</span>' +
+                                    '</label>';
                             }
                         },
                         {
@@ -90,12 +97,14 @@
                             orderable: false,
                             render: function(data, type, full, meta) {
                                 return (
-                                    '<span class="text-nowrap"><button class="btn btn-sm btn-icon me-2" onclick="edit(&#39;/course/edit/' +
+                                    '<span class="text-nowrap">' +
+                                    '<button class="btn btn-sm btn-icon me-2" onclick="edit(\'/course/edit/' +
                                     full['id'] +
-                                    '&#39; , &#39;modal-lg&#39;)"><i class="ti ti-edit"></i></button>' +
-                                    '<button class="btn btn-sm btn-icon delete-record"onclick="destry(&#39;/course/destroy/' +
+                                    '\', \'modal-lg\')"><i class="ti ti-edit"></i></button>' +
+                                    '<button class="btn btn-sm btn-icon delete-record" onclick="destry(\'/course/destroy/' +
                                     full['id'] +
-                                    '&#39; , &#39;course-table&#39;)"><i class="ti ti-trash"></i></button></span>'
+                                    '\', \'course-table\')"><i class="ti ti-trash"></i></button>' +
+                                    '</span>'
                                 );
                             }
                         }
@@ -136,8 +145,8 @@
                             type: 'column',
                             renderer: function(api, rowIdx, columns) {
                                 var data = $.map(columns, function(col, i) {
-                                    return col.title !==
-                                        '' ? '<tr data-dt-row="' + col.rowIndex +
+                                    return col.title !== '' ? '<tr data-dt-row="' + col
+                                        .rowIndex +
                                         '" data-dt-column="' + col.columnIndex + '">' +
                                         '<td>' + col.title + ':</td> ' +
                                         '<td>' + col.data + '</td>' +
@@ -152,12 +161,12 @@
             }
         });
     </script>
+
     <h4 class="mb-4">Course List</h4>
 
-    <!-- Admission Table -->
+    <!-- Course Table -->
     <div class="card">
         <div class="card-datatable table-responsive">
-
             <table id="course-table" class="table border-top">
                 <thead>
                     <tr>
@@ -166,11 +175,12 @@
                         <th>Name</th>
                         <th>Image</th>
                         <th>Status</th>
+                        <th>Is Banner</th>
                         <th></th>
                     </tr>
                 </thead>
             </table>
         </div>
     </div>
-    <!--/ Admission Table -->
+    <!--/ Course Table -->
 @endsection

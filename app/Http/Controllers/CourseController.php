@@ -287,6 +287,31 @@ class CourseController extends Controller
         }
     }
 
+    public function bannerStatus($id)
+    {
+        try {
+            $course = Course::findOrFail($id);
+            if ($course) {
+                $course->is_banner = $course->is_banner == 1 ? 0 : 1;
+                $course->save();
+                return response()->json([
+                    'status' => 'success',
+                    'message' => $course->name . ' Banner status updated successfully!',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Course not found',
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
     public function coursesFunc(Request $request, $column = '', $value = '')
     {
         try {
@@ -318,7 +343,7 @@ class CourseController extends Controller
     public function getCourseByType($typeId = '')
     {
         try {
-            $courses = CourseType::where('is_active_on_home', 1)->with('courses', 'users');
+            $courses = CourseType::where('is_active_on_home', 1)->with('courses');
             if ($typeId != '') {
                 $courses->where('id', $typeId);
             }

@@ -36,5 +36,14 @@ class Students extends Model
     public function studentCourses(){
         return $this->hasMany(StudentCourse::class, 'student_id')->with('course');
     }
+
+
+    /**
+     * Define relationship: A student has many progress records.
+     */
+    public function progress()
+    {
+        return $this->hasMany(StudentProgress::class, 'student_id');
+    }
 }
 

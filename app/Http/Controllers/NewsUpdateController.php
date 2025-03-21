@@ -17,7 +17,11 @@ class NewsUpdateController extends Controller
     public function getNew()
     {
         try {
-            $news = NewsUpdate::where('status', 1)->get()->toArray();
+            // $news = NewsUpdate::where('status', 1)->get()->toArray();
+            $news = NewsUpdate::where('status', 1)
+            ->orderBy('created_at', 'desc') 
+            ->get()
+            ->toArray();
             return response()->json([
                 'status' => 'success',
                 'data' => $news
