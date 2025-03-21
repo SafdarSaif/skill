@@ -26,17 +26,13 @@
             <label for="video_id" class="form-label">Select Student<span class="text-danger">*</span></label>
             <select name="student_id" id="student_id" class="form-select" required>
                 <option value="">Select Video</option>
-                @foreach ($subjectvideo as $id => $name)
+                @foreach ($student as $id => $name)
                     <option value="{{ $id }}">{{ $name }}</option>
                 @endforeach
             </select>
         </div>
 
-        <!-- Student ID -->
-        <div class="col-md-12">
-            <label for="student_id" class="form-label">Student ID</label>
-            <input type="number" name="student_id" id="student_id" class="form-control">
-        </div>
+
         <!-- Student Name -->
         <div class="col-md-12">
             <label for="student_name" class="form-label">Student Name <span class="text-danger">*</span></label>

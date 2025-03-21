@@ -13,6 +13,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PrivacyPolicyController;
 use App\Http\Controllers\TermsConditionController;
 use App\Http\Controllers\StudentProgressController;
+use App\Http\Controllers\StudentQueryController;
 // use App\Http\Controllers\EasebuzzController;
 
 use App\Models\Students;
@@ -63,3 +64,5 @@ Route::post('/update-progress', [StudentProgressController::class, 'updateProgre
 Route::get('/get-progress', [StudentProgressController::class, 'getProgress'])->name('get-progress');
 Route::get('type-wise-course',[CourseController::class,'getCourseByType']);
 Route::get('type-wise-course/{course_type_id}',[CourseController::class,'getCourseByType']);
+
+Route::post('/get-query',[StudentQueryController::class,'getQuery'])->name('get-query');
