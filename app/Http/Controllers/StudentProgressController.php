@@ -15,50 +15,51 @@ class StudentProgressController extends Controller
 {
 
 
-    // Store or update student progress
-    // public function updateProgress(Request $request)
-    // {
-    //     try {
-    //         $validatedData = $request->validate([
-    //             'student_id' => 'required|integer',
-    //             'video_id' => 'required|integer',
-    //             'subject_id' => 'required|integer',
-    //             'course_id' => 'required|integer',
-    //             'subject_name' => 'required|string',
-    //             'total_duration' => 'required|numeric|min:1',
-    //             'watch_time' => 'required|numeric|min:0'
-    //         ]);
 
-    //         $progress = ($validatedData['watch_time'] / $validatedData['total_duration']) * 100;
 
-    //         $progressRecord = StudentProgress::updateOrCreate(
-    //             [
-    //                 'student_id' => $validatedData['student_id'],
-    //                 'video_id' => $validatedData['video_id']
-    //             ],
-    //             [
-    //                 'subject_id' => $validatedData['subject_id'],
-    //                 'course_id' => $validatedData['course_id'],
-    //                 'subject_name' => $validatedData['subject_name'],
-    //                 'total_duration' => $validatedData['total_duration'],
-    //                 'watch_time' => $validatedData['watch_time'],
-    //                 'progress' => round($progress, 2) 
-    //             ]
-    //         );
+    public function getStudentProgress($student_id, $subject_id, $video_id = null)
+    {
+        try {
+            // Base query
+            $query = StudentProgress::where('student_id', $student_id)
+                ->where('subject_id', $subject_id);
 
-    //         return response()->json([
-    //             'status' => 'success',
-    //             'message' => 'Progress updated successfully!',
-    //             'progress' => round($progress, 2) . '%',
-    //             'data' => $progressRecord
-    //         ], 200);
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'status' => 'error',
-    //             'message' => 'Something went wrong! ' . $e->getMessage()
-    //         ], 500);
-    //     }
-    // }
+            // If video_id is provided, filter by it
+            if ($video_id) {
+                $query->where('video_id', $video_id);
+            }
+
+            $progressRecords = $query->get();
+
+            if ($progressRecords->isEmpty()) {
+                return response()->json(['status' => 'error', 'message' => 'No progress found']);
+            }
+
+            $progressData = $progressRecords->map(function ($record) {
+                return [
+                    'video_id' => $record->video_id,
+                    'subject_id' => $record->subject_id,
+                    'subject_name' => $record->subject_name,
+                    'course_id' => $record->course_id,
+                    'total_duration' => $record->total_duration,
+                    'watch_time' => $record->watch_time,
+                    'progress' => round($record->progress, 2),
+                    'status' => $record->progress >= 90 ? 'Completed' : 'Ongoing'
+                ];
+            });
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $progressData
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+    }
+
+
+
+  
 
     public function updateProgress(Request $request)
     {
@@ -100,7 +101,7 @@ class StudentProgressController extends Controller
                 [
                     'subject_id' => $validatedData['subject_id'],
                     'course_id' => $validatedData['course_id'],
-                    'subject_name' => $subject->name, 
+                    'subject_name' => $subject->name,
                     'total_duration' => $validatedData['total_duration'],
                     'watch_time' => $validatedData['watch_time'],
                     'progress' => round($progress, 2)
@@ -111,7 +112,7 @@ class StudentProgressController extends Controller
                 'status' => 'success',
                 'message' => 'Progress updated successfully!',
                 'progress' => round($progress, 2) . '%',
-                'course_name' => $course->name, 
+                'course_name' => $course->name,
                 'subject_name' => $subject->name, // Use subject name from the model
                 'data' => $progressRecord
             ], 200);
@@ -204,7 +205,7 @@ class StudentProgressController extends Controller
     //         $data = StudentProgress::with(['student', 'course'])
     //             ->orderBy('id', 'desc')
     //             ->get();
-    
+
     //         return DataTables::of($data)
     //             ->addIndexColumn()
     //             ->addColumn('student_name', function ($data) {
@@ -232,7 +233,7 @@ class StudentProgressController extends Controller
     //                 // Get total duration and watch time for progress calculation
     //                 $totalDuration = StudentProgress::where('course_id', $data->course_id)->sum('total_duration');
     //                 $watchTime = StudentProgress::where('course_id', $data->course_id)->sum('watch_time');
-    
+
     //                 if ($totalDuration > 0) {
     //                     $progress = ($watchTime / $totalDuration) * 100;
     //                     return round($progress, 2) . '%';
@@ -247,14 +248,14 @@ class StudentProgressController extends Controller
     //             })
     //             ->make(true);
     //     }
-    
+
     //     return view('studentprogress.index');
     // }
-    
+
     public function index(Request $request)
-{
-    if ($request->ajax()) {
-        $data = StudentProgress::selectRaw("
+    {
+        if ($request->ajax()) {
+            $data = StudentProgress::selectRaw("
                 course_id,
                 MAX(student_id) as student_id, 
                 MAX(subject_name) as subject_name, 
@@ -263,41 +264,41 @@ class StudentProgressController extends Controller
                 (SUM(watch_time) / NULLIF(SUM(total_duration), 0)) * 100 as progress,
                 MAX(created_at) as created_at
             ")
-            ->with(['student', 'course'])
-            ->groupBy('course_id')
-            ->orderBy('id', 'desc')
-            ->get();
+                ->with(['student', 'course'])
+                ->groupBy('course_id')
+                ->orderBy('id', 'desc')
+                ->get();
 
-        return DataTables::of($data)
-            ->addIndexColumn()
-            ->addColumn('student_name', function ($data) {
-                return $data->student ? $data->student->name : 'N/A';
-            })
-            ->addColumn('course', function ($data) {
-                return $data->course ? $data->course->name : 'N/A';
-            })
-            ->addColumn('subjects', function ($data) {
-                // Get subjects for the same course_id
-                $subjects = Subject::where('course_id', $data->course_id)->pluck('name')->toArray();
-                return implode(', ', $subjects);
-            })
-            ->addColumn('total_duration', function ($data) {
-                return gmdate("H:i:s", $data->total_duration);
-            })
-            ->addColumn('watch_time', function ($data) {
-                return gmdate("H:i:s", $data->watch_time);
-            })
-            ->addColumn('overall_progress', function ($data) {
-                return round($data->progress, 2) . '%';
-            })
-            ->editColumn('created_at', function ($data) {
-                return Carbon::parse($data->created_at)->format('d-m-Y h:i A');
-            })
-            ->make(true);
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('student_name', function ($data) {
+                    return $data->student ? $data->student->name : 'N/A';
+                })
+                ->addColumn('course', function ($data) {
+                    return $data->course ? $data->course->name : 'N/A';
+                })
+                ->addColumn('subjects', function ($data) {
+                    // Get subjects for the same course_id
+                    $subjects = Subject::where('course_id', $data->course_id)->pluck('name')->toArray();
+                    return implode(', ', $subjects);
+                })
+                ->addColumn('total_duration', function ($data) {
+                    return gmdate("H:i:s", $data->total_duration);
+                })
+                ->addColumn('watch_time', function ($data) {
+                    return gmdate("H:i:s", $data->watch_time);
+                })
+                ->addColumn('overall_progress', function ($data) {
+                    return round($data->progress, 2) . '%';
+                })
+                ->editColumn('created_at', function ($data) {
+                    return Carbon::parse($data->created_at)->format('d-m-Y h:i A');
+                })
+                ->make(true);
+        }
+
+        return view('studentprogress.index');
     }
-
-    return view('studentprogress.index');
-}
 
 
     /**

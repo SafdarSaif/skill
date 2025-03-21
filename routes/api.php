@@ -27,6 +27,7 @@ Route::get('/user', function (Request $request) {
 Route::get('/get-otp/{mobile_no}',[OTPController::class,'getOtp'])->name('get-otp');
 Route::get('/verify-otp/{otp}/{mobile_no}',[OTPController::class,'verifyOtp']);
 Route::get('/resend-otp/{mobile_no}',[OTPController::class,'reSendOtp']);
+// API modification for Students Progress
 Route::get('/students-details/{mobile_no}',[StudentsController::class,'getStudentDetails']);
 Route::post('/students-registration',[StudentsController::class,'registerStudent']);
 Route::get('/students-all-details/{mobile_no}',[StudentsController::class,'StudentAllDetaills']);
@@ -66,3 +67,8 @@ Route::get('type-wise-course',[CourseController::class,'getCourseByType']);
 Route::get('type-wise-course/{course_type_id}',[CourseController::class,'getCourseByType']);
 
 Route::post('/get-query',[StudentQueryController::class,'getQuery'])->name('get-query');
+Route::get('/return-response/{student_id}/{video_id}',[StudentQueryController::class,'sndResponse'])->name('return-response');
+
+Route::get('/get-student-progress/{student_id}/{subject_id}/{video_id?}',[StudentProgressController::class,'getStudentProgress'])->name('get-student-progress');
+
+
