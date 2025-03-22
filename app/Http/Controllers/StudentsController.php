@@ -185,14 +185,14 @@ class StudentsController extends Controller
     public static function StudentAllDetaills($mobile)
     {
         try {
-            $student = Students::where('mobile', $mobile)->with('progress')->first();
+            $student = Students::where('mobile', $mobile)->with('progress','progress.course','progress.course.users')->first();
 
             if (!$student) {
                 return response()->json(['status' => 'error', 'message' => 'No student found with this mobile number']);
             }
 
             // Fetch enrolled courses from StudentCourse model
-            $enrolledCourses = StudentCourse::where('student_id', $student->id)->get();
+            $enrolledCourses = StudentCourse::where('student_id', $student->id)->with('course','course.users')->get();
             // dd($enrolledCourses);
             $onGoingCourses = [];
             $completedCourses = [];
@@ -205,7 +205,8 @@ class StudentsController extends Controller
                     'progress' => round($course->progress, 2),
                     'watch_time' => $course->watch_time,
                     'total_duration' => $course->total_duration,
-                    'status' => $course->progress >= 90 ? 'Completed' : 'Ongoing'
+                    'status' => $course->progress >= 90 ? 'Completed' : 'Ongoing',
+                    'course' => $course->course,
                 ];
 
                 if ($course->progress >= 90) {
