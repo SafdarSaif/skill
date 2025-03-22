@@ -88,11 +88,24 @@ class SubjectVideoController extends Controller
                 $videoUrl = uploadFile($request->file('video_file'), 'subject_videos');
             }
 
+            // Convert HH:MM:SS to seconds
+            $durationInSeconds = null;
+            if ($request->filled('duration')) {
+                preg_match('/^(\d{2}):(\d{2}):(\d{2})$/', $request->duration, $matches);
+                if ($matches) {
+                    $hours   = (int) $matches[1];
+                    $minutes = (int) $matches[2];
+                    $seconds = (int) $matches[3];
+
+                    $durationInSeconds = ($hours * 3600) + ($minutes * 60) + $seconds;
+                }
+            }
             $subjectVideo = SubjectVideo::create([
                 'subject_id'  => $request->subject_id,
                 'name'        => $request->name,
                 'description' => $request->description,
-                'duration'    => $request->duration,
+                // 'duration'    => $request->duration,
+                'duration'    => $durationInSeconds, // Store in seconds
                 'user_id'     => $request->user_id,
                 'position'    => $request->position,
                 'upload_type' => $request->upload_type,
@@ -175,12 +188,26 @@ class SubjectVideoController extends Controller
                 $videoUrl = uploadFile($request->file('video_file'), 'subject_videos');
             }
 
+              // Convert HH:MM:SS to seconds
+              $durationInSeconds = null;
+              if ($request->filled('duration')) {
+                  preg_match('/^(\d{2}):(\d{2}):(\d{2})$/', $request->duration, $matches);
+                  if ($matches) {
+                      $hours   = (int) $matches[1];
+                      $minutes = (int) $matches[2];
+                      $seconds = (int) $matches[3];
+  
+                      $durationInSeconds = ($hours * 3600) + ($minutes * 60) + $seconds;
+                  }
+              }
+
             // Update the subject video
             $subjectVideo->update([
                 'subject_id'  => $request->subject_id,
                 'name'        => $request->name,
                 'description' => $request->description,
-                'duration'    => $request->duration,
+                // 'duration'    => $request->duration,
+                'duration'    => $durationInSeconds, // Store in seconds
                 'user_id'     => $request->user_id,
                 'position'    => $request->position,
                 'upload_type' => $request->upload_type,

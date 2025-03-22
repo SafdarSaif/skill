@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Students;
 use App\Models\StudentCourse;
-
+use App\Models\SubjectVideo;
+use App\Models\StudentProgress;
+use App\Models\Course;
+use App\Models\Subject;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Carbon;
@@ -165,7 +168,7 @@ class StudentsController extends Controller
     //     }
     // }
 
-// API by KP
+    // API by KP
     // public static function StudentAllDetaills($mobile)
     // {
     //     try {
@@ -181,39 +184,111 @@ class StudentsController extends Controller
     //     }
     // }
 
-    
+
+
+    // 21/03/2025  API Working
+    // public static function StudentAllDetaills($mobile)
+    // {
+    //     try {
+    //         $student = Students::where('mobile', $mobile)->with('progress','progress.course','progress.course.users')->first();
+
+    //         if (!$student) {
+    //             return response()->json(['status' => 'error', 'message' => 'No student found with this mobile number']);
+    //         }
+
+    //         // Fetch enrolled courses from StudentCourse model
+    //         $enrolledCourses = StudentCourse::where('student_id', $student->id)->with('course','course.users')->get();
+    //         // dd($enrolledCourses);
+    //         $onGoingCourses = [];
+    //         $completedCourses = [];
+    //         // dd($student->progress->toArray());
+    //         foreach ($student->progress as $course) {
+    //             $courseDetails = [
+    //                 'course_id' => $course->course_id,
+    //                 'subject_id' => $course->subject_id,
+    //                 'subject_name' => $course->subject_name,
+    //                 'progress' => round($course->progress, 2),
+    //                 'watch_time' => $course->watch_time,
+    //                 'total_duration' => $course->total_duration,
+    //                 'status' => $course->progress >= 90 ? 'Completed' : 'Ongoing',
+    //                 'course' => $course->course,
+    //             ];
+
+    //             if ($course->progress >= 90) {
+    //                 $completedCourses[$course->course_id] = $courseDetails;
+    //             } else {
+    //                 $onGoingCourses[$course->course_id] = $courseDetails;
+    //             }
+    //         }
+
+    //         return response()->json([
+    //             'status' => 'success',
+    //             'data' => [
+    //                 'student' => $student,
+    //                 'enrolled_courses' => $enrolledCourses,
+    //                 'on_going_courses' => $onGoingCourses,
+    //                 'completed_courses' => $completedCourses
+    //             ]
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    //     }
+    // }
 
     public static function StudentAllDetaills($mobile)
     {
         try {
-            $student = Students::where('mobile', $mobile)->with('progress','progress.course','progress.course.users')->first();
+            $student = Students::where('mobile', $mobile)
+                ->with('progress', 'progress.course', 'progress.course.users')
+                ->first();
 
             if (!$student) {
                 return response()->json(['status' => 'error', 'message' => 'No student found with this mobile number']);
             }
 
-            // Fetch enrolled courses from StudentCourse model
-            $enrolledCourses = StudentCourse::where('student_id', $student->id)->with('course','course.users')->get();
-            // dd($enrolledCourses);
+            // Fetch enrolled courses
+            $enrolledCourses = StudentCourse::where('student_id', $student->id)
+                ->with('course', 'course.users')
+                ->get();
+// dd($enrolledCourses);
             $onGoingCourses = [];
             $completedCourses = [];
 
-            foreach ($student->progress as $course) {
+            foreach ($enrolledCourses as $enrolled) {
+                $courseId = $enrolled->course_id;
+                // dd($courseId);
+
+                // Fetch subject IDs related to this course
+                $subjectIds = Subject::where('course_id', $courseId)->pluck('id');
+                // dd($subjectIds);
+
+                // Get total duration from subject_videos using subject IDs
+                $totalDuration = SubjectVideo::whereIn('subject_id', $subjectIds)->sum('duration');
+
+                // Get total watch time from StudentProgress
+                $totalWatchTime = StudentProgress::where('student_id', $student->id)
+                    ->whereIn('subject_id', $subjectIds)
+                    ->sum('watch_time');
+                    // dd($totalWatchTime);
+                // Calculate progress percentage
+                $progress = ($totalDuration > 0) ? round(($totalWatchTime / $totalDuration) * 100, 2) : 0;
+                $status = $progress >= 90 ? 'Completed' : 'Ongoing';
+
                 $courseDetails = [
-                    'course_id' => $course->course_id,
-                    'subject_id' => $course->subject_id,
-                    'subject_name' => $course->subject_name,
-                    'progress' => round($course->progress, 2),
-                    'watch_time' => $course->watch_time,
-                    'total_duration' => $course->total_duration,
-                    'status' => $course->progress >= 90 ? 'Completed' : 'Ongoing',
-                    'course' => $course->course,
+                    'course_id' => $courseId,
+                    // 'total_watch_time' => gmdate("H:i:s", $totalWatchTime),
+                    // 'total_duration' => gmdate("H:i:s", $totalDuration),
+                    'total_watch_time' => $totalWatchTime,  
+                    'total_duration' => $totalDuration,   
+                    'progress' => $progress,
+                    'status' => $status,
+                    'course' => $enrolled->course,
                 ];
 
-                if ($course->progress >= 90) {
-                    $completedCourses[] = $courseDetails;
+                if ($status === 'Completed') {
+                    $completedCourses[$courseId] = $courseDetails;
                 } else {
-                    $onGoingCourses[] = $courseDetails;
+                    $onGoingCourses[$courseId] = $courseDetails;
                 }
             }
 
@@ -230,6 +305,10 @@ class StudentsController extends Controller
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
     }
+
+
+
+
 
 
     public function registerStudent(Request $request)
