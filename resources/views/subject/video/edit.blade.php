@@ -35,12 +35,22 @@
         </div>
 
         <!-- Duration -->
-        <div class="col-md-6">
+        {{-- <div class="col-md-6">
             <label for="duration" class="form-label">Duration (HH:MM:SS)</label>
             <input type="text" name="duration" id="duration" class="form-control"
                 value="{{ old('duration', $video->duration) }}" pattern="^([0-9]{1,2}):([0-5][0-9]):([0-5][0-9])$"
                 placeholder="HH:MM:SS" title="Enter duration in HH:MM:SS format">
+        </div> --}}
+
+        <!-- Duration -->
+        <div class="col-md-6">
+            <label for="duration" class="form-label">Duration (HH:MM:SS)</label>
+            <input type="text" name="duration" id="duration" class="form-control"
+                value="{{ old('duration', gmdate('H:i:s', $video->duration)) }}"
+                pattern="^([0-9]{1,2}):([0-5][0-9]):([0-5][0-9])$" placeholder="HH:MM:SS"
+                title="Enter duration in HH:MM:SS format">
         </div>
+
 
         <!-- Uploader -->
         <div class="col-md-6">
@@ -90,7 +100,7 @@
         <div class="col-md-12" id="local_field"
             style="{{ old('upload_type', $video->upload_type) == 'local' ? '' : 'display: none;' }}">
             <label for="video_file" class="form-label">Upload Video File <span class="text-danger">*</span></label>
-            <input type="file" name="video_file" id="video_file" class="form-control" accept="video/*" >
+            <input type="file" name="video_file" id="video_file" class="form-control" accept="video/*">
 
             @if ($video->upload_type == 'local' && $video->video_url)
                 <!-- Display existing video file name -->

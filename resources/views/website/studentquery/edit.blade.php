@@ -4,7 +4,7 @@
         <p class="text-muted">Modify the student query details below</p>
     </div>
 
-    <form id="edit-student-query-form" action="{{ route('studentquery.update', $query->id) }}" method="POST" enctype="multipart/form-data" class="row g-3">
+    <form id="edit-student-query-form" action="{{ route('studentquery.update', $studentquery->id) }}" method="POST" enctype="multipart/form-data" class="row g-3">
         @csrf
         @method('PUT')
 
@@ -14,7 +14,7 @@
             <select name="video_id" id="video_id" class="form-select" required>
                 <option value="">Select Video</option>
                 @foreach ($subjectvideo as $id => $name)
-                    <option value="{{ $id }}" {{ $query->video_id == $id ? 'selected' : '' }}>{{ $name }}</option>
+                    <option value="{{ $id }}" {{ $studentquery->video_id == $id ? 'selected' : '' }}>{{ $name }}</option>
                 @endforeach
             </select>
         </div>
@@ -25,7 +25,7 @@
             <select name="student_id" id="student_id" class="form-select" required>
                 <option value="">Select Student</option>
                 @foreach ($student as $id => $name)
-                    <option value="{{ $id }}" {{ $query->student_id == $id ? 'selected' : '' }}>{{ $name }}</option>
+                    <option value="{{ $id }}" {{ $studentquery->student_id == $id ? 'selected' : '' }}>{{ $name }}</option>
                 @endforeach
             </select>
         </div>
@@ -33,31 +33,31 @@
         <!-- Student Name -->
         <div class="col-md-12">
             <label for="student_name" class="form-label">Student Name <span class="text-danger">*</span></label>
-            <input type="text" name="student_name" id="student_name" class="form-control" value="{{ $query->student_name }}" required>
+            <input type="text" name="student_name" id="student_name" class="form-control" value="{{ $studentquery->student_name }}" required>
         </div>
 
         <!-- Email -->
         <div class="col-md-12">
             <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
-            <input type="email" name="email" id="email" class="form-control" value="{{ $query->email }}" required>
+            <input type="email" name="email" id="email" class="form-control" value="{{ $studentquery->email }}" required>
         </div>
 
         <!-- Phone Number -->
         <div class="col-md-12">
             <label for="phone" class="form-label">Phone Number <span class="text-danger">*</span></label>
-            <input type="text" name="phone" id="phone" class="form-control" value="{{ $query->phone }}" required pattern="\d{10}" title="Enter a valid 10-digit phone number">
+            <input type="text" name="phone" id="phone" class="form-control" value="{{ $studentquery->phone }}" required pattern="\d{10}" title="Enter a valid 10-digit phone number">
         </div>
 
         <!-- Query -->
         <div class="col-md-12">
             <label for="query" class="form-label">Query <span class="text-danger">*</span></label>
-            <textarea name="query" id="query" class="form-control" rows="4" required>{{ $query->query }}</textarea>
+            <textarea name="query" id="query" class="form-control" rows="4" required>{{ $studentquery->query }}</textarea>
         </div>
         
         <!-- Answer -->
         <div class="col-md-12">
             <label for="answer" class="form-label">Answer</label>
-            <textarea name="answer" id="answer" class="form-control" rows="4">{{ $query->answer }}</textarea>
+            <textarea name="answer" id="answer" class="form-control" rows="4">{{ $studentquery->answer }}</textarea>
         </div>
 
         <!-- Attachment -->

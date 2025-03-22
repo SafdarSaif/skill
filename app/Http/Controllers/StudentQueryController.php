@@ -45,19 +45,68 @@ class StudentQueryController extends Controller
      * Store a newly created resource in storage.
      */
 
+    // public function store(Request $request)
+    // {
+
+    //     // Validate the request data
+    //     $validator = Validator::make($request->all(), [
+    //         'video_id' => 'required|exists:subject_videos,id',
+    //         'student_id' => 'required|exists:students,id',
+    //         'student_name' => 'required|string|min:3|max:255',
+    //         'email' => 'required|email|max:255',
+    //         'phone' => 'required|digits:10',
+    //         'query' => 'required|string|min:10',
+    //         'answer' => 'nullable|string',
+    //         'attachment' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => $validator->errors()->first(),
+    //         ], 422);
+    //     }
+
+    //     try {
+    //         $attachmentPath = $request->hasFile('attachment')
+    //             ? uploadFile($request->file('attachment'), 'attachments')
+    //             : null;
+
+
+    //         $studentQuery = StudentQuery::create([
+    //             'video_id' => $request->input('video_id'),
+    //             'student_id' => $request->input('student_id'),
+    //             'name' => $request->input('student_name'),
+    //             'email' => $request->input('email'),
+    //             'phone' => $request->input('phone'),
+    //             'query' => $request->input('query'),
+    //             'answer' => $request->input('answer', null),
+    //             'attachment' => $attachmentPath,
+    //         ]);
+
+    //         return response()->json([
+    //             'status' => 'success',
+    //             'message' => 'Student query added successfully!',
+    //             'data' => $studentQuery
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Failed to add student query: ' . $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
+
     public function store(Request $request)
     {
-
-        // Validate the request data
         $validator = Validator::make($request->all(), [
             'video_id' => 'required|exists:subject_videos,id',
             'student_id' => 'required|exists:students,id',
-            'student_name' => 'required|string|min:3|max:255',
             'email' => 'required|email|max:255',
             'phone' => 'required|digits:10',
             'query' => 'required|string|min:10',
             'answer' => 'nullable|string',
-            'attachment' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
+            'attachment.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048', // Allow multiple files
         ]);
 
         if ($validator->fails()) {
@@ -68,20 +117,25 @@ class StudentQueryController extends Controller
         }
 
         try {
-            $attachmentPath = $request->hasFile('attachment')
-                ? uploadFile($request->file('attachment'), 'attachments')
-                : null;
+            $attachmentPath = ['answer' => []];
 
+            if ($request->hasFile('attachment')) {
+                $index = 0;
+                foreach ($request->file('attachment') as $file) {
+                    $filePath = uploadFile($file, 'attachments');
+                    $attachmentPath['answer'][(string) $index] = $filePath;
+                    $index++;
+                }
+            }
 
             $studentQuery = StudentQuery::create([
                 'video_id' => $request->input('video_id'),
                 'student_id' => $request->input('student_id'),
-                'name' => $request->input('student_name'),
                 'email' => $request->input('email'),
                 'phone' => $request->input('phone'),
                 'query' => $request->input('query'),
                 'answer' => $request->input('answer', null),
-                'attachment' => $attachmentPath,
+                'attachment' => !empty($attachmentPath['answer']) ? json_encode($attachmentPath, JSON_FORCE_OBJECT) : null, // Ensure forced JSON object format
             ]);
 
             return response()->json([
@@ -96,6 +150,7 @@ class StudentQueryController extends Controller
             ], 500);
         }
     }
+
 
     /**
      * Display the specified resource.
@@ -178,8 +233,8 @@ class StudentQueryController extends Controller
             if ($request->hasFile('attachment')) {
                 $index = 0;
                 foreach ($request->file('attachment') as $file) {
-                    $filePath = uploadFile($file, 'attachments'); 
-                    $attachmentPath['question'][(string) $index] = $filePath; 
+                    $filePath = uploadFile($file, 'attachments');
+                    $attachmentPath['question'][(string) $index] = $filePath;
                     $index++;
                 }
             }
@@ -192,7 +247,7 @@ class StudentQueryController extends Controller
                 'phone' => $request->input('phone'),
                 'query' => $request->input('query'),
                 'answer' => $request->input('answer', null),
-                'attachment' => json_encode($attachmentPath, JSON_FORCE_OBJECT), 
+                'attachment' => json_encode($attachmentPath, JSON_FORCE_OBJECT),
             ]);
 
             return response()->json([
@@ -340,9 +395,10 @@ class StudentQueryController extends Controller
     public function edit($queryID)
     {
         $studentquery = StudentQuery::findOrFail($queryID);
+        $student = Students::pluck('name', 'id');
+        $subjectvideo = SubjectVideo::pluck('name', 'id');
 
-
-        return view('website.studentquery.edit', compact('studentquery'));
+        return view('website.studentquery.edit', compact('studentquery', 'student', 'subjectvideo'));
     }
 
 
