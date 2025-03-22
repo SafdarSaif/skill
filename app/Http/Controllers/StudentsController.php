@@ -355,7 +355,7 @@ class StudentsController extends Controller
                 if ($status === 'Completed') {
                     $completedCourses[] = $enrolled;
                 } else {
-                    $onGoingCourses[] = $enrolled; // Add to ongoing courses
+                    $onGoingCourses[] = $enrolled; 
                 }
             }
 
