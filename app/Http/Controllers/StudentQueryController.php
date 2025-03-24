@@ -327,7 +327,6 @@ class StudentQueryController extends Controller
     public function sndResponse($student_id, $video_id)
     {
         try {
-            // Validate if the student and video exist
             $validator = Validator::make(
                 ['student_id' => $student_id, 'video_id' => $video_id],
                 [
@@ -343,7 +342,6 @@ class StudentQueryController extends Controller
                 ], 422);
             }
 
-            // Fetch queries for the student and video
             $queries = StudentQuery::where('video_id', $video_id)
                 ->where('student_id', $student_id)
                 ->get()
@@ -357,7 +355,7 @@ class StudentQueryController extends Controller
                         'phone' => $query->phone,
                         'query' => $query->query,
                         'answer' => $query->answer,
-                        'attachments' => $query->attachment ? explode(',', $query->attachment) : [], // Convert to array
+                        'attachments' => $query->attachment ? json_decode($query->attachment, true) : [], // Proper JSON decoding
                         'status' => $query->status,
                         'created_at' => $query->created_at,
                         'updated_at' => $query->updated_at
