@@ -26,6 +26,10 @@
                             title: 'Query'
                         },
                         {
+                            data: 'attachment',
+                            title: 'Attachments'
+                        },
+                        {
                             data: 'status',
                             title: 'Status'
                         },
@@ -34,8 +38,59 @@
                             title: 'Actions'
                         }
                     ],
-                    columnDefs: [{
-                            targets: 4,
+                    columnDefs: [
+
+                        {
+                            targets: 4, // Attachments column
+                            render: function(data, type, full, meta) {
+                                var attachmentsHtml = '';
+
+                                // console.log(full['attachment']); 
+
+                                if (full['attachment']) {
+                                    try {
+                                        // Decode any HTML entities (to convert &quot; back to ")
+                                        let decodedData = $("<textarea/>").html(full['attachment'])
+                                            .text();
+
+                                        // Parse JSON string to object
+                                        let attachments = JSON.parse(decodedData);
+
+                                        // Display Question Attachments
+                                        if (attachments['question'] && Object.keys(attachments[
+                                                'question']).length) {
+                                            attachmentsHtml += `<strong>Question:</strong><ul>`;
+                                            Object.values(attachments['question']).forEach(file => {
+                                                attachmentsHtml +=
+                                                    `<li><a href="${file}" target="_blank">${file.split('/').pop()}</a></li>`;
+                                            });
+                                            attachmentsHtml += `</ul>`;
+                                        }
+
+                                        // Display Answer Attachments
+                                        if (attachments['answer'] && Object.keys(attachments[
+                                                'answer']).length) {
+                                            attachmentsHtml += `<strong>Answer:</strong><ul>`;
+                                            Object.values(attachments['answer']).forEach(file => {
+                                                attachmentsHtml +=
+                                                    `<li><a href="${file}" target="_blank">${file.split('/').pop()}</a></li>`;
+                                            });
+                                            attachmentsHtml += `</ul>`;
+                                        }
+
+                                    } catch (e) {
+                                        console.error("Error parsing attachments:", e);
+                                        attachmentsHtml = 'Invalid Attachment Data';
+                                    }
+                                }
+
+                                return attachmentsHtml || 'No Attachments';
+                            }
+                        },
+
+
+                        {
+                            targets: 5,
                             render: function(data, type, full, meta) {
                                 var checked = full['status'] == 1 ? 'checked' : '';
                                 var statusText = full['status'] == 1 ? 'Resolved' : 'Pending';
@@ -51,7 +106,7 @@
                                     </label>`;
                             }
 
-                            
+
                         },
                         {
                             targets: -1, // Actions column
@@ -129,6 +184,7 @@
                         <th>Student Name</th>
                         <th>Email</th>
                         <th>Query</th>
+                        <th>Attachemts</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>

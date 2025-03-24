@@ -363,7 +363,8 @@ class StudentsController extends Controller
                 'status' => 'success',
                 'data' => [
                     'student' => $student,
-                    'enrolled_courses' => $onGoingCourses,  // Keep ongoing courses inside enrolled
+                    // 'enrolled_courses' => $onGoingCourses,  // Keep ongoing courses inside enrolled
+                    'enrolled_courses' => $enrolledCourses, // Include all enrolled courses
                     'on_going_courses' => $onGoingCourses,  // Separate ongoing courses array
                     'completed_courses' => $completedCourses
                 ]
@@ -375,9 +376,9 @@ class StudentsController extends Controller
     }
 
 
-    // to show ongoing and completed courses separately.
+    // ****to show ongoing and completed courses separately.
 
-    // Map student progress with total duration with Course Duration
+    // Map student progress with total duration with Course Duration***
 
     /**
      * Convert duration string (e.g., "1 Month", "6 Weeks", "3 Days", "5 Hours", "30 Minutes") to seconds.

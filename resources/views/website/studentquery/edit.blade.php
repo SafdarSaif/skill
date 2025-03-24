@@ -4,9 +4,9 @@
         <p class="text-muted">Modify the student query details below</p>
     </div>
 
-    <form id="edit-student-query-form" action="{{ route('studentquery.update', $studentquery->id) }}" method="POST" enctype="multipart/form-data" class="row g-3">
+    <form id="edit-student-query-form" action="{{ route('studentquery.update', $studentquery->id) }}" method="POST"
+        enctype="multipart/form-data" class="row g-3">
         @csrf
-        @method('PUT')
 
         <!-- Video Type -->
         <div class="col-md-6">
@@ -14,7 +14,8 @@
             <select name="video_id" id="video_id" class="form-select" required>
                 <option value="">Select Video</option>
                 @foreach ($subjectvideo as $id => $name)
-                    <option value="{{ $id }}" {{ $studentquery->video_id == $id ? 'selected' : '' }}>{{ $name }}</option>
+                    <option value="{{ $id }}" {{ $studentquery->video_id == $id ? 'selected' : '' }}>
+                        {{ $name }}</option>
                 @endforeach
             </select>
         </div>
@@ -25,27 +26,23 @@
             <select name="student_id" id="student_id" class="form-select" required>
                 <option value="">Select Student</option>
                 @foreach ($student as $id => $name)
-                    <option value="{{ $id }}" {{ $studentquery->student_id == $id ? 'selected' : '' }}>{{ $name }}</option>
+                    <option value="{{ $id }}" {{ $studentquery->student_id == $id ? 'selected' : '' }}>
+                        {{ $name }}</option>
                 @endforeach
             </select>
         </div>
-
-        <!-- Student Name -->
-        <div class="col-md-12">
-            <label for="student_name" class="form-label">Student Name <span class="text-danger">*</span></label>
-            <input type="text" name="student_name" id="student_name" class="form-control" value="{{ $studentquery->student_name }}" required>
-        </div>
-
         <!-- Email -->
         <div class="col-md-12">
             <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
-            <input type="email" name="email" id="email" class="form-control" value="{{ $studentquery->email }}" required>
+            <input type="email" name="email" id="email" class="form-control" value="{{ $studentquery->email }}"
+                required>
         </div>
 
         <!-- Phone Number -->
         <div class="col-md-12">
             <label for="phone" class="form-label">Phone Number <span class="text-danger">*</span></label>
-            <input type="text" name="phone" id="phone" class="form-control" value="{{ $studentquery->phone }}" required pattern="\d{10}" title="Enter a valid 10-digit phone number">
+            <input type="text" name="phone" id="phone" class="form-control" value="{{ $studentquery->phone }}"
+                required pattern="\d{10}" title="Enter a valid 10-digit phone number">
         </div>
 
         <!-- Query -->
@@ -53,18 +50,69 @@
             <label for="query" class="form-label">Query <span class="text-danger">*</span></label>
             <textarea name="query" id="query" class="form-control" rows="4" required>{{ $studentquery->query }}</textarea>
         </div>
-        
+
         <!-- Answer -->
         <div class="col-md-12">
             <label for="answer" class="form-label">Answer</label>
             <textarea name="answer" id="answer" class="form-control" rows="4">{{ $studentquery->answer }}</textarea>
         </div>
 
-        <!-- Attachment -->
+        {{-- <!-- Attachment -->
         <div class="col-md-12">
             <label for="attachment" class="form-label">Attachment</label>
             <input type="file" name="attachment" id="attachment" class="form-control">
+        </div> --}}
+
+        <div class="col-md-12">
+            <label for="attachment" class="form-label">Attachments</label>
+            <input type="file" name="attachment[]" id="attachment" class="form-control" multiple>
+
+            @php
+                $attachments = $studentquery->attachment ? json_decode($studentquery->attachment, true) : [];
+            @endphp
+
+            <div class="row">
+                <!-- Display Question Attachments -->
+                @if (!empty($attachments['question']))
+                    <div class="col-md-6">
+                        <div class="mt-2">
+                            <label class="form-label">Question Attachments:</label>
+                            <ul>
+                                @foreach ($attachments['question'] as $filePath)
+                                    <li>
+                                        <a href="{{ asset($filePath) }}" target="_blank">
+                                            {{ basename($filePath) }}
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                @endif
+
+                <!-- Display Answer Attachments -->
+                @if (!empty($attachments['answer']))
+                    <div class="col-md-6">
+                        <div class="mt-2">
+                            <label class="form-label">Answer Attachments:</label>
+                            <ul>
+                                @foreach ($attachments['answer'] as $filePath)
+                                    <li>
+                                        <a href="{{ asset($filePath) }}" target="_blank">
+                                            {{-- {{ basename($filePath) }} --}}
+                                            {{ pathinfo($filePath, PATHINFO_EXTENSION) }}
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                @endif
+            </div>
+
         </div>
+
+
 
         <!-- Submit Buttons -->
         <div class="col-12 text-center mt-3">
@@ -79,10 +127,6 @@
         // Initialize form validation
         $("#edit-student-query-form").validate({
             rules: {
-                student_name: {
-                    required: true,
-                    minlength: 3
-                },
                 email: {
                     required: true,
                     email: true
@@ -99,10 +143,6 @@
                 }
             },
             messages: {
-                student_name: {
-                    required: "Please enter student name",
-                    minlength: "Name must be at least 3 characters long"
-                },
                 email: {
                     required: "Please enter an email",
                     email: "Enter a valid email address"
@@ -120,10 +160,10 @@
             },
             submitHandler: function(form) {
                 $(':input[type="submit"]').prop('disabled', true);
-                
+
                 var formData = new FormData(form);
                 formData.append("_token", "{{ csrf_token() }}");
-                
+
                 $.ajax({
                     url: $(form).attr('action'),
                     type: $(form).attr('method'),
