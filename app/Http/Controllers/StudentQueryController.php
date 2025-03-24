@@ -18,10 +18,14 @@ class StudentQueryController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = StudentQuery::orderBy('id', 'desc')->get();
+            // $data = StudentQuery::orderBy('id', 'desc')->get();
+            $data = StudentQuery::with('student')->orderBy('id', 'desc')->get();
 
             return DataTables::of($data)
                 ->addIndexColumn()
+                ->addColumn('name', function ($row) {
+                    return $row->student ? $row->student->name : 'N/A';
+                })
                 ->editColumn('created_at', function ($data) {
                     return Carbon::createFromFormat('Y-m-d H:i:s', $data->created_at)->format('d-m-Y h:i A');
                 })
@@ -407,10 +411,61 @@ class StudentQueryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, StudentQuery $studentQuery)
+    public function update(Request $request, $id)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'video_id' => 'required|exists:subject_videos,id',
+            'student_id' => 'required|exists:students,id',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|digits:10',
+            'query' => 'required|string|min:10',
+            'answer' => 'nullable|string',
+            'attachment.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $validator->errors()->first(),
+            ], 422);
+        }
+
+        try {
+            $studentQuery = StudentQuery::findOrFail($id);
+
+            $attachmentPath = json_decode($studentQuery->attachment, true) ?? ['answer' => []];
+
+            if ($request->hasFile('attachment')) {
+                foreach ($request->file('attachment') as $file) {
+                    $filePath = uploadFile($file, 'attachments');
+                    $attachmentPath['answer'][] = $filePath;
+                }
+            }
+
+            $studentQuery->update([
+                'video_id' => $request->input('video_id'),
+                'student_id' => $request->input('student_id'),
+                'email' => $request->input('email'),
+                'phone' => $request->input('phone'),
+                'query' => $request->input('query'),
+                'answer' => $request->input('answer', null),
+                'attachment' => !empty($attachmentPath['answer']) ? json_encode($attachmentPath, JSON_FORCE_OBJECT) : null,
+                'status' => 1,
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Student query updated successfully!',
+                'data' => $studentQuery
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to update student query: ' . $e->getMessage()
+            ], 500);
+        }
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -428,13 +483,13 @@ class StudentQueryController extends Controller
     public function status($id)
     {
         try {
-            $student = Students::findOrFail($id);
-            if ($student) {
-                $student->status = $student->status == 1 ? 0 : 1;
-                $student->save();
+            $studentquery = StudentQuery::findOrFail($id);
+            if ($studentquery) {
+                $studentquery->status = $studentquery->status == 1 ? 0 : 1;
+                $studentquery->save();
                 return response()->json([
                     'status' => 'success',
-                    'message' => $student->name . ' status updated successfully!',
+                    'message' => $studentquery->name . ' Status updated successfully!',
                 ]);
             } else {
                 return response()->json([
