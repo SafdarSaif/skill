@@ -57,7 +57,70 @@ class StudentProgressController extends Controller
 
 
 
-  
+
+
+    // public function updateProgress(Request $request)
+    // {
+    //     try {
+    //         $validatedData = $request->validate([
+    //             'student_id' => 'required|integer',
+    //             'video_id' => 'required|integer',
+    //             'subject_id' => 'required|integer',
+    //             'course_id' => 'required|integer',
+    //             'total_duration' => 'required|numeric|min:1',
+    //             'watch_time' => 'required|numeric|min:0'
+    //         ]);
+
+    //         // Fetch subject using Eloquent
+    //         $subject = Subject::find($validatedData['subject_id']);
+    //         if (!$subject) {
+    //             return response()->json([
+    //                 'status' => 'error',
+    //                 'message' => 'Invalid subject ID!'
+    //             ], 400);
+    //         }
+
+    //         // Fetch course using Eloquent
+    //         $course = StudentCourse::find($validatedData['course_id']);
+    //         if (!$course) {
+    //             return response()->json([
+    //                 'status' => 'error',
+    //                 'message' => 'Invalid course ID!'
+    //             ], 400);
+    //         }
+
+    //         $progress = ($validatedData['watch_time'] / $validatedData['total_duration']) * 100;
+
+    //         $progressRecord = StudentProgress::updateOrCreate(
+    //             [
+    //                 'student_id' => $validatedData['student_id'],
+    //                 'video_id' => $validatedData['video_id']
+    //             ],
+    //             [
+    //                 'subject_id' => $validatedData['subject_id'],
+    //                 'course_id' => $validatedData['course_id'],
+    //                 'subject_name' => $subject->name,
+    //                 'total_duration' => $validatedData['total_duration'],
+    //                 'watch_time' => $validatedData['watch_time'],
+    //                 'progress' => round($progress, 2)
+    //             ]
+    //         );
+
+    //         return response()->json([
+    //             'status' => 'success',
+    //             'message' => 'Progress updated successfully!',
+    //             'progress' => round($progress, 2) . '%',
+    //             'course_name' => $course->name,
+    //             'subject_name' => $subject->name, // Use subject name from the model
+    //             'data' => $progressRecord
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Something went wrong! ' . $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
 
     public function updateProgress(Request $request)
     {
@@ -89,7 +152,25 @@ class StudentProgressController extends Controller
                 ], 400);
             }
 
+            // Check if progress record exists
+            $progressRecord = StudentProgress::where([
+                'student_id' => $validatedData['student_id'],
+                'video_id' => $validatedData['video_id']
+            ])->first();
+
+            // If already completed, do not update
+            if ($progressRecord && $progressRecord->progress_status === 'completed') {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Progress already completed. No update needed.',
+                    'progress' => $progressRecord->progress . '%',
+                    'progress_status' => $progressRecord->progress_status
+                ], 200);
+            }
+
             $progress = ($validatedData['watch_time'] / $validatedData['total_duration']) * 100;
+
+            $progressStatus = $progress >= 90 ? 'completed' : 'not completed';
 
             $progressRecord = StudentProgress::updateOrCreate(
                 [
@@ -102,7 +183,8 @@ class StudentProgressController extends Controller
                     'subject_name' => $subject->name,
                     'total_duration' => $validatedData['total_duration'],
                     'watch_time' => $validatedData['watch_time'],
-                    'progress' => round($progress, 2)
+                    'progress' => round($progress, 2),
+                    'progress_status' => $progressStatus
                 ]
             );
 
@@ -110,8 +192,9 @@ class StudentProgressController extends Controller
                 'status' => 'success',
                 'message' => 'Progress updated successfully!',
                 'progress' => round($progress, 2) . '%',
+                'progress_status' => $progressStatus,
                 'course_name' => $course->name,
-                'subject_name' => $subject->name, // Use subject name from the model
+                'subject_name' => $subject->name,
                 'data' => $progressRecord
             ], 200);
         } catch (\Exception $e) {
@@ -121,6 +204,8 @@ class StudentProgressController extends Controller
             ], 500);
         }
     }
+
+
 
 
     // Get student progress

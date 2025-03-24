@@ -19,7 +19,8 @@ class StudentProgress extends Model
         'subject_name',
         'total_duration',
         'watch_time',
-        'progress'
+        'progress',
+        'progress_status'
     ];
 
 
