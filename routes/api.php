@@ -36,6 +36,8 @@ Route::get('/course-wise-subjects', [SubjectController::class,'getCourseSubjects
 Route::get('/course-wise-subjects/{column}/{value}', [SubjectController::class,'getCourseSubjects']);
 Route::post('/student-update', [StudentsController::class,'updateStudents']);
 
+Route::post('/video-history', [StudentsController::class,'watchHitoryFunc']);
+
 // API for Content
 Route::get('/all-faq', [FaqController::class, 'getFaqs'])->name('all-faq');
 Route::get('/all-news', [NewsUpdateController::class, 'getNew'])->name('all-news');
