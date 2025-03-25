@@ -249,6 +249,46 @@ class StudentProgressController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+     public function index(Request $request)
+     {
+         if ($request->ajax()) {
+             $data = StudentProgress::with(['student', 'course', 'subject', 'video'])
+                 ->orderBy('id', 'desc')
+                 ->get();
+     
+                //  dd($data->toArray()); // Debugging step
+             return DataTables::of($data)
+                 ->addIndexColumn()
+                 ->addColumn('student_name', function ($data) {
+                     return optional($data->student)->name ?? 'N/A';
+                 })
+                 ->addColumn('course_name', function ($data) {
+                     return optional($data->course)->name ?? 'N/A';
+                    //  dd($data->course);
+                 })
+                 ->addColumn('subject_name', function ($data) {
+                     return optional($data->subject)->name ?? 'N/A';
+                 })
+                 ->addColumn('video_name', function ($data) {
+                     return optional($data->video)->name?? 'N/A';
+                 })
+                 ->editColumn('progress', function ($data) {
+                     return isset($data->progress) ? $data->progress . '%' : '0%';
+                 })
+                 ->editColumn('progress_status', function ($data) {
+                     return ucfirst($data->progress_status ?? 'N/A');
+                 })
+                 ->editColumn('created_at', function ($data) {
+                     return $data->created_at ? \Carbon\Carbon::parse($data->created_at)->format('d-m-Y h:i A') : 'N/A';
+                 })
+                 ->make(true);
+         }
+     
+         return view('studentprogress.index');
+     }
+     
+
     // public function index(Request $request)
     // {
     //     if ($request->ajax()) {
@@ -335,53 +375,53 @@ class StudentProgressController extends Controller
     //     return view('studentprogress.index');
     // }
 
-    public function index(Request $request)
-    {
-        if ($request->ajax()) {
-            $data = StudentProgress::selectRaw("
-                course_id,
-                MAX(student_id) as student_id, 
-                MAX(subject_name) as subject_name, 
-                SUM(total_duration) as total_duration, 
-                SUM(watch_time) as watch_time,
-                (SUM(watch_time) / NULLIF(SUM(total_duration), 0)) * 100 as progress,
-                MAX(created_at) as created_at
-            ")
-                ->with(['student', 'course'])
-                ->groupBy('course_id')
-                ->orderBy('id', 'desc')
-                ->get();
+    // public function index(Request $request)
+    // {
+    //     if ($request->ajax()) {
+    //         $data = StudentProgress::selectRaw("
+    //             course_id,
+    //             MAX(student_id) as student_id, 
+    //             MAX(subject_name) as subject_name, 
+    //             SUM(total_duration) as total_duration, 
+    //             SUM(watch_time) as watch_time,
+    //             (SUM(watch_time) / NULLIF(SUM(total_duration), 0)) * 100 as progress,
+    //             MAX(created_at) as created_at
+    //         ")
+    //             ->with(['student', 'course'])
+    //             ->groupBy('course_id')
+    //             ->orderBy('id', 'desc')
+    //             ->get();
 
-            return DataTables::of($data)
-                ->addIndexColumn()
-                ->addColumn('student_name', function ($data) {
-                    return $data->student ? $data->student->name : 'N/A';
-                })
-                ->addColumn('course', function ($data) {
-                    return $data->course ? $data->course->name : 'N/A';
-                })
-                ->addColumn('subjects', function ($data) {
-                    // Get subjects for the same course_id
-                    $subjects = Subject::where('course_id', $data->course_id)->pluck('name')->toArray();
-                    return implode(', ', $subjects);
-                })
-                ->addColumn('total_duration', function ($data) {
-                    return gmdate("H:i:s", $data->total_duration);
-                })
-                ->addColumn('watch_time', function ($data) {
-                    return gmdate("H:i:s", $data->watch_time);
-                })
-                ->addColumn('overall_progress', function ($data) {
-                    return round($data->progress, 2) . '%';
-                })
-                ->editColumn('created_at', function ($data) {
-                    return Carbon::parse($data->created_at)->format('d-m-Y h:i A');
-                })
-                ->make(true);
-        }
+    //         return DataTables::of($data)
+    //             ->addIndexColumn()
+    //             ->addColumn('student_name', function ($data) {
+    //                 return $data->student ? $data->student->name : 'N/A';
+    //             })
+    //             ->addColumn('course', function ($data) {
+    //                 return $data->course ? $data->course->name : 'N/A';
+    //             })
+    //             ->addColumn('subjects', function ($data) {
+    //                 // Get subjects for the same course_id
+    //                 $subjects = Subject::where('course_id', $data->course_id)->pluck('name')->toArray();
+    //                 return implode(', ', $subjects);
+    //             })
+    //             ->addColumn('total_duration', function ($data) {
+    //                 return gmdate("H:i:s", $data->total_duration);
+    //             })
+    //             ->addColumn('watch_time', function ($data) {
+    //                 return gmdate("H:i:s", $data->watch_time);
+    //             })
+    //             ->addColumn('overall_progress', function ($data) {
+    //                 return round($data->progress, 2) . '%';
+    //             })
+    //             ->editColumn('created_at', function ($data) {
+    //                 return Carbon::parse($data->created_at)->format('d-m-Y h:i A');
+    //             })
+    //             ->make(true);
+    //     }
 
-        return view('studentprogress.index');
-    }
+    //     return view('studentprogress.index');
+    // }
 
 
     /**
