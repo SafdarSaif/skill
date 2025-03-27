@@ -284,7 +284,7 @@ class CategoryController extends Controller
     public function categories(Request $request)
     {
         try {
-            $data = Category::all();
+            $data = Category::with('courses')->get();
             if ($data) {
                 return response()->json(['status' => "success", 'message' => "All Category Lists", "data" => $data]);
             } else {
