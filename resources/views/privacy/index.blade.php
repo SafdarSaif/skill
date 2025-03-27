@@ -12,7 +12,7 @@
                     columns: [
                         { data: 'DT_RowIndex', title: 'No.' },
                         { data: 'content', title: 'Content' },
-                        { data: 'status', title: 'Status' },
+                        // { data: 'status', title: 'Status' },
                         { data: '', title: 'Actions' }
                     ],
                     columnDefs: [
@@ -24,23 +24,23 @@
                                 return `<span title="${data}" data-bs-toggle="tooltip">${shortContent}</span>`;
                             }
                         },
-                        {
-                            targets: 2, // Status Column
-                            render: function(data, type, full, meta) {
-                                var checked = full['status'] == 1 ? 'checked' : '';
-                                var statusText = full['status'] == 1 ? 'Active' : 'Inactive';
+                        // {
+                        //     targets: 2, // Status Column
+                        //     render: function(data, type, full, meta) {
+                        //         var checked = full['status'] == 1 ? 'checked' : '';
+                        //         var statusText = full['status'] == 1 ? 'Active' : 'Inactive';
 
-                                return `
-                                    <label class="switch">
-                                        <input type="checkbox" ${checked} onclick="updateActiveStatus('/privacy/status/${full['id']}', 'privacy-table')" class="switch-input">
-                                        <span class="switch-toggle-slider">
-                                            <span class="switch-on"><i class="ti ti-check"></i></span>
-                                            <span class="switch-off"><i class="ti ti-x"></i></span>
-                                        </span>
-                                        <span class="switch-label">${statusText}</span>
-                                    </label>`;
-                            }
-                        },
+                        //         return `
+                        //             <label class="switch">
+                        //                 <input type="checkbox" ${checked} onclick="updateActiveStatus('/privacy/status/${full['id']}', 'privacy-table')" class="switch-input">
+                        //                 <span class="switch-toggle-slider">
+                        //                     <span class="switch-on"><i class="ti ti-check"></i></span>
+                        //                     <span class="switch-off"><i class="ti ti-x"></i></span>
+                        //                 </span>
+                        //                 <span class="switch-label">${statusText}</span>
+                        //             </label>`;
+                        //     }
+                        // },
                         {
                             targets: -1, // Actions Column
                             searchable: false,
@@ -119,7 +119,7 @@
                     <tr>
                         <th>No.</th>
                         <th>Content</th>
-                        <th>Status</th>
+                        {{-- <th>Status</th> --}}
                         <th>Actions</th>
                     </tr>
                 </thead>

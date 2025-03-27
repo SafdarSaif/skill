@@ -98,31 +98,47 @@
                         return '<span class="text-truncate">' + $status + '</span>'
                     }
                 },
-                {
-                    // Actions
-                    targets: -1,
-                    title: 'Actions',
-                    searchable: false,
-                    orderable: false,
-                    render: function(data, type, full, meta) {
-                        var $role = JSON.parse(full['role']);
-                        var dropDown = $role[0] == 'Super Admin' ? '' :
-                            '<a href="/users/assign-verticals/' + full['id'] +
-                            '" class="dropdown-item">Assign Vertical</a><a href="javascript:;" onclick="assignReporting(' +
-                            full['id'] + ')" class="dropdown-item">Reporting</a>';
+                // {
+                //     // Actions
+                //     targets: -1,
+                //     title: 'Actions',
+                //     searchable: false,
+                //     orderable: false,
+                //     render: function(data, type, full, meta) {
+                //         var $role = JSON.parse(full['role']);
+                //         var dropDown = $role[0] == 'Super Admin' ? '' :
+                //             '<a href="/users/assign-verticals/' + full['id'] +
+                //             '" class="dropdown-item">Assign Vertical</a><a href="javascript:;" onclick="assignReporting(' +
+                //             full['id'] + ')" class="dropdown-item">Reporting</a>';
 
-                        return (
-                            '<div class="d-flex align-items-center">' +
-                            '<a href="javascript:;" class="text-body"><i class="ti ti-edit ti-sm me-2"></i></a>' +
-                            '<a href="javascript:;" class="text-body dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical ti-sm mx-1"></i></a>' +
-                            '<div class="dropdown-menu dropdown-menu-end m-0">' +
-                            dropDown +
-                            '<a href="javascript:;" class="dropdown-item">Change Password</a>' +
-                            '</div>' +
-                            '</div>'
-                        );
-                    }
-                }
+                //         return (
+                //             '<div class="d-flex align-items-center">' +
+                //             '<a href="javascript:;" class="text-body"><i class="ti ti-edit ti-sm me-2"></i></a>' +
+                //             '<a href="javascript:;" class="text-body dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical ti-sm mx-1"></i></a>' +
+                //             '<div class="dropdown-menu dropdown-menu-end m-0">' +
+                //             dropDown +
+                //             '<a href="javascript:;" class="dropdown-item">Change Password</a>' +
+                //             '</div>' +
+                //             '</div>'
+                //         );
+                //     }
+                // }
+                {
+                            targets: -1,
+                            searchable: false,
+                            orderable: false,
+                            render: function(data, type, full, meta) {
+                                return (
+                                    '<span class="text-nowrap">' +
+                                    '<button class="btn btn-sm btn-icon me-2" onclick="edit(\'/users/edit/' +
+                                    full['id'] + '\', \'modal-lg\')">' +
+                                    '<i class="ti ti-edit"></i></button>' +
+                                    '<button class="btn btn-sm btn-icon delete-record" onclick="destry(\'/users/destroy/' +
+                                    full['id'] + '\', \'users-datatable\')">' +
+                                    '<i class="ti ti-trash"></i></button></span>'
+                                );
+                            }
+                        }
             ],
             aaSorting: false,
             dom: '<"row me-2"' +

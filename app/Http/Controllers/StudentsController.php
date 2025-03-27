@@ -320,18 +320,16 @@ class StudentsController extends Controller
                 return response()->json(['status' => 'error', 'message' => 'No student found with this mobile number']);
             }
 
-            // Fetch enrolled courses
             $enrolledCourses = StudentCourse::where('student_id', $student->id)
                 ->with('course', 'course.users')
                 ->get();
 
             $completedCourses = [];
-            $onGoingCourses = [];  // Separate array for ongoing courses
+            $onGoingCourses = [];  
 
             foreach ($enrolledCourses as $enrolled) {
                 $courseId = $enrolled->course_id;
 
-                // Fetch subject IDs related to this course
                 $subjectIds = Subject::where('course_id', $courseId)->pluck('id');
 
                 // Get total duration from subject_videos using subject IDs
@@ -363,9 +361,9 @@ class StudentsController extends Controller
                 'status' => 'success',
                 'data' => [
                     'student' => $student,
-                    // 'enrolled_courses' => $onGoingCourses,  // Keep ongoing courses inside enrolled
-                    'enrolled_courses' => $enrolledCourses, // Include all enrolled courses
-                    'on_going_courses' => $onGoingCourses,  // Separate ongoing courses array
+                    // 'enrolled_courses' => $onGoingCourses,  
+                    'enrolled_courses' => $enrolledCourses, 
+                    'on_going_courses' => $onGoingCourses,  
                     'completed_courses' => $completedCourses
                 ]
             ]);
@@ -491,29 +489,35 @@ class StudentsController extends Controller
 
     public function registerStudent(Request $request)
     {
-        // dd($request);
-        $mobile = $request->mobile;
         try {
-            $student = Students::where('mobile',)->first();
-
+            $student = Students::where('mobile', $request->mobile)
+                               ->orWhere('email', $request->email)
+                               ->first();
+    
             if ($student) {
-                return response()->json(['status' => 'error', 'message' => 'Student already registered with this ' . $request->mobile]);
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Student already registered with this email or mobile number.'
+                ]);
             }
-
+    
+            // Create new student
             $studentdata = new Students();
             $studentdata->name = $request->name;
             $studentdata->email = $request->email;
-            $studentdata->mobile = $mobile;
+            $studentdata->mobile = $request->mobile;
             $studentdata->status = 1;
             $studentdata->save();
-            $otpresponse = OTPController::getOtp($mobile);
-
+    
+            // Send OTP
+            $otpresponse = OTPController::getOtp($request->mobile);
             return $otpresponse;
+    
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
     }
-
+    
     /**
      * Show the form for creating a new resource.
      */
