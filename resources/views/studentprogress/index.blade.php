@@ -18,23 +18,28 @@
                             title: 'Student Name'
                         },
                         {
-                            data: 'course',
+                            data: 'course_name',
                             title: 'Course Name'
                         },
+
 
                         {
                             data: 'subject_name',
                             title: 'Subject Name'
                         },
+                        {
+                            data: 'video_name',
+                            title: 'Video Name'
+                        },
 
                         {
                             data: 'progress',
                             title: ' Student Progress'
+                        },
+                         {
+                            data: 'progress_status',
+                            title: 'Progress Status'
                         }
-                        // {
-                        //     data: 'status',
-                        //     title: 'Status'
-                        // },
                         // {
                         //     data: '',
                         //     title: 'Actions'
@@ -43,7 +48,7 @@
                     columnDefs: [
 
                         {
-                            targets: 4,
+                            targets: 5,
                             render: function(data, type, full, meta) {
                                 data = parseFloat(data) || 0;
 
@@ -62,6 +67,7 @@
                             }
                         },
 
+                      
 
 
                         // {
@@ -143,9 +149,9 @@
                     }
                 });
                 // Enable Bootstrap tooltips
-                $('body').tooltip({
-                    selector: '[data-bs-toggle="tooltip"]'
-                });
+                // $('body').tooltip({
+                //     selector: '[data-bs-toggle="tooltip"]'
+                // });
             }
         });
     </script>
@@ -159,8 +165,10 @@
                         <th>No.</th>
                         <th>Student Name</th>
                         <th>Course Name</th>
+                        <th>Video Name</th>
                         <th>Subject Name</th>
                         <th>Student Progress</th>
+                        <th>Progress Status</th>
                         {{-- <th>Status</th>
                         <th>Actions</th> --}}
                     </tr>

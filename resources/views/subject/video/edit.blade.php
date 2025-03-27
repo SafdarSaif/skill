@@ -35,12 +35,22 @@
         </div>
 
         <!-- Duration -->
-        <div class="col-md-6">
+        {{-- <div class="col-md-6">
             <label for="duration" class="form-label">Duration (HH:MM:SS)</label>
             <input type="text" name="duration" id="duration" class="form-control"
                 value="{{ old('duration', $video->duration) }}" pattern="^([0-9]{1,2}):([0-5][0-9]):([0-5][0-9])$"
                 placeholder="HH:MM:SS" title="Enter duration in HH:MM:SS format">
+        </div> --}}
+
+        <!-- Duration -->
+        <div class="col-md-6">
+            <label for="duration" class="form-label">Duration (HH:MM:SS)</label>
+            <input type="text" name="duration" id="duration" class="form-control"
+                value="{{ old('duration', gmdate('H:i:s', $video->duration)) }}"
+                pattern="^([0-9]{1,2}):([0-5][0-9]):([0-5][0-9])$" placeholder="HH:MM:SS"
+                title="Enter duration in HH:MM:SS format">
         </div>
+
 
         <!-- Uploader -->
         <div class="col-md-6">
@@ -81,7 +91,7 @@
             style="{{ old('upload_type', $video->upload_type) == 'youtube' ? '' : 'display: none;' }}">
             <label for="video_url" class="form-label">YouTube Video URL <span class="text-danger">*</span></label>
             <input type="url" name="video_url" id="video_url" class="form-control"
-                placeholder="Enter YouTube embedded URL" value="{{ old('video_url', $video->video_url) }}">
+                placeholder="Enter YouTube embedded URL" value="">
             <small class="text-muted">⚠ Only YouTube embedded URLs are allowed (e.g.,
                 <code>https://www.youtube.com/embed/VIDEO_ID</code>).</small>
         </div>
@@ -90,7 +100,7 @@
         <div class="col-md-12" id="local_field"
             style="{{ old('upload_type', $video->upload_type) == 'local' ? '' : 'display: none;' }}">
             <label for="video_file" class="form-label">Upload Video File <span class="text-danger">*</span></label>
-            <input type="file" name="video_file" id="video_file" class="form-control" accept="video/*" >
+            <input type="file" name="video_file" id="video_file" class="form-control" accept="video/*">
 
             @if ($video->upload_type == 'local' && $video->video_url)
                 <!-- Display existing video file name -->
@@ -140,6 +150,69 @@
         });
 
         // Form Validation & Submission via AJAX
+        // $("#subject-video-form").validate({
+        //     rules: {
+        //         subject_id: {
+        //             required: true
+        //         },
+        //         name: {
+        //             required: true,
+        //             minlength: 3
+        //         },
+        //         user_id: {
+        //             required: true
+        //         },
+        //         upload_type: {
+        //             required: true
+        //         },
+        //         video_url: {
+        //             required: function() {
+        //                 return $("#upload_type").val() === "youtube";
+        //             },
+        //             url: true
+        //         }
+        //     },
+        //     messages: {
+        //         subject_id: {
+        //             required: "Please select a subject"
+        //         },
+        //         name: {
+        //             required: "Please enter a video name",
+        //             minlength: "Video name must be at least 3 characters long"
+        //         },
+        //         user_id: {
+        //             required: "Please select an uploader"
+        //         },
+        //         upload_type: {
+        //             required: "Please select an upload type"
+        //         },
+        //         video_url: {
+        //             required: "Please enter a YouTube video URL",
+        //             url: "Please enter a valid URL"
+        //         }
+        //     },
+        //     submitHandler: function(form) {
+        //         $(':input[type="submit"]').prop('disabled', true);
+        //         var formData = new FormData(form);
+        //         formData.append("_token", "{{ csrf_token() }}");
+
+        //         $.ajax({
+        //             url: $(form).attr('action'),
+        //             type: $(form).attr('method'),
+        //             data: formData,
+        //             processData: false,
+        //             contentType: false,
+        //             success: function(response) {
+        //                 toastr.success(response.message);
+        //                 $(".modal").modal('hide');
+        //                 $('#subjects-video-table').DataTable().ajax.reload();
+        //             },
+        //             error: function(response) {
+        //                 toastr.error(response.responseJSON.message);
+        //             }
+        //         });
+        //     }
+        // });
         $("#subject-video-form").validate({
             rules: {
                 subject_id: {
@@ -154,12 +227,6 @@
                 },
                 upload_type: {
                     required: true
-                },
-                video_url: {
-                    required: function() {
-                        return $("#upload_type").val() === "youtube";
-                    },
-                    url: true
                 }
             },
             messages: {
@@ -175,10 +242,6 @@
                 },
                 upload_type: {
                     required: "Please select an upload type"
-                },
-                video_url: {
-                    required: "Please enter a YouTube video URL",
-                    url: "Please enter a valid URL"
                 }
             },
             submitHandler: function(form) {
@@ -203,5 +266,6 @@
                 });
             }
         });
+
     });
 </script>

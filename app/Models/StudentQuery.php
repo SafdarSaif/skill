@@ -12,12 +12,16 @@ class StudentQuery extends Model
     protected $fillable = [
         'video_id',
         'student_id',
-        'name',
         'email',
         'phone',
         'query',
         'answer',
+        'status',
         'attachment',
     ];
-}
 
+    public function student()
+    {
+        return $this->belongsTo(Students::class, 'student_id'); // Assuming 'student_id' is the foreign key in 'student_queries' table
+    }
+}
