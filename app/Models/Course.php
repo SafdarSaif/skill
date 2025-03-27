@@ -54,4 +54,6 @@ class Course extends Model
     {
         return $this->hasMany(Subject::class)->with('videos', 'notes');
     }
+
+    
 }
