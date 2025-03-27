@@ -33,7 +33,7 @@ class StudentProgress extends Model
     // Define Relationship with Course Model
     public function course()
     {
-        return $this->belongsTo(Course::class, 'course_id');
+        return $this->belongsTo(StudentCourse::class, 'course_id');
     }
 
     // Define Relationship with Subject Model
@@ -42,8 +42,15 @@ class StudentProgress extends Model
         return $this->belongsTo(Subject::class, 'subject_id');
     }
 
+    // public function video()
+    // {
+    //     return $this->belongsTo(StudentProgress::class, 'video_id');
+    // }
     public function video()
     {
-        return $this->belongsTo(StudentProgress::class, 'video_id');
+        return $this->belongsTo(SubjectVideo::class, 'video_id');
     }
+
+
+    
 }
