@@ -42,4 +42,9 @@ class StudentCourse extends Model
         return $this->hasMany(StudentProgress::class, 'student_id');
     }
 
+    public function users()
+    {
+        return $this->belongsTo(User::class, 'added_by');
+    }
+
 }
