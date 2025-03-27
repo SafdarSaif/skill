@@ -780,7 +780,7 @@ class StudentsController extends Controller
                 'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
                 'signature' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:1024',
             ]);
-
+// dd($request->all());
             if ($validator->fails()) {
                 return response()->json([
                     'status' => 'error',
@@ -820,7 +820,7 @@ class StudentsController extends Controller
                 'city' => $request->city,
                 'pincode' => $request->pincode,
                 'country' => $request->country,
-                'highest_qualification' => $request->highest_qualification,
+                'heighest_qualification' => $request->highest_qualification,
             ]);
 
             return response()->json([

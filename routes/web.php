@@ -123,6 +123,7 @@ Route::get('/payment/edit/{id}', [StudentPaymentController::class, 'edit'])->nam
 Route::post('/payment/update/{id}', [StudentPaymentController::class, 'update'])->name('payment.update');
 Route::delete('/payment/destroy/{id}', [StudentPaymentController::class, 'destroy'])->name('payment.destroy');
 Route::get('payment/status/{id}', [StudentPaymentController::class, 'status'])->name('payment.status');
+Route::get('payemnt/get-payment-according-to-student-and-course/{student_id}/{course_id}', [StudentPaymentController::class, 'getPyamentByStudentIdCourseId'])->name('payment.get-payment-according-to-student-and-course');
 
 Route::get('/studentcourse', [StudentCourseController::class, 'index'])->name('studentcourse');
 Route::get('/studentcourse/create', [StudentCourseController::class, 'create'])->name('studentcourse.create');
