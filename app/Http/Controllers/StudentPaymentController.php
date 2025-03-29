@@ -40,19 +40,39 @@ class StudentPaymentController extends Controller
 
         return view('studentpayment.index', compact('students', 'courses'));
     }
-    
+
+
+    // API by KP
+    // public static function StudentPayment($mobile)
+    // {
+    //     try {
+    //         $student = Students::where('mobile', $mobile)->first();
+    //         if ($student) {
+    //             $data = StudentPayment::where('student_id', $student->id)->with('course')->get();
+    //             return response()->json(['status' => 'success', 'data' => $data]);
+    //         } else {
+    //             return response()->json(['status' => 'success', 'message' => 'Student not found']);
+    //         }
+    //     } catch (\Exception $e) {
+    //         return response()->json(['status' => 'error','message' => 'An error occurred while fetching student payment details'], 500);
+    //     }
+    // }
+
     public static function StudentPayment($mobile)
     {
         try {
             $student = Students::where('mobile', $mobile)->first();
             if ($student) {
-                $data = StudentPayment::where('student_id', $student->id)->with('course')->get();
+                $data = StudentPayment::where('student_id', $student->id)
+                    ->with('course')
+                    ->orderBy('id', 'desc')
+                    ->get();
                 return response()->json(['status' => 'success', 'data' => $data]);
             } else {
                 return response()->json(['status' => 'success', 'message' => 'Student not found']);
             }
         } catch (\Exception $e) {
-            return response()->json(['status' => 'error','message' => 'An error occurred while fetching student payment details'], 500);
+            return response()->json(['status' => 'error', 'message' => 'An error occurred while fetching student payment details'], 500);
         }
     }
 
@@ -120,7 +140,7 @@ class StudentPaymentController extends Controller
             $payment = new StudentPayment();
             $payment->student_id = $request->student_id;
             $payment->course_id = $request->course_id;
-            $payment->amount = $request->amount; 
+            $payment->amount = $request->amount;
             $payment->transaction_id = $request->transaction_id;
             $payment->payment_status = $request->payment_status;
             $payment->payment_confirmation_date = $request->payment_confirmation_date;
@@ -170,13 +190,12 @@ class StudentPaymentController extends Controller
         //
     }
 
-    public function getPyamentByStudentIdCourseId($studentId,$courseId)
+    public function getPyamentByStudentIdCourseId($studentId, $courseId)
     {
-        $transactionData = StudentPayment::where('course_id',$courseId)->where('student_id',$studentId)->get();
-        if($transactionData->isNotEmpty())
-        {
-            return response()->json(['status'=>'success','payments'=>$transactionData]);
+        $transactionData = StudentPayment::where('course_id', $courseId)->where('student_id', $studentId)->get();
+        if ($transactionData->isNotEmpty()) {
+            return response()->json(['status' => 'success', 'payments' => $transactionData]);
         }
-        return response()->json(['status'=>'error']);
+        return response()->json(['status' => 'error']);
     }
 }
