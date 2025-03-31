@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('student_progress', function (Blueprint $table) {
+            $table->dropForeign(['course_id']);
             $table->foreign('course_id')->references('id')->on('student_courses')->onDelete('cascade');
         });
     }

@@ -71,8 +71,9 @@ Route::get('/return-response/{student_id}/{video_id}',[StudentQueryController::c
 Route::get('/get-student-progress/{student_id}/{subject_id}/{video_id?}',[StudentProgressController::class,'getStudentProgress'])->name('get-student-progress');
 Route::get('/get-contact', [ContactController::class, 'getContact'])->name('get-contact');
 
+Route::get('/get-contact', [ContactController::class, 'getContact'])->name('get-contact');
 
-
+Route::post('/fee-receipt', [StudentPaymentController::class, 'generateFeeReceipt']);
 
 
 

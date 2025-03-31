@@ -7,6 +7,7 @@ use App\Models\StudentCourse;
 use App\Models\StudentPayment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+
 class EasebuzzPaymentController extends Controller
 {
     public static $merchantKey;
@@ -60,7 +61,11 @@ class EasebuzzPaymentController extends Controller
     }
     public function paymentSuccess(Request $request)
     {
+        
         $payment = StudentPayment::where('transaction_id', $request->txnid)->first();
+        $pdfController = new StudentPaymentController();
+        $receiptResponse = $pdfController->generateFeeReceipt($request);
+
         if ($payment) {
             $payment->update([
                 'payment_status' => "completed",
@@ -94,6 +99,7 @@ class EasebuzzPaymentController extends Controller
             'status' => 'success',
             'message' => 'Payment successful!',
             'data' => $payment,
+            'pdf_url' => $receiptResponse,
         ]);
 
     }
