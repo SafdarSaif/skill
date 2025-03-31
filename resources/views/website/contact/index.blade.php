@@ -42,8 +42,8 @@
                             render: function(data, type, full, meta) {
                                 return (
                                     '<span class="text-nowrap">' +
-                                    // `<button class="btn btn-sm btn-icon me-2" onclick="edit('/contact/edit/${full['id']}', 'modal-lg')">` +
-                                    // '<i class="ti ti-edit"></i></button>' +
+                                    `<button class="btn btn-sm btn-icon me-2" onclick="edit('/contact/edit/${full['id']}', 'modal-lg')">` +
+                                    '<i class="ti ti-edit"></i></button>' +
                                     `<button class="btn btn-sm btn-icon delete-record" onclick="destry('/contact/destroy/${full['id']}', 'contact-table')">` +
                                     '<i class="ti ti-trash"></i></button></span>'
                                 );
@@ -64,7 +64,16 @@
                         search: 'Search',
                         searchPlaceholder: 'Search Contacts...'
                     },
-                   
+                    buttons: [{
+                        text: 'Add Contact',
+                        className: 'add-new btn btn-primary mb-3 mb-md-0 waves-effect waves-light',
+                        attr: {
+                            'onclick': "add('{{ route('contact.create') }}', 'modal-lg')"
+                        },
+                        init: function(api, node, config) {
+                            $(node).removeClass('btn-secondary');
+                        }
+                    }],
                     responsive: {
                         details: {
                             display: $.fn.dataTable.Responsive.display.modal({

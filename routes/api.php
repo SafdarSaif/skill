@@ -10,6 +10,10 @@ use App\Http\Controllers\FaqController;
 use App\Http\Controllers\NewsUpdateController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\PrivacyPolicyController;
+use App\Http\Controllers\TermsConditionController;
+use App\Http\Controllers\StudentProgressController;
+use App\Http\Controllers\StudentQueryController;
 // use App\Http\Controllers\EasebuzzController;
 
 use App\Models\Students;
@@ -23,6 +27,7 @@ Route::get('/user', function (Request $request) {
 Route::get('/get-otp/{mobile_no}',[OTPController::class,'getOtp'])->name('get-otp');
 Route::get('/verify-otp/{otp}/{mobile_no}',[OTPController::class,'verifyOtp']);
 Route::get('/resend-otp/{mobile_no}',[OTPController::class,'reSendOtp']);
+// API modification for Students Progress
 Route::get('/students-details/{mobile_no}',[StudentsController::class,'getStudentDetails']);
 Route::post('/students-registration',[StudentsController::class,'registerStudent']);
 Route::get('/students-all-details/{mobile_no}',[StudentsController::class,'StudentAllDetaills']);
@@ -36,14 +41,12 @@ Route::get('/course-wise-subjects', [SubjectController::class,'getCourseSubjects
 Route::get('/course-wise-subjects/{column}/{value}', [SubjectController::class,'getCourseSubjects']);
 Route::post('/student-update', [StudentsController::class,'updateStudents']);
 
-Route::post('/video-history', [StudentsController::class,'watchHitoryFunc']);
-
 // API for Content
 Route::get('/all-faq', [FaqController::class, 'getFaqs'])->name('all-faq');
 Route::get('/all-news', [NewsUpdateController::class, 'getNew'])->name('all-news');
-Route::post('/store-leads', [ContactController::class, 'store'])->name('store-leads');
-
-
+Route::get('/subect-wise-content/{subject_id}/{student_id}',[SubjectController::class,'getVideoNotesBySubject']);
+Route::get('/get-privacy', [PrivacyPolicyController::class, 'getPrivacy'])->name('get-privacy');
+Route::get('/get-terms', [TermsConditionController::class, 'getTerms'])->name('get-terms');
 
 Route::post('/pay', [EasebuzzPaymentController::class, 'initiatePayment'])->name('easebuzz.pay');
 Route::post('/payment-success', [EasebuzzPaymentController::class, 'paymentSuccess'])->name('easebuzz.success');
@@ -54,3 +57,22 @@ Route::post('/easebuzz/initiate', [EasebuzzPaymentController::class, 'initiate_p
 Route::post('/easebuzz/response', [EasebuzzPaymentController::class, 'ebz_response']);
 Route::post('/easebuzz/success', [EasebuzzPaymentController::class, 'payment_success']);
 Route::post('/easebuzz/failure', [EasebuzzPaymentController::class, 'payment_failure']);
+
+
+
+Route::post('/update-progress', [StudentProgressController::class, 'updateProgress'])->name('update-progress');
+Route::get('/get-progress', [StudentProgressController::class, 'getProgress'])->name('get-progress');
+Route::get('type-wise-course',[CourseController::class,'getCourseByType']);
+Route::get('type-wise-course/{course_type_id}',[CourseController::class,'getCourseByType']);
+
+Route::post('/get-query',[StudentQueryController::class,'getQuery'])->name('get-query');
+Route::get('/return-response/{student_id}/{video_id}',[StudentQueryController::class,'sndResponse'])->name('return-response');
+
+Route::get('/get-student-progress/{student_id}/{subject_id}/{video_id?}',[StudentProgressController::class,'getStudentProgress'])->name('get-student-progress');
+Route::get('/get-contact', [ContactController::class, 'getContact'])->name('get-contact');
+
+
+
+
+
+

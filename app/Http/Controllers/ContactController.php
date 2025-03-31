@@ -33,7 +33,7 @@ class ContactController extends Controller
      */
     public function create()
     {
-        //
+        return view('website.contact.create');
     }
 
     /**
@@ -44,6 +44,7 @@ class ContactController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:contacts,email',
+            'phone' => 'required|digits:10',
             'subject' => 'required|string|max:255',
             'message' => 'required|string',
         ]);
@@ -52,6 +53,7 @@ class ContactController extends Controller
             $contact = Contact::create([
                 'name' => $request->input('name'),
                 'email' => $request->input('email'),
+                'phone' => $request->input('phone'),
                 'subject' => $request->input('subject'),
                 'message' => $request->input('message'),
             ]);
@@ -59,6 +61,22 @@ class ContactController extends Controller
             return response()->json(['success' => true, 'message' => 'Lead stored successfully!', 'data' => $contact], 201);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Failed to store lead.', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function getContact()
+    {
+        try {
+            $contacts = Contact::orderBy('created_at', 'desc')->get()->toArray();
+            return response()->json([
+                'status' => 'success',
+                'data' => $contacts
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong! ' . $e->getMessage()
+            ], 500);
         }
     }
 
@@ -89,8 +107,14 @@ class ContactController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Contact $contact)
-    {
-        //
+    public function destroy($contactID)
+    { {
+            try {
+                $contact = Contact::destroy($contactID);
+                return ['status' => 'success', 'message' => 'Contact  deleted successfully!'];
+            } catch (\Throwable $e) {
+                return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+            }
+        }
     }
 }

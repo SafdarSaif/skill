@@ -92,8 +92,11 @@
           email: true
         },
         mobile: {
-          required: true
-        },
+        required: true,
+        digits: true,
+        minlength: 10,
+        maxlength: 10
+      },
         role_id: {
           required: true
         },

@@ -37,4 +37,14 @@ class StudentCourse extends Model
         return $this->belongsTo(Course::class, 'course_id');
     }
 
+    public function progress()
+    {
+        return $this->hasMany(StudentProgress::class, 'student_id');
+    }
+
+    public function users()
+    {
+        return $this->belongsTo(User::class, 'added_by');
+    }
+
 }

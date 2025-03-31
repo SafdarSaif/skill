@@ -25,10 +25,10 @@ class Course extends Model
      * Get the category associated with the course.
      */
 
-     public function type()
-     {
-         return $this->belongsTo(CourseType::class, 'type_id');
-     }
+    public function type()
+    {
+        return $this->belongsTo(CourseType::class, 'type_id');
+    }
 
     public function category()
     {
@@ -52,7 +52,8 @@ class Course extends Model
 
     public function subjects()
     {
-        return $this->hasMany(Subject::class)->with('videos','notes');
+        return $this->hasMany(Subject::class)->with('videos', 'notes');
     }
 
+    
 }

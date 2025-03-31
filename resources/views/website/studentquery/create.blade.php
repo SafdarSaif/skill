@@ -4,14 +4,34 @@
         <p class="text-muted">Fill in the student query details below</p>
     </div>
 
-    <form id="student-query-form" action="{{ route('studentquery.store') }}" method="POST" enctype="multipart/form-data" class="row g-3">
+    <form id="student-query-form" action="{{ route('studentquery.store') }}" method="POST" enctype="multipart/form-data"
+        class="row g-3">
         @csrf
 
-        <!-- Student Name -->
-        <div class="col-md-12">
-            <label for="student_name" class="form-label">Student Name <span class="text-danger">*</span></label>
-            <input type="text" name="student_name" id="student_name" class="form-control" required>
+
+
+        <!-- Video Type-->
+        <div class="col-md-6">
+            <label for="video_id" class="form-label">Select Video<span class="text-danger">*</span></label>
+            <select name="video_id" id="video_id" class="form-select" required>
+                <option value="">Select Video</option>
+                @foreach ($subjectvideo as $id => $name)
+                    <option value="{{ $id }}">{{ $name }}</option>
+                @endforeach
+            </select>
         </div>
+
+        <!-- Student Type-->
+        <div class="col-md-6">
+            <label for="video_id" class="form-label">Select Student<span class="text-danger">*</span></label>
+            <select name="student_id" id="student_id" class="form-select" required>
+                <option value="">Select Video</option>
+                @foreach ($student as $id => $name)
+                    <option value="{{ $id }}">{{ $name }}</option>
+                @endforeach
+            </select>
+        </div>
+
 
         <!-- Email -->
         <div class="col-md-12">
@@ -22,7 +42,8 @@
         <!-- Phone Number -->
         <div class="col-md-12">
             <label for="phone" class="form-label">Phone Number <span class="text-danger">*</span></label>
-            <input type="text" name="phone" id="phone" class="form-control" required pattern="\d{10}" title="Enter a valid 10-digit phone number">
+            <input type="text" name="phone" id="phone" class="form-control" required pattern="\d{10}"
+                title="Enter a valid 10-digit phone number">
         </div>
 
         <!-- Query -->
@@ -30,6 +51,22 @@
             <label for="query" class="form-label">Query <span class="text-danger">*</span></label>
             <textarea name="query" id="query" class="form-control" rows="4" required></textarea>
         </div>
+        <!-- Answer -->
+        <div class="col-md-12">
+            <label for="answer" class="form-label">Answer</label>
+            <textarea name="answer" id="answer" class="form-control" rows="4"></textarea>
+        </div>
+        {{-- <!-- Attachment -->
+        <div class="col-md-12">
+            <label for="attachment" class="form-label">Attachment</label>
+            <input type="file" name="attachment" id="attachment" class="form-control">
+        </div> --}}
+        <!-- Attachment -->
+        <div class="col-md-12">
+            <label for="attachment" class="form-label">Attachment</label>
+            <input type="file" name="attachment[]" id="attachment" class="form-control" multiple>
+        </div>
+
 
         <!-- Submit Buttons -->
         <div class="col-12 text-center mt-3">
@@ -44,10 +81,6 @@
         // Initialize form validation
         $("#student-query-form").validate({
             rules: {
-                student_name: {
-                    required: true,
-                    minlength: 3
-                },
                 email: {
                     required: true,
                     email: true
@@ -64,10 +97,6 @@
                 }
             },
             messages: {
-                student_name: {
-                    required: "Please enter student name",
-                    minlength: "Name must be at least 3 characters long"
-                },
                 email: {
                     required: "Please enter an email",
                     email: "Enter a valid email address"
@@ -85,7 +114,7 @@
             },
             submitHandler: function(form) {
                 $(':input[type="submit"]').prop('disabled', true);
-                
+
                 var formData = new FormData(form);
                 formData.append("_token", "{{ csrf_token() }}");
 

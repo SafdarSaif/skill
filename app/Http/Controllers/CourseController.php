@@ -24,27 +24,7 @@ class CourseController extends Controller
     /** 
      * Api of all cources
      */
-    public function coursesFunc(Request $request, $column = '', $value = '')
-    {
-        try {
-            $query = Course::with('category', 'users','subjects');
-            if (!empty($column) && !empty($value)) {
-                $query->where($column, $value);
-            }
-            
-            $data = $query->get()->toArray();
-            if ($data) {
-                return response()->json(['status' => "success", 'message' => "All Course Lists", "data" => $data]);
-            } else {
-                return response()->json(['status' => "error", 'message' => "No Course Found"]);
-            }
-        } catch (Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage(),
-            ]);
-        }
-    }
+
 
 
     /**
@@ -74,7 +54,7 @@ class CourseController extends Controller
     {
 
         try {
-             
+
             $courseArr = Course::find($request->course_id); // course details
             if (!$courseArr) {
                 return response()->json(['status' => 'error', 'message' => 'Course not found!']);
@@ -106,8 +86,7 @@ class CourseController extends Controller
             ];
             $procced_payment = EasebuzzPaymentController::initiatePayment($paymentdata);
 
-            return response()->json(['status' => 'pending', 'message' => 'Payment is in process', 'data'=>$paymentdata,'api_response'=>  $procced_payment]);
-
+            return response()->json(['status' => 'pending', 'message' => 'Payment is in process', 'data' => $paymentdata, 'api_response' =>  $procced_payment]);
         } catch (Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -304,9 +283,70 @@ class CourseController extends Controller
         }
     }
 
+    public function bannerStatus($id)
+    {
+        try {
+            $course = Course::findOrFail($id);
+            if ($course) {
+                $course->is_banner = $course->is_banner == 1 ? 0 : 1;
+                $course->save();
+                return response()->json([
+                    'status' => 'success',
+                    'message' => $course->name . ' Banner status updated successfully!',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Course not found',
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function coursesFunc(Request $request, $column = '', $value = '')
+    {
+        try {
+            $query = Course::with('category', 'users', 'subjects')->where('status', 1);
+            if (!empty($column) && !empty($value)) {
+                $query->where($column, $value);
+            }
+
+            $data = $query->get()->toArray();
+            if ($data) {
+                return response()->json(['status' => "success", 'message' => "All Course Lists", "data" => $data]);
+            } else {
+                return response()->json(['status' => "error", 'message' => "No Course Found"]);
+            }
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
     public function getCourseAmount($courseId)
     {
         $courseAmount = Course::where('id', $courseId)->pluck('price')->first();
         return response()->json(['status' => 'success', 'price' => $courseAmount]);
+    }
+
+    public function getCourseByType($typeId = '')
+    {
+        try {
+            $courses = CourseType::where('status', 1)->with('courses');
+            if ($typeId != '') {
+                $courses->where('id', $typeId);
+            }
+            $courses = $courses->get()->toArray();
+            return response()->json(['status' => 'success', 'message' => 'All courses', 'data' => $courses]);
+        } catch (Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+        }
     }
 }

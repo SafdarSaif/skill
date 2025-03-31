@@ -15,4 +15,13 @@ class CourseType extends Model
     protected $fillable = [
         'name',
     ];
+
+    public function courses()
+    {
+        return $this->hasMany(Course::class,'type_id','id')->with('users');
+    }
+    public function users()
+    {
+        return $this->belongsTo(User::class, 'added_by');
+    }
 }
