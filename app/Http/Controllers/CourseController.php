@@ -315,7 +315,7 @@ class CourseController extends Controller
     public function coursesFunc(Request $request, $column = '', $value = '')
     {
         try {
-            $query = Course::with('category', 'users', 'subjects');
+            $query = Course::with('category', 'users', 'subjects')->where('status', 1);
             if (!empty($column) && !empty($value)) {
                 $query->where($column, $value);
             }

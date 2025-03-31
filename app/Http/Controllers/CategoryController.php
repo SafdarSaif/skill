@@ -284,11 +284,11 @@ class CategoryController extends Controller
     public function categories(Request $request)
     {
         try {
-            $data = Category::with('courses')->get();
-            if ($data) {
-                return response()->json(['status' => "success", 'message' => "All Category Lists", "data" => $data]);
+            $data = Category::with('courses')->where('status', 1)->get();
+            if ($data->isNotEmpty()) {
+                return response()->json(['status' => "success", 'message' => "All Active Category Lists", "data" => $data]);
             } else {
-                return response()->json(['status' => "error", 'message' => "No Category Found"]);
+                return response()->json(['status' => "error", 'message' => "No Active Category Found"]);
             }
         } catch (Exception $e) {
             return response()->json([

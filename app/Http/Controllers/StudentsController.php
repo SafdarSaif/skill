@@ -829,7 +829,7 @@ class StudentsController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'Student updated successfully!',
+                'message' => 'Profile updated successfully!',
                 'data' => $student
             ], 200);
         } catch (\Exception $e) {
