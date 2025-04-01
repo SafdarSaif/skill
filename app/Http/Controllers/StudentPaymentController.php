@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\StudentPayment;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Carbon;
 use App\Models\Course;
 use App\Models\Students;
+use FFI\Exception;
 
 class StudentPaymentController extends Controller
 {
@@ -197,5 +199,44 @@ class StudentPaymentController extends Controller
             return response()->json(['status' => 'success', 'payments' => $transactionData]);
         }
         return response()->json(['status' => 'error']);
+    }
+
+
+    public function generateFeeReceipt(Request $request){
+        try{
+
+            $paymentData = StudentPayment::where('transaction_id', $request->txnid)->with('course','student')->first();
+            if (!$paymentData) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'No record found for the provided transaction ID. Please verify and try again.',
+                ]);
+            }
+            $data = [
+                'payment' => $paymentData,
+                'course' => $paymentData->course,
+                'student' => $paymentData->student,
+            ];
+
+            $pdf = Pdf::loadView('studentpayment.feeReceipt', $data);
+            $filePath = 'fee_receipt_' . $request->txnid . '.pdf';
+            $pdf->save(storage_path('app/public/' . $filePath));
+            return asset('storage/' . $filePath);
+
+            // return response()->json([
+            //     'status' => 'success',
+            //     'message' => 'Fee receipt generated successfully.',
+            //     'transaction_id' => $request->transaction_id,
+            //     'pdf_url' => asset('storage/' . $filePath),
+            // ]);
+
+        }catch (Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong while retrieving the fee receipt. Please try again later!',
+                'error' => $e->getMessage(),
+            ]);
+        
+        }
     }
 }
