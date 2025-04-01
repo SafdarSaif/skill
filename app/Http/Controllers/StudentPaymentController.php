@@ -221,14 +221,14 @@ class StudentPaymentController extends Controller
             $pdf = Pdf::loadView('studentpayment.feeReceipt', $data);
             $filePath = 'fee_receipt_' . $request->txnid . '.pdf';
             $pdf->save(storage_path('app/public/' . $filePath));
-            return asset('storage/' . $filePath);
+            // return asset('storage/' . $filePath);
 
-            // return response()->json([
-            //     'status' => 'success',
-            //     'message' => 'Fee receipt generated successfully.',
-            //     'transaction_id' => $request->transaction_id,
-            //     'pdf_url' => asset('storage/' . $filePath),
-            // ]);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Fee receipt generated successfully.',
+                'transaction_id' => $request->txnid,
+                'pdf_url' => asset('storage/' . $filePath),
+            ]);
 
         }catch (Exception $e) {
             return response()->json([

@@ -63,8 +63,7 @@ class EasebuzzPaymentController extends Controller
     {
         
         $payment = StudentPayment::where('transaction_id', $request->txnid)->first();
-        $pdfController = new StudentPaymentController();
-        $receiptResponse = $pdfController->generateFeeReceipt($request);
+      
 
         if ($payment) {
             $payment->update([
@@ -94,12 +93,14 @@ class EasebuzzPaymentController extends Controller
                 ]
             );
         }
-
+        $pdfController = new StudentPaymentController();
+        $receiptResponse = $pdfController->generateFeeReceipt($request);
+        $receiptData = json_decode($receiptResponse->getContent(), true);
         return response()->json([
             'status' => 'success',
             'message' => 'Payment successful!',
             'data' => $payment,
-            'pdf_url' => $receiptResponse,
+            'pdf_url'   => $receiptData['pdf_url'] ?? null,
         ]);
 
     }
