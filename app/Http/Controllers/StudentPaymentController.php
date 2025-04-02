@@ -10,6 +10,7 @@ use Illuminate\Support\Carbon;
 use App\Models\Course;
 use App\Models\Students;
 use FFI\Exception;
+use Illuminate\Support\Facades\File;
 
 class StudentPaymentController extends Controller
 {
@@ -220,14 +221,20 @@ class StudentPaymentController extends Controller
 
             $pdf = Pdf::loadView('studentpayment.feeReceipt', $data);
             $filePath = 'fee_receipt_' . $request->txnid . '.pdf';
-            $pdf->save(storage_path('app/public/' . $filePath));
+            if(!is_dir(public_path('uploads/fee-receipt')))
+            {
+                File::makeDirectory(public_path('uploads/fee-receipt'));
+            }
+            $pdf->save(public_path('uploads/fee-receipt/' . $filePath));
             // return asset('storage/' . $filePath);
-
+           
+            $storagePath = '/uploads/fee-receipt/'.$filePath;
+            
             return response()->json([
                 'status' => 'success',
                 'message' => 'Fee receipt generated successfully.',
                 'transaction_id' => $request->txnid,
-                'pdf_url' => asset('storage/' . $filePath),
+                'pdf_url' => $storagePath,
             ]);
 
         }catch (Exception $e) {
