@@ -21,7 +21,8 @@ class OTPController extends Controller
             
             // $isOtpSend = self::sendOtpToUser($otp,$mobileNo);
             
-            $isOtpSend =true;
+            // $isOtpSend =true;
+            $isOtpSend=true;
             if($isOtpSend)
             // if($isOtpSend)
             {
