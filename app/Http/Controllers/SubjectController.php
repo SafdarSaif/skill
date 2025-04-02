@@ -276,7 +276,8 @@ class SubjectController extends Controller
                             $progressQuery->where('student_id', $studentId);
                         }]);
                     },
-                    'notes'
+                    'notes',
+                    'eBooks'
                 ])
                 ->get();
 
