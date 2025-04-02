@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\EbookController;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Course;
@@ -36,8 +37,8 @@ class Subject extends Model
         return $this->hasMany(SubjectNote::class);
     }
 
-    // public function eBooks()
-    // {
-    //     return $this->hasMany(Subject)
-    // }
+    public function eBooks()
+    {
+        return $this->hasMany(Ebook::class);
+    }
 }
