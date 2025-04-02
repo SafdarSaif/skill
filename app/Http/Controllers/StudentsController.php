@@ -765,7 +765,7 @@ class StudentsController extends Controller
 
   public function updateStudents(Request $request)
 {
-    try {
+    try { 
         $validator = Validator::make(
             $request->all(),
             [
