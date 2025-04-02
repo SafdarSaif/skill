@@ -21,13 +21,6 @@ use Illuminate\Support\Facades\DB;
 
 class StudentsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    // public function index()
-    // {
-    //     //
-    // }
     public function index(Request $request)
     {
         if ($request->ajax()) {
