@@ -45,5 +45,7 @@ class Students extends Model
     {
         return $this->hasMany(StudentProgress::class, 'student_id');
     }
+
+ 
 }
 
