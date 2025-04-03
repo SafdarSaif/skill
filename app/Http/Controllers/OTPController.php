@@ -12,9 +12,10 @@ class OTPController extends Controller
 {
     public static function getOtp($mobileNo)
     {
-        $checkStudent = Students::where('mobile',$mobileNo)->first();
-        
-        if($checkStudent->count())
+        try{
+            $checkStudent = Students::where('mobile',$mobileNo)->first();
+           
+        if($checkStudent!==null && $checkStudent->count())
         {
             
             $otp = self::generateOtp($checkStudent);
@@ -45,6 +46,10 @@ class OTPController extends Controller
                 'status'=>'error',
                 'message'=>'Please enter valid mobile number',
             ]);
+        }
+        }catch(\Exception $e)
+        {
+            return response()->json(['status'=>'error','message'=>$e->getMessage()]);
         }
     }
 

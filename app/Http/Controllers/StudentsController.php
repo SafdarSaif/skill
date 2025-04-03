@@ -1,6 +1,5 @@
 
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Students;
@@ -13,10 +12,9 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Carbon;
 use App\Http\Controllers\OTPController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
-
-
 
 
 class StudentsController extends Controller
@@ -24,7 +22,22 @@ class StudentsController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Students::orderBy('id', 'desc')->get();
+            if(Auth::check() && Auth::user()->hasRole("Super Admin")){
+                $data = Students::orderBy('id', 'desc')->get();
+            }else{
+                $userId = Auth::user()->id;
+                // $data = Course::whereHas('users', function($query)use($userId){ $query->where('id',$userId);
+                // })->orderBy('id', 'desc')->get();
+
+                $course_ids = Course::where('added_by', $userId)->pluck('id');
+
+                $data = Students::with('studentCourses')->whereHas('studentCourses', function ($query) use ($course_ids) {
+                    $query->whereIn('course_id', $course_ids);
+                })->orderBy('id', 'desc')->get();
+
+
+        //    dd($data);
+            }
 
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -546,7 +559,7 @@ class StudentsController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'signature' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:1024',
         ]);
-        dd($request->all());
+       
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
@@ -782,6 +795,7 @@ class StudentsController extends Controller
             ]
         );
 
+        // dd($request->file('image'));
         if ($validator->fails()) {
             return response()->json([
                 'status'  => 'error',

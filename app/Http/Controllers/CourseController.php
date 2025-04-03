@@ -35,8 +35,18 @@ class CourseController extends Controller
     {
         
         if ($request->ajax()) {
-            $data = Course::with('category')->orderBy('id', 'desc')->get();
-
+            if(Auth::check() && Auth::user()->hasRole('Super Admin'))
+            {
+                $data = Course::with(['category','users'])->orderBy('id', 'desc')->get();
+            }
+            else
+            {
+                $userId = Auth::user()->id;
+                $data = Course::with(['category'])->whereHas('users',function($query)use($userId){
+                    $query->where('id',$userId);
+                })->orderBy('id', 'desc')->get();
+             
+            }
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->editColumn('category', function ($data) {
@@ -147,6 +157,7 @@ class CourseController extends Controller
          
 
             // Create a new course
+          
             $course = Course::create([
                 'name' => $request->name,
                 'description' => $request->description,
