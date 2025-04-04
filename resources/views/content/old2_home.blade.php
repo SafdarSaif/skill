@@ -94,7 +94,7 @@
         </div>
 
         <!-- Enrollment Chart -->
-        {{-- <div class="col-lg-6">
+        <div class="col-lg-6">
             <div class="card border-0 shadow-sm bg-soft-cloud">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -106,31 +106,8 @@
                             <div class="dropdown-menu dropdown-menu-end">
                                 <a class="dropdown-item" href="#" id="weeklyBtn">Weekly</a>
                                 <a class="dropdown-item" href="#" id="monthlyBtn">Monthly</a>
-                                
-                            </div>
-                        </div>
-                    </div>
-                    <canvas id="enrollmentChart" style="height: 250px"></canvas>
-                </div>
-            </div>
-        </div> --}}
-        <div class="col-lg-6">
-            <div class="card border-0 shadow-sm bg-soft-cloud">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h5 class="mb-0 text-primary-dark">Enrollment Trends</h5>
-                        <div class="d-flex">
-                            <select id="yearFilter" class="form-select me-2">
-                                <!-- Years will be populated dynamically -->
-                            </select>
-                            <div class="dropdown">
-                                <button class="btn btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
-                                    <i class="ti ti-dots-vertical"></i>
-                                </button>
-                                <div class="dropdown-menu dropdown-menu-end">
-                                    <a class="dropdown-item" href="#" id="weeklyBtn">Weekly</a>
-                                    <a class="dropdown-item" href="#" id="monthlyBtn">Monthly</a>
-                                </div>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#">Export Data</a>
                             </div>
                         </div>
                     </div>
@@ -140,7 +117,7 @@
         </div>
 
         <!-- Payment Methods Bar Chart -->
-        {{-- <div class="col-lg-6">
+        <div class="col-lg-6">
             <div class="card border-0 shadow-sm bg-soft-lavender">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -159,63 +136,6 @@
                         <canvas id="paymentChart"></canvas>
                     </div>
 
-                    <div class="mt-4">
-                        <div class="row text-center">
-                            <div class="col-3">
-                                <div class="payment-method">
-                                    <span class="badge-dot bg-primary"></span>
-                                    <small class="text-muted">Credit Card</small>
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <div class="payment-method">
-                                    <span class="badge-dot bg-success"></span>
-                                    <small class="text-muted">PayPal</small>
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <div class="payment-method">
-                                    <span class="badge-dot bg-warning"></span>
-                                    <small class="text-muted">Bank Transfer</small>
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <div class="payment-method">
-                                    <span class="badge-dot bg-secondary"></span>
-                                    <small class="text-muted">Other</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
-        <div class="col-lg-6">
-            <div class="card border-0 shadow-sm bg-white rounded">
-                <div class="card-body">
-                    <!-- Header -->
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="mb-0 text-primary fw-bold">Payment Methods</h5>
-                        <div class="d-flex align-items-center">
-                            <!-- Year Dropdown -->
-                            <select id="yearSelect" class="form-select form-select-sm me-2 border-primary text-primary">
-                                <!-- Years will be populated dynamically -->
-                            </select>
-                            <!-- Weekly & Monthly Toggle -->
-                            <div class="btn-group btn-group-sm" role="group">
-                                <button type="button" class="btn btn-primary active" id="paymentWeeklyBtn">Weekly</button>
-                                <button type="button" class="btn btn-outline-primary"
-                                    id="paymentMonthlyBtn">Monthly</button>
-                            </div>
-                            <!-- View All Button -->
-                            <a href="{{ route('payment') }}" class="btn btn-sm btn-outline-primary ms-2">View All</a>
-                        </div>
-                    </div>
-
-                    <!-- Chart Section -->
-                    <div class="position-relative" style="height: 270px;">
-                        <canvas id="paymentChart"></canvas>
-                    </div>
                     <div class="mt-4">
                         <div class="row text-center">
                             <div class="col-3">
@@ -416,101 +336,88 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const ctx = document.getElementById('enrollmentChart').getContext('2d');
-            let enrollmentChart;
+            // Sample data - replace with your actual data from controller
+            const weeklyData = {
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'],
+                datasets: [{
+                    label: 'Weekly Enrollments',
+                    data: [12, 19, 15, 27, 23],
+                    backgroundColor: 'rgba(29, 78, 216, 0.2)',
+                    borderColor: 'rgba(29, 78, 216, 1)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true
+                }]
+            };
 
-            function populateYearFilter() {
-                const yearFilter = document.getElementById('yearFilter');
-                const currentYear = new Date().getFullYear();
-                for (let year = currentYear; year >= currentYear - 5; year--) {
-                    let option = new Option(year, year);
-                    yearFilter.appendChild(option);
-                }
-                yearFilter.value = currentYear; // Default to current year
-            }
+            const monthlyData = {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                    label: 'Monthly Enrollments',
+                    data: [65, 59, 80, 81, 56, 72, 90, 85, 70, 88, 95, 100],
+                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true
+                }]
+            };
 
-            function loadChartData(type, year) {
-                fetch(`/dashboard/enrollment-data?type=${type}&year=${year}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const chartData = {
-                            labels: data.labels,
-                            datasets: [{
-                                label: `${type.charAt(0).toUpperCase() + type.slice(1)} Enrollments (${year})`,
-                                data: data.values,
-                                backgroundColor: 'rgba(29, 78, 216, 0.2)',
-                                borderColor: 'rgba(29, 78, 216, 1)',
-                                borderWidth: 2,
-                                tension: 0.4,
-                                fill: true
-                            }]
-                        };
-
-                        const config = {
-                            type: 'line',
-                            data: chartData,
-                            options: {
-                                responsive: true,
-                                plugins: {
-                                    legend: {
-                                        position: 'top'
-                                    },
-                                    tooltip: {
-                                        mode: 'index',
-                                        intersect: false
-                                    }
-                                },
-                                scales: {
-                                    y: {
-                                        beginAtZero: true,
-                                        max: 100,
-                                        ticks: {
-                                            stepSize: 10
-                                        }
-                                    }
-                                },
-                                interaction: {
-                                    mode: 'nearest',
-                                    axis: 'x',
-                                    intersect: false
-                                }
-                            }
-                        };
-
-                        if (enrollmentChart) {
-                            enrollmentChart.destroy();
+            // Chart configuration
+            const config = {
+                type: 'line',
+                data: weeklyData, // Default to weekly data
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
                         }
-                        enrollmentChart = new Chart(ctx, config);
-                    });
-            }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 5
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    }
+                }
+            };
 
-            populateYearFilter();
-            const selectedYear = document.getElementById('yearFilter').value;
-            loadChartData('weekly', selectedYear);
+            // Initialize chart
+            const ctx = document.getElementById('enrollmentChart').getContext('2d');
+            const enrollmentChart = new Chart(ctx, config);
 
+            // Toggle between weekly and monthly data
             document.getElementById('weeklyBtn').addEventListener('click', function(e) {
                 e.preventDefault();
-                const selectedYear = document.getElementById('yearFilter').value;
-                loadChartData('weekly', selectedYear);
+                config.data = weeklyData;
+                enrollmentChart.update();
             });
 
             document.getElementById('monthlyBtn').addEventListener('click', function(e) {
                 e.preventDefault();
-                const selectedYear = document.getElementById('yearFilter').value;
-                loadChartData('monthly', selectedYear);
-            });
-
-            document.getElementById('yearFilter').addEventListener('change', function() {
-                const type = document.querySelector('.dropdown-menu .active')?.id || 'weekly';
-                loadChartData(type, this.value);
+                config.data = monthlyData;
+                enrollmentChart.update();
             });
         });
     </script>
 
 
     {{-- // Payment Methods Chart --}}
-    {{-- <script>
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Sample data - replace with actual data from your controller
             const weeklyPaymentData = {
                 labels: ['Credit Card', 'PayPal', 'Bank Transfer', 'Other'],
                 datasets: [{
@@ -556,7 +463,7 @@
             // Chart configuration for bar chart
             const paymentConfig = {
                 type: 'bar',
-                data: weeklyPaymentData, 
+                data: weeklyPaymentData, // Default to weekly data
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
@@ -590,6 +497,7 @@
             const paymentCtx = document.getElementById('paymentChart').getContext('2d');
             const paymentChart = new Chart(paymentCtx, paymentConfig);
 
+            // Toggle between weekly and monthly data
             document.getElementById('paymentWeeklyBtn').addEventListener('click', function(e) {
                 e.preventDefault();
                 this.classList.add('active');
@@ -604,181 +512,6 @@
                 document.getElementById('paymentWeeklyBtn').classList.remove('active');
                 paymentChart.data = monthlyPaymentData;
                 paymentChart.update();
-            });
-        });
-    </script> --}}
-
-    {{-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const weeklyPaymentData = {
-                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-                datasets: [{
-                    label: 'Weekly Payments',
-                    data: [120, 150, 180, 100],
-                    backgroundColor: [
-                        'rgba(29, 78, 216, 0.8)',
-                        'rgba(59, 130, 246, 0.8)',
-                        'rgba(234, 179, 8, 0.8)',
-                        'rgba(156, 163, 175, 0.8)'
-                    ],
-                    borderColor: [
-                        'rgba(29, 78, 216, 1)',
-                        'rgba(59, 130, 246, 1)',
-                        'rgba(234, 179, 8, 1)',
-                        'rgba(156, 163, 175, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            };
-
-            const monthlyPaymentData = {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                datasets: [{
-                    label: 'Monthly Payments',
-                    data: [500, 620, 700, 480, 540, 600, 650, 720, 680, 750, 770, 820],
-                    backgroundColor: [
-                        'rgba(29, 78, 216, 0.8)',
-                        'rgba(59, 130, 246, 0.8)',
-                        'rgba(234, 179, 8, 0.8)',
-                        'rgba(156, 163, 175, 0.8)'
-                    ],
-                    borderColor: [
-                        'rgba(29, 78, 216, 1)',
-                        'rgba(59, 130, 246, 1)',
-                        'rgba(234, 179, 8, 1)',
-                        'rgba(156, 163, 175, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            };
-
-            // Chart configuration
-            const paymentConfig = {
-                type: 'bar',
-                data: weeklyPaymentData,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'top',
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.dataset.label || '';
-                                    const value = context.raw || 0;
-                                    return `${label}: ${value}`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                precision: 0
-                            }
-                        }
-                    }
-                }
-            };
-
-            // Initialize chart
-            const paymentCtx = document.getElementById('paymentChart').getContext('2d');
-            const paymentChart = new Chart(paymentCtx, paymentConfig);
-
-            document.getElementById('paymentWeeklyBtn').addEventListener('click', function(e) {
-                e.preventDefault();
-                this.classList.add('active');
-                document.getElementById('paymentMonthlyBtn').classList.remove('active');
-                paymentChart.data = weeklyPaymentData;
-                paymentChart.update();
-            });
-
-            document.getElementById('paymentMonthlyBtn').addEventListener('click', function(e) {
-                e.preventDefault();
-                this.classList.add('active');
-                document.getElementById('paymentWeeklyBtn').classList.remove('active');
-                paymentChart.data = monthlyPaymentData;
-                paymentChart.update();
-            });
-        });
-    </script> --}}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const ctx = document.getElementById('paymentChart').getContext('2d');
-            let paymentChart;
-
-            function fetchPaymentData(type = 'weekly', year = new Date().getFullYear()) {
-                fetch(`/payment-data?type=${type}&year=${year}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        updateChart(data.labels, data.values, type);
-                    });
-            }
-
-            function updateChart(labels, values, type) {
-                if (paymentChart) {
-                    paymentChart.destroy(); // Destroy previous instance
-                }
-
-                paymentChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: `${type.charAt(0).toUpperCase() + type.slice(1)} Payments`,
-                            data: values,
-                            backgroundColor: 'rgba(75, 192, 192, 0.8)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: true,
-                                position: 'top'
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        return `₹${context.raw}`;
-                                    }
-                                }
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    precision: 0,
-                                    callback: (value) => `₹${value}`
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-
-            // Fetch initial data
-            fetchPaymentData();
-
-            // Handle button clicks
-            document.getElementById('paymentWeeklyBtn').addEventListener('click', function() {
-                fetchPaymentData('weekly');
-                this.classList.add('active');
-                document.getElementById('paymentMonthlyBtn').classList.remove('active');
-            });
-
-            document.getElementById('paymentMonthlyBtn').addEventListener('click', function() {
-                fetchPaymentData('monthly');
-                this.classList.add('active');
-                document.getElementById('paymentWeeklyBtn').classList.remove('active');
             });
         });
     </script>

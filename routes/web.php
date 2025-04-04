@@ -44,6 +44,10 @@ Route::middleware([
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/dashboard/enrollment-data', [DashboardController::class, 'getEnrollmentData']);
+Route::get('/payment-data', [DashboardController::class, 'getPaymentData']);
+
+
 
 
 Route::view('/table', 'users.index')->name('table');
