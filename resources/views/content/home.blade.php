@@ -216,7 +216,7 @@
                     <div class="position-relative" style="height: 270px;">
                         <canvas id="paymentChart"></canvas>
                     </div>
-                    <div class="mt-4">
+                    {{-- <div class="mt-4">
                         <div class="row text-center">
                             <div class="col-3">
                                 <div class="payment-method">
@@ -243,7 +243,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>
