@@ -284,7 +284,9 @@ class CategoryController extends Controller
     public function categories(Request $request)
     {
         try {
-            $data = Category::with('courses')->where('status', 1)->get();
+            $data = Category::whereHas('courses',function($query){
+                $query->where('status',true);
+            })->where('status', 1)->get();
             if ($data->isNotEmpty()) {
                 return response()->json(['status' => "success", 'message' => "All Active Category Lists", "data" => $data]);
             } else {

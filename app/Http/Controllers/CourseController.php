@@ -350,7 +350,9 @@ class CourseController extends Controller
     public function getCourseByType($typeId = '')
     {
         try {
-            $courses = CourseType::where('status', 1)->with('courses');
+            $courses = CourseType::where('status', 1)->whereHas('courses',function($query){
+                $query->where('status',true);
+            });
             if ($typeId != '') {
                 $courses->where('id', $typeId);
             }
