@@ -195,7 +195,7 @@ class StudentPaymentController extends Controller
 
     public function getPyamentByStudentIdCourseId($studentId, $courseId)
     {
-        $transactionData = StudentPayment::where('course_id', $courseId)->where('student_id', $studentId)->get();
+        $transactionData = StudentPayment::where('course_id', $courseId)->where('student_id', $studentId)->where('payment_status','completed')->get();
         if ($transactionData->isNotEmpty()) {
             return response()->json(['status' => 'success', 'payments' => $transactionData]);
         }
