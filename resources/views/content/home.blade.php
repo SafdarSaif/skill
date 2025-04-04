@@ -14,13 +14,22 @@
                             </div>
                             <div>
                                 <h5 class="mb-1 text-primary-dark">Total Students</h5>
-                                <h2 class="mb-0 text-primary">1,842</h2>
+                                {{-- <h2 class="mb-0 text-primary">1,842</h2> --}}
+                                <h2 class="mb-0 text-primary">{{ $studentCount }}</h2> 
+
                             </div>
                         </div>
-                        <div class="mt-3">
+                        {{-- <div class="mt-3">
                             <span class="badge bg-soft-success text-success">+22.4%</span>
                             <span class="text-muted ms-2">From last month</span>
+                        </div> --}}
+                        <div class="mt-3">
+                            <span class="badge {{ $studentGrowth >= 0 ? 'bg-soft-success text-success' : 'bg-soft-danger text-danger' }}">
+                                {{ $studentGrowth >= 0 ? '+' : '' }}{{ number_format($studentGrowth, 1) }}%
+                            </span>
+                            <span class="text-muted ms-2">From last month</span>
                         </div>
+                        
                     </div>
                 </div>
             </div>
@@ -35,7 +44,8 @@
                             </div>
                             <div>
                                 <h5 class="mb-1 text-info-dark">Active Courses</h5>
-                                <h2 class="mb-0 text-info">58</h2>
+                                {{-- <h2 class="mb-0 text-info">58</h2> --}}
+                                <h2 class="mb-0 text-info">{{$courseCount}}</h2>
                             </div>
                         </div>
                         <div class="mt-3">
@@ -46,7 +56,7 @@
                 </div>
             </div>
 
-            <!-- Completion Rate -->
+            <!-- Users Rate -->
             <div class="col-md-6 col-xl-3">
                 <div class="card border-0 shadow-sm bg-soft-mint">
                     <div class="card-body">
@@ -55,8 +65,9 @@
                                 <i class="ti ti-certificate fs-4 text-success"></i>
                             </div>
                             <div>
-                                <h5 class="mb-1 text-success-dark">Completion Rate</h5>
-                                <h2 class="mb-0 text-success">86%</h2>
+                                <h5 class="mb-1 text-success-dark">Users</h5>
+                                {{-- <h2 class="mb-0 text-success">86%</h2> --}}
+                                <h2 class="mb-0 text-success">{{ $userCount }}</h2>
                             </div>
                         </div>
                         <div class="mt-3">
@@ -67,7 +78,7 @@
                 </div>
             </div>
 
-            <!-- Avg. Progress -->
+            <!-- Total Revenue -->
             <div class="col-md-6 col-xl-3">
                 <div class="card border-0 shadow-sm bg-soft-peach">
                     <div class="card-body">
@@ -76,8 +87,12 @@
                                 <i class="ti ti-progress fs-4 text-warning"></i>
                             </div>
                             <div>
-                                <h5 class="mb-1 text-warning-dark">Avg. Progress</h5>
-                                <h2 class="mb-0 text-warning">78%</h2>
+                                <h5 class="mb-1 text-warning-dark">Total Revenue</h5>
+                                {{-- <h2 class="mb-0 text-warning">78%</h2> --}}
+                                {{-- <h2 class="mb-0 text-warning">₹{{ number_format($totalRevenue, 2, '.', ',') }}</h2> --}}
+                                <h2 class="mb-0 text-warning">₹{{ number_format($totalRevenue, 0) }}</h2>
+
+
                             </div>
                         </div>
                         <div class="mt-3">

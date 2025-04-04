@@ -28,6 +28,23 @@ class StudentsController extends Controller
     // {
     //     //
     // }
+    public function getStudentCount()
+    {
+        if (Auth::check() && Auth::user()->hasRole("Super Admin")) {
+            $count = Students::count();
+        } else {
+            $userId = Auth::user()->id;
+            $course_ids = Course::where('added_by', $userId)->pluck('id');
+            $count = Students::whereHas('studentCourses', function ($query) use ($course_ids) {
+                $query->whereIn('course_id', $course_ids);
+            })->count();
+        }
+    
+        return response()->json(['student_count' => $count]);
+    }
+    
+
+
     public function index(Request $request)
     {
         if ($request->ajax()) {

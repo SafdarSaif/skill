@@ -22,6 +22,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PrivacyPolicyController;
 use App\Http\Controllers\TermsConditionController;
 use App\Http\Controllers\StudentProgressController;
+use App\Http\Controllers\DashboardController;
 
 
 // Route::get('/', function () {
@@ -31,15 +32,7 @@ Route::get('/', function () {
     return view('content.index');
 });
 
-// Route::middleware([
-//     'auth:sanctum',
-//     config('jetstream.auth_session'),
-//     'verified',
-// ])->group(function () {
-//     Route::get('/dashboard', function () {
-//         return view('dashboard');
-//     })->name('dashboard');
-// });
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -50,6 +43,7 @@ Route::middleware([
     })->name('dashboard');
 });
 
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 
 Route::view('/table', 'users.index')->name('table');

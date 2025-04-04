@@ -57,7 +57,7 @@ class NewsUpdateController extends Controller
 
     public function index(Request $request)
     {
-        if (Auth::check() && Auth::user()->hasPermissionTo('view news')) {
+        // if (Auth::check() && Auth::user()->hasPermissionTo('view news')) {
             if ($request->ajax()) {
                 $data = NewsUpdate::orderBy('id', 'desc')->get();
 
@@ -69,9 +69,9 @@ class NewsUpdateController extends Controller
                     ->make(true);
             }
             return view('website.news.index');
-        } else {
-            return response()->view('errors.403', [], 403);
-        }
+        // } else {
+        //     return response()->view('errors.403', [], 403);
+        // }
     }
 
 
@@ -80,11 +80,14 @@ class NewsUpdateController extends Controller
      */
     public function create()
     {
-        if (Auth::check() && Auth::user()->hasPermissionTo('create news')) {
+        // if (Auth::check() && Auth::user()->hasPermissionTo('create news')) 
+        {
+
             return view('website.news.create');
-        } else {
-            return response()->view('errors.403', [], 403);
         }
+        //  else {
+        //     return response()->view('errors.403', [], 403);
+        // }
     }
 
     /**
@@ -207,45 +210,45 @@ class NewsUpdateController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    // public function destroy($newID)
-    // { {
-    //         try {
-    //             $news = NewsUpdate::destroy($newID);
-    //             return ['status' => 'success', 'message' => 'News  deleted successfully!'];
-    //         } catch (\Throwable $e) {
-    //             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
-    //         }
-    //     }
-    // }
     public function destroy($newID)
-    {
-        if (!Auth::user()->hasPermissionTo('delete news')) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Unauthorized access'
-            ], 403);
-        }
-
-        try {
-            $news = NewsUpdate::findOrFail($newID);
-
-            if ($news->image) {
-                deleteImage($news->image);
+    { {
+            try {
+                $news = NewsUpdate::destroy($newID);
+                return ['status' => 'success', 'message' => 'News  deleted successfully!'];
+            } catch (\Throwable $e) {
+                return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
             }
-
-            $news->delete();
-
-            return response()->json([
-                'status'  => 'success',
-                'message' => 'News deleted successfully!'
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status'  => 'error',
-                'message' => 'Something went wrong! ' . $e->getMessage()
-            ], 500);
         }
     }
+    // public function destroy($newID)
+    // {
+    //     if (!Auth::user()->hasPermissionTo('delete news')) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Unauthorized access'
+    //         ], 403);
+    //     }
+
+    //     try {
+    //         $news = NewsUpdate::findOrFail($newID);
+
+    //         if ($news->image) {
+    //             deleteImage($news->image);
+    //         }
+
+    //         $news->delete();
+
+    //         return response()->json([
+    //             'status'  => 'success',
+    //             'message' => 'News deleted successfully!'
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status'  => 'error',
+    //             'message' => 'Something went wrong! ' . $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
 
     public function status($id)
     {

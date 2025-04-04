@@ -102,6 +102,7 @@
             <label for="video_file" class="form-label">Upload Video File <span class="text-danger">*</span></label>
             <input type="file" name="video_file" id="video_file" class="form-control" accept="video/*">
 
+
             @if ($video->upload_type == 'local' && $video->video_url)
                 <!-- Display existing video file name -->
                 <p class="mt-2"><strong>Current File:</strong> {{ basename($video->video_url) }}</p>
@@ -127,20 +128,35 @@
 <!-- jQuery Script for Dynamic Field Display -->
 <script>
     $(document).ready(function() {
+        // function toggleFields() {
+        //     let uploadType = $('#upload_type').val();
+        //     if (uploadType === 'youtube') {
+        //         $('#youtube_field').show();
+        //         $('#video_url').prop('required', true);
+        //         $('#local_field').hide();
+        //         $('#video_file').prop('required', false);
+        //     } else {
+        //         $('#local_field').show();
+        //         $('#video_file').prop('required', true);
+        //         $('#youtube_field').hide();
+        //         $('#video_url').prop('required', false);
+        //     }
+        // }
         function toggleFields() {
             let uploadType = $('#upload_type').val();
             if (uploadType === 'youtube') {
                 $('#youtube_field').show();
                 $('#video_url').prop('required', true);
                 $('#local_field').hide();
-                $('#video_file').prop('required', false);
+                $('#video_file').prop('required', false); // Ensure it's not required
             } else {
                 $('#local_field').show();
-                $('#video_file').prop('required', true);
+                $('#video_file').prop('required', false); // Remove required here
                 $('#youtube_field').hide();
                 $('#video_url').prop('required', false);
             }
         }
+
 
         // Initialize on page load
         toggleFields();

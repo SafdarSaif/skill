@@ -69,7 +69,7 @@ class SubjectVideoController extends Controller
             'upload_type' => 'required|in:youtube,local',
             // 'video_url'   => 'nullable|required_if:upload_type,youtube|url|regex:/^https?:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+$/',
             'video_url'   => 'nullable|required_if:upload_type,youtube|url',
-            'video_file'  => 'nullable|required_if:upload_type,local|max:51200',
+            'video_file'  => 'nullable|required_if:upload_type,local',
         ]);
 
         if ($validator->fails()) {
@@ -166,7 +166,7 @@ class SubjectVideoController extends Controller
             'position'    => 'required|integer|in:0,1',
             'upload_type' => 'required|in:youtube,local',
             'video_url'   => 'nullable|required_if:upload_type,youtube|url|regex:/^https?:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+$/',
-            'video_file'  => 'nullable|mimes:mp4,avi,mkv,mov|max:51200',
+            'video_file'  => 'nullable|mimes:mp4,avi,mkv,mov',
 
         ]);
 
