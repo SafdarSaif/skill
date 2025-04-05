@@ -137,8 +137,8 @@
                 <h5 class="mb-3">Educational Details</h5>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label" for="highest_qualification">Highest Qualification</label>
-                        <input type="text" id="highest_qualification" name="highest_qualification"
+                        <label class="form-label" for="heighest_qualification">Highest Qualification</label>
+                        <input type="text" id="heighest_qualification" name="heighest_qualification"
                             class="form-control"
                             value="{{ old('highest_qualification', $student->heighest_qualification) }}" required>
                     </div>

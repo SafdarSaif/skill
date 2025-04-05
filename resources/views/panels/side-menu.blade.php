@@ -2,7 +2,8 @@
     <!-- Logo Section -->
     <div class="app-brand demo">
         <div class="d-flex align-items-center">
-            <i class="ti ti-apps fs-3 text-primary"></i>
+            {{-- <i class="ti ti-apps fs-3 text-primary"></i> --}}
+            <img src="assets/img/logo/logo 3.jpg" alt="Skill App Logo" style="height: 60px; width: auto;" />
             <h4 class="mb-0 ms-2">Skill App</h4>
         </div>
         <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
