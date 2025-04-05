@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\DB;
 
 class StudentsController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      */
@@ -926,7 +927,7 @@ class StudentsController extends Controller
                 $student->save();
                 return response()->json([
                     'status' => 'success',
-                    'message' => $student->name . ' status updated successfully!',
+                    'message' => $student->name . ' Deleted successfully!',
                 ]);
             } else {
                 return response()->json([
@@ -940,5 +941,29 @@ class StudentsController extends Controller
                 'message' => $e->getMessage(),
             ]);
         }
+    }
+
+    public function deleteAt($id){
+
+          try { 
+            $student = Students::findOrFail($id);
+            if ($student) {
+                Students::find($id)->delete(); 
+                return response()->json([
+                    'status' => 'success',
+                    'message' => $student->name . ' Deleted successfully!',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'AdmissionType not found',
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
+        }   
     }
 }

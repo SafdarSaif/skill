@@ -82,6 +82,8 @@ Route::post('/student/store', [StudentsController::class, 'store'])->name('setti
 Route::get('/student/edit/{id}', [StudentsController::class, 'edit'])->name('student.edit');
 Route::post('/student/update/{id}', [StudentsController::class, 'update'])->name('student.update');
 Route::delete('/student/destroy/{id}', [StudentsController::class, 'destroy'])->name('student.destroy');
+Route::delete('/student/delete_at_status/{id}', [StudentsController::class, 'deleteAt'])->name('student.deletestatus');
+
 Route::get('student/status/{id}', [StudentsController::class, 'status'])->name('student.status');
 Route::get('/student/{id}', [StudentsController::class, 'show'])->name('student.show');
 // Route::post('/student', [StudentsController::class, 'show'])->name('student.show');
@@ -125,6 +127,9 @@ Route::post('/payment/update/{id}', [StudentPaymentController::class, 'update'])
 Route::delete('/payment/destroy/{id}', [StudentPaymentController::class, 'destroy'])->name('payment.destroy');
 Route::get('payment/status/{id}', [StudentPaymentController::class, 'status'])->name('payment.status');
 Route::get('payemnt/get-payment-according-to-student-and-course/{student_id}/{course_id}', [StudentPaymentController::class, 'getPyamentByStudentIdCourseId'])->name('payment.get-payment-according-to-student-and-course');
+Route::get('/get-course-amount/{id}', [CourseController::class, 'getCourseAmount'])->name('getCourseAmount');
+
+
 
 Route::get('/studentcourse', [StudentCourseController::class, 'index'])->name('studentcourse');
 Route::get('/studentcourse/create', [StudentCourseController::class, 'create'])->name('studentcourse.create');
@@ -250,3 +255,5 @@ Route::get('/studentprogress/edit/{id}', [StudentProgressController::class, 'edi
 Route::post('/studentprogress/update/{id}', [StudentProgressController::class, 'update'])->name('studentprogress.update');
 Route::delete('/studentprogress/destroy/{id}', [StudentProgressController::class, 'destroy'])->name('studentprogress.destroy');
 Route::get('studentprogress/status/{id}', [StudentProgressController::class, 'status'])->name('studentprogress.status');
+
+
