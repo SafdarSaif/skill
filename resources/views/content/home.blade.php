@@ -94,26 +94,7 @@
         </div>
 
         <!-- Enrollment Chart -->
-        {{-- <div class="col-lg-6">
-            <div class="card border-0 shadow-sm bg-soft-cloud">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h5 class="mb-0 text-primary-dark">Enrollment Trends</h5>
-                        <div class="dropdown">
-                            <button class="btn btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
-                                <i class="ti ti-dots-vertical"></i>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <a class="dropdown-item" href="#" id="weeklyBtn">Weekly</a>
-                                <a class="dropdown-item" href="#" id="monthlyBtn">Monthly</a>
-                                
-                            </div>
-                        </div>
-                    </div>
-                    <canvas id="enrollmentChart" style="height: 250px"></canvas>
-                </div>
-            </div>
-        </div> --}}
+        
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm bg-soft-cloud">
                 <div class="card-body">
@@ -140,70 +121,21 @@
         </div>
 
         <!-- Payment Methods Bar Chart -->
-        {{-- <div class="col-lg-6">
-            <div class="card border-0 shadow-sm bg-soft-lavender">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h5 class="mb-0 text-info-dark">Payment Methods</h5>
-                        <div>
-                            <div class="btn-group btn-group-sm" role="group">
-                                <button type="button" class="btn btn-soft-primary active"
-                                    id="paymentWeeklyBtn">Weekly</button>
-                                <button type="button" class="btn btn-soft-primary" id="paymentMonthlyBtn">Monthly</button>
-                            </div>
-                            <a href="{{ route('payment') }}" class="btn btn-sm btn-soft-primary ms-2">View All</a>
-                        </div>
-                    </div>
 
-                    <div class="position-relative" style="height: 250px;">
-                        <canvas id="paymentChart"></canvas>
-                    </div>
-
-                    <div class="mt-4">
-                        <div class="row text-center">
-                            <div class="col-3">
-                                <div class="payment-method">
-                                    <span class="badge-dot bg-primary"></span>
-                                    <small class="text-muted">Credit Card</small>
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <div class="payment-method">
-                                    <span class="badge-dot bg-success"></span>
-                                    <small class="text-muted">PayPal</small>
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <div class="payment-method">
-                                    <span class="badge-dot bg-warning"></span>
-                                    <small class="text-muted">Bank Transfer</small>
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <div class="payment-method">
-                                    <span class="badge-dot bg-secondary"></span>
-                                    <small class="text-muted">Other</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm bg-white rounded">
                 <div class="card-body">
                     <!-- Header -->
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="mb-0 text-primary fw-bold">Payment Methods</h5>
+                        <h5 class="mb-0 text-primary fw-bold">Payment Chart</h5>
                         <div class="d-flex align-items-center">
                             <!-- Year Dropdown -->
-                            <select id="yearSelect" class="form-select form-select-sm me-2 border-primary text-primary">
+                            {{-- <select id="yearSelect" class="form-select form-select-sm me-2 border-primary text-primary">
                                 <!-- Years will be populated dynamically -->
-                            </select>
+                            </select> --}}
                             <!-- Weekly & Monthly Toggle -->
                             <div class="btn-group btn-group-sm" role="group">
-                                <button type="button" class="btn btn-primary active" id="paymentWeeklyBtn">Weekly</button>
+                                <button type="button" class="btn btn-primary " id="paymentWeeklyBtn">Weekly</button>
                                 <button type="button" class="btn btn-outline-primary"
                                     id="paymentMonthlyBtn">Monthly</button>
                             </div>
@@ -249,48 +181,117 @@
         </div>
 
         <!-- Course Progress Section -->
-        <div class="col-12">
-            <div class="card border-0 shadow-sm bg-soft-mint">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h5 class="mb-0 text-success-dark">Course Progress</h5>
-                        <div class="dropdown">
-                            <button class="btn btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
-                                <i class="ti ti-dots-vertical"></i>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <a class="dropdown-item" href="#">Manage Courses</a>
-                                <a class="dropdown-item" href="#">View All</a>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="row g-4">
-                        @foreach ($courses as $course)
-                            <div class="col-md-6">
-                                <div class="d-flex align-items-center p-3 bg-white rounded-3">
-                                    <div class="flex-shrink-0">
-                                        <div class="avatar avatar-sm bg-soft-primary text-primary rounded me-3">
-                                            {{ substr($course->name, 0, 2) }}
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <div class="d-flex justify-content-between mb-2">
-                                            <h6 class="mb-0">{{ $course->name }}</h6>
-                                            <small class="text-primary">{{ $course->completion_rate }}%</small>
-                                        </div>
-                                        <div class="progress" style="height: 6px;">
-                                            <div class="progress-bar bg-primary" role="progressbar"
-                                                style="width: {{ $course->completion_rate }}%"></div>
-                                        </div>
+        <div class="col-12">
+            <div class="row">
+                {{-- ✅ Course Trends --}}
+                <div class="col-6">
+                    <div class="card border-0 shadow-sm bg-soft-mint h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="mb-0 text-success-dark">Course Trends</h5>
+                                <div class="dropdown">
+                                    <button class="btn btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
+                                        <i class="ti ti-dots-vertical"></i>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <a class="dropdown-item" href="#">Manage Courses</a>
+                                        <a class="dropdown-item" href="#">View All</a>
                                     </div>
                                 </div>
                             </div>
-                        @endforeach
+
+                            {{-- Scrollable Course Trends --}}
+                            {{-- <div style="max-height: 360px; overflow-y: auto;" class="row g-4">
+                                @foreach ($courses->sortByDesc('completion_rate')->take(10) as $course)
+
+                                    <div class="col-md-12">
+                                        <div class="d-flex align-items-center p-3 bg-white rounded-3">
+                                            <div class="flex-shrink-0">
+                                                <div class="avatar avatar-sm bg-soft-primary text-primary rounded me-3">
+                                                    {{ substr($course->name, 0, 2) }}
+                                                </div>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="d-flex justify-content-between mb-2">
+                                                    <h6 class="mb-0">{{ $course->name }}</h6>
+                                                    <small class="text-primary">{{ $course->completion_rate }}%</small>
+                                                </div>
+                                                <div class="progress" style="height: 6px;">
+                                                    <div class="progress-bar bg-primary" role="progressbar"
+                                                        style="width: {{ $course->completion_rate }}%"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div> --}}
+                            <div style="max-height: 360px; overflow-y: auto;" class="row g-4">
+                                @foreach ($courses->sortByDesc('students_count')->take(10) as $course)
+                                    <div class="col-md-12">
+                                        <div class="d-flex align-items-center p-3 bg-white rounded-3">
+                                            <div class="flex-shrink-0">
+                                                <div class="avatar avatar-sm bg-soft-primary text-primary rounded me-3">
+                                                    {{ substr($course->name, 0, 2) }}
+                                                </div>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="d-flex justify-content-between mb-2">
+                                                    <h6 class="mb-0">{{ $course->name }}</h6>
+                                                    <small class="text-primary">
+                                                        {{ $course->students_count }} Enrollments
+                                                        ({{ number_format($course->enrollment_percent, 1) }}%)
+                                                    </small>
+                                                </div>
+                                                <div class="progress" style="height: 6px;">
+                                                    <div class="progress-bar bg-primary" role="progressbar"
+                                                         style="width: {{ $course->enrollment_percent }}%">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                            
+                            
+                        </div>
+                    </div>
+                </div>
+
+                {{-- ✅ Recent Enrollments --}}
+                <div class="col-6">
+                    <div class="card border-0 shadow-sm bg-soft-blue h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="mb-0 text-primary">Recent Enrolled Courses</h5>
+                                <span class="badge bg-primary-light text-primary">
+                                    Total Enrolled Courses: {{ $totalEnrollments }}
+                                </span>
+                            </div>
+
+                            <ul class="list-group list-group-flush" style="max-height: 360px; overflow-y: auto;">
+                                @foreach ($recentEnrollments->take(6) as $enrollment)
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>{{ $enrollment->student->name ?? 'N/A' }}</strong>
+                                            <div class="small text-muted">
+                                                Enrolled in: {{ $enrollment->course->name ?? 'Unknown Course' }}
+                                            </div>
+                                        </div>
+                                        <span class="badge bg-primary">
+                                            {{ $enrollment->created_at->format('d M Y') }}
+                                        </span>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
+
     </div>
 
     <style>
@@ -706,7 +707,7 @@
             });
         });
     </script> --}}
-    <script>
+    {{-- <script>
         document.addEventListener('DOMContentLoaded', function() {
             const ctx = document.getElementById('paymentChart').getContext('2d');
             let paymentChart;
@@ -721,7 +722,7 @@
 
             function updateChart(labels, values, type) {
                 if (paymentChart) {
-                    paymentChart.destroy(); // Destroy previous instance
+                    paymentChart.destroy();
                 }
 
                 paymentChart = new Chart(ctx, {
@@ -781,5 +782,93 @@
                 document.getElementById('paymentWeeklyBtn').classList.remove('active');
             });
         });
+    </script> --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = document.getElementById('paymentChart').getContext('2d');
+            let paymentChart;
+    
+            const weeklyBtn = document.getElementById('paymentWeeklyBtn');
+            const monthlyBtn = document.getElementById('paymentMonthlyBtn');
+    
+            function fetchPaymentData(type = 'weekly', year = new Date().getFullYear()) {
+                fetch(`/payment-data?type=${type}&year=${year}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        updateChart(data.labels, data.values, type);
+                    });
+            }
+    
+            function updateChart(labels, values, type) {
+                if (paymentChart) {
+                    paymentChart.destroy();
+                }
+    
+                paymentChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: `${type.charAt(0).toUpperCase() + type.slice(1)} Payments`,
+                            data: values,
+                            backgroundColor: 'rgba(75, 192, 192, 0.8)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        return `₹${context.raw}`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    precision: 0,
+                                    callback: (value) => `₹${value}`
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+    
+            // Utility to toggle active/inactive styles
+            function setActiveButton(activeBtn, inactiveBtn) {
+                activeBtn.classList.add('active', 'btn-primary');
+                activeBtn.classList.remove('btn-outline-primary');
+                inactiveBtn.classList.remove('active', 'btn-primary');
+                inactiveBtn.classList.add('btn-outline-primary');
+            }
+    
+            // Initial fetch (weekly)
+            fetchPaymentData('weekly');
+            setActiveButton(weeklyBtn, monthlyBtn);
+    
+            // Weekly button click
+            weeklyBtn.addEventListener('click', function () {
+                fetchPaymentData('weekly');
+                setActiveButton(weeklyBtn, monthlyBtn);
+            });
+    
+            // Monthly button click
+            monthlyBtn.addEventListener('click', function () {
+                fetchPaymentData('monthly');
+                setActiveButton(monthlyBtn, weeklyBtn);
+            });
+        });
     </script>
+    
 @endsection
