@@ -94,7 +94,7 @@
         </div>
 
         <!-- Enrollment Chart -->
-        
+
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm bg-soft-cloud">
                 <div class="card-body">
@@ -115,7 +115,7 @@
                             </div>
                         </div>
                     </div>
-                    <canvas id="enrollmentChart" style="height: 250px"></canvas>
+                    <canvas id="enrollmentChart"></canvas>
                 </div>
             </div>
         </div>
@@ -245,7 +245,7 @@
                                                 </div>
                                                 <div class="progress" style="height: 6px;">
                                                     <div class="progress-bar bg-primary" role="progressbar"
-                                                         style="width: {{ $course->enrollment_percent }}%">
+                                                        style="width: {{ $course->enrollment_percent }}%">
                                                     </div>
                                                 </div>
                                             </div>
@@ -253,8 +253,8 @@
                                     </div>
                                 @endforeach
                             </div>
-                            
-                            
+
+
                         </div>
                     </div>
                 </div>
@@ -392,6 +392,12 @@
 
 
         /* css for piechart */
+
+        #enrollmentChart {
+            height: 250px !important;
+            max-height: 250px !important;
+        }
+
         .badge-dot {
             display: inline-block;
             width: 10px;
@@ -427,7 +433,7 @@
                     let option = new Option(year, year);
                     yearFilter.appendChild(option);
                 }
-                yearFilter.value = currentYear; // Default to current year
+                yearFilter.value = currentYear;
             }
 
             function loadChartData(type, year) {
@@ -510,207 +516,14 @@
 
 
     {{-- // Payment Methods Chart --}}
-    {{-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const weeklyPaymentData = {
-                labels: ['Credit Card', 'PayPal', 'Bank Transfer', 'Other'],
-                datasets: [{
-                    label: 'Weekly Payments',
-                    data: [45, 30, 20, 5],
-                    backgroundColor: [
-                        'rgba(29, 78, 216, 0.8)',
-                        'rgba(59, 130, 246, 0.8)',
-                        'rgba(234, 179, 8, 0.8)',
-                        'rgba(156, 163, 175, 0.8)'
-                    ],
-                    borderColor: [
-                        'rgba(29, 78, 216, 1)',
-                        'rgba(59, 130, 246, 1)',
-                        'rgba(234, 179, 8, 1)',
-                        'rgba(156, 163, 175, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            };
 
-            const monthlyPaymentData = {
-                labels: ['Credit Card', 'PayPal', 'Bank Transfer', 'Other'],
-                datasets: [{
-                    label: 'Monthly Payments',
-                    data: [220, 150, 120, 30],
-                    backgroundColor: [
-                        'rgba(29, 78, 216, 0.8)',
-                        'rgba(59, 130, 246, 0.8)',
-                        'rgba(234, 179, 8, 0.8)',
-                        'rgba(156, 163, 175, 0.8)'
-                    ],
-                    borderColor: [
-                        'rgba(29, 78, 216, 1)',
-                        'rgba(59, 130, 246, 1)',
-                        'rgba(234, 179, 8, 1)',
-                        'rgba(156, 163, 175, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            };
-
-            // Chart configuration for bar chart
-            const paymentConfig = {
-                type: 'bar',
-                data: weeklyPaymentData, 
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'top',
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.dataset.label || '';
-                                    const value = context.raw || 0;
-                                    return `${label}: ${value}`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                precision: 0
-                            }
-                        }
-                    }
-                }
-            };
-
-            // Initialize chart
-            const paymentCtx = document.getElementById('paymentChart').getContext('2d');
-            const paymentChart = new Chart(paymentCtx, paymentConfig);
-
-            document.getElementById('paymentWeeklyBtn').addEventListener('click', function(e) {
-                e.preventDefault();
-                this.classList.add('active');
-                document.getElementById('paymentMonthlyBtn').classList.remove('active');
-                paymentChart.data = weeklyPaymentData;
-                paymentChart.update();
-            });
-
-            document.getElementById('paymentMonthlyBtn').addEventListener('click', function(e) {
-                e.preventDefault();
-                this.classList.add('active');
-                document.getElementById('paymentWeeklyBtn').classList.remove('active');
-                paymentChart.data = monthlyPaymentData;
-                paymentChart.update();
-            });
-        });
-    </script> --}}
-
-    {{-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const weeklyPaymentData = {
-                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-                datasets: [{
-                    label: 'Weekly Payments',
-                    data: [120, 150, 180, 100],
-                    backgroundColor: [
-                        'rgba(29, 78, 216, 0.8)',
-                        'rgba(59, 130, 246, 0.8)',
-                        'rgba(234, 179, 8, 0.8)',
-                        'rgba(156, 163, 175, 0.8)'
-                    ],
-                    borderColor: [
-                        'rgba(29, 78, 216, 1)',
-                        'rgba(59, 130, 246, 1)',
-                        'rgba(234, 179, 8, 1)',
-                        'rgba(156, 163, 175, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            };
-
-            const monthlyPaymentData = {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                datasets: [{
-                    label: 'Monthly Payments',
-                    data: [500, 620, 700, 480, 540, 600, 650, 720, 680, 750, 770, 820],
-                    backgroundColor: [
-                        'rgba(29, 78, 216, 0.8)',
-                        'rgba(59, 130, 246, 0.8)',
-                        'rgba(234, 179, 8, 0.8)',
-                        'rgba(156, 163, 175, 0.8)'
-                    ],
-                    borderColor: [
-                        'rgba(29, 78, 216, 1)',
-                        'rgba(59, 130, 246, 1)',
-                        'rgba(234, 179, 8, 1)',
-                        'rgba(156, 163, 175, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            };
-
-            // Chart configuration
-            const paymentConfig = {
-                type: 'bar',
-                data: weeklyPaymentData,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'top',
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.dataset.label || '';
-                                    const value = context.raw || 0;
-                                    return `${label}: ${value}`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                precision: 0
-                            }
-                        }
-                    }
-                }
-            };
-
-            // Initialize chart
-            const paymentCtx = document.getElementById('paymentChart').getContext('2d');
-            const paymentChart = new Chart(paymentCtx, paymentConfig);
-
-            document.getElementById('paymentWeeklyBtn').addEventListener('click', function(e) {
-                e.preventDefault();
-                this.classList.add('active');
-                document.getElementById('paymentMonthlyBtn').classList.remove('active');
-                paymentChart.data = weeklyPaymentData;
-                paymentChart.update();
-            });
-
-            document.getElementById('paymentMonthlyBtn').addEventListener('click', function(e) {
-                e.preventDefault();
-                this.classList.add('active');
-                document.getElementById('paymentWeeklyBtn').classList.remove('active');
-                paymentChart.data = monthlyPaymentData;
-                paymentChart.update();
-            });
-        });
-    </script> --}}
-    {{-- <script>
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
             const ctx = document.getElementById('paymentChart').getContext('2d');
             let paymentChart;
+
+            const weeklyBtn = document.getElementById('paymentWeeklyBtn');
+            const monthlyBtn = document.getElementById('paymentMonthlyBtn');
 
             function fetchPaymentData(type = 'weekly', year = new Date().getFullYear()) {
                 fetch(`/payment-data?type=${type}&year=${year}`)
@@ -766,85 +579,6 @@
                 });
             }
 
-            // Fetch initial data
-            fetchPaymentData();
-
-            // Handle button clicks
-            document.getElementById('paymentWeeklyBtn').addEventListener('click', function() {
-                fetchPaymentData('weekly');
-                this.classList.add('active');
-                document.getElementById('paymentMonthlyBtn').classList.remove('active');
-            });
-
-            document.getElementById('paymentMonthlyBtn').addEventListener('click', function() {
-                fetchPaymentData('monthly');
-                this.classList.add('active');
-                document.getElementById('paymentWeeklyBtn').classList.remove('active');
-            });
-        });
-    </script> --}}
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const ctx = document.getElementById('paymentChart').getContext('2d');
-            let paymentChart;
-    
-            const weeklyBtn = document.getElementById('paymentWeeklyBtn');
-            const monthlyBtn = document.getElementById('paymentMonthlyBtn');
-    
-            function fetchPaymentData(type = 'weekly', year = new Date().getFullYear()) {
-                fetch(`/payment-data?type=${type}&year=${year}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        updateChart(data.labels, data.values, type);
-                    });
-            }
-    
-            function updateChart(labels, values, type) {
-                if (paymentChart) {
-                    paymentChart.destroy();
-                }
-    
-                paymentChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: `${type.charAt(0).toUpperCase() + type.slice(1)} Payments`,
-                            data: values,
-                            backgroundColor: 'rgba(75, 192, 192, 0.8)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: true,
-                                position: 'top'
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function (context) {
-                                        return `₹${context.raw}`;
-                                    }
-                                }
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    precision: 0,
-                                    callback: (value) => `₹${value}`
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-    
             // Utility to toggle active/inactive styles
             function setActiveButton(activeBtn, inactiveBtn) {
                 activeBtn.classList.add('active', 'btn-primary');
@@ -852,23 +586,22 @@
                 inactiveBtn.classList.remove('active', 'btn-primary');
                 inactiveBtn.classList.add('btn-outline-primary');
             }
-    
+
             // Initial fetch (weekly)
             fetchPaymentData('weekly');
             setActiveButton(weeklyBtn, monthlyBtn);
-    
+
             // Weekly button click
-            weeklyBtn.addEventListener('click', function () {
+            weeklyBtn.addEventListener('click', function() {
                 fetchPaymentData('weekly');
                 setActiveButton(weeklyBtn, monthlyBtn);
             });
-    
+
             // Monthly button click
-            monthlyBtn.addEventListener('click', function () {
+            monthlyBtn.addEventListener('click', function() {
                 fetchPaymentData('monthly');
                 setActiveButton(monthlyBtn, weeklyBtn);
             });
         });
     </script>
-    
 @endsection
