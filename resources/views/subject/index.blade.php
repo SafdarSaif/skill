@@ -157,6 +157,14 @@
             var url = "{{ route('subjectnote') }}?id=" + subjectId;
             window.location.href = url;
         }
+        function manageVideos(videoId) {
+        let url = "{{ route('subjectvideo') }}?id=" + videoId;;
+        window.location.href = url;
+    }
+    function manageEbook(ebookId) {
+        let url = "{{ route('ebook') }}?id=" + ebookId;
+        window.location.href = url;
+    }
     </script>
 
     <h4 class="mb-4">Subjects List</h4>
