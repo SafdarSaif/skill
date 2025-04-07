@@ -4,7 +4,7 @@
     <div class="container mt-4">
         <div class="row">
             <!-- Profile Section -->
-            <div class="col-md-4">
+            {{-- <div class="col-md-4">
                 <div class="card shadow-lg text-center">
                     <div class="card-body">
                         <img src="{{ asset('assets/img/avatars/profile.webp') }}" class="rounded-circle mb-3" width="120"
@@ -16,7 +16,33 @@
                         </span>
                     </div>
                 </div>
+            </div> --}}
+            <div class="col-md-4">
+                <div class="card shadow-lg text-center">
+                    <div class="card-body">
+                        {{-- Profile Image --}}
+                        <img src="{{ $student->image ? asset($student->image) : asset('assets/img/avatars/profile.webp') }}"
+                             class="rounded-circle mb-3"
+                             width="120"
+                             height="120"
+                             alt="{{ $student->name ?? 'Profile Image' }}">
+            
+                        {{-- Student Name --}}
+                        <h4 class="fw-bold">{{ $student->name ?? 'N/A' }}</h4>
+            
+                        {{-- Enrollment Number --}}
+                        <p class="text-muted">
+                            Enrollment No: {{ $student->enrollment_no ?? 'N/A' }}
+                        </p>
+            
+                        {{-- Status Badge --}}
+                        <span class="badge {{ $student->status ? 'bg-success' : 'bg-danger' }}">
+                            {{ $student->status ? 'Active' : 'Inactive' }}
+                        </span>
+                    </div>
+                </div>
             </div>
+            
 
             <!-- Details Section -->
             <div class="col-md-8">

@@ -46,65 +46,7 @@
     </form>
 </div>
 
-<!-- jQuery Validation -->
-{{-- <script>
-    $(document).ready(function() {
-        $("#contact-form").validate({
-            rules: {
-                name: {
-                    required: true,
-                    minlength: 3
-                },
-                email: {
-                    required: true,
-                    email: true
-                },
-                subject: {
-                    required: true,
-                    minlength: 5
-                },
-                message: {
-                    required: true,
-                    minlength: 10
-                }
-            },
-            messages: {
-                name: "Please enter your name (at least 3 characters)",
-                email: "Please enter a valid email address",
-                subject: "Please enter a subject (at least 5 characters)",
-                message: "Please enter a message (at least 10 characters)"
-            },
-            submitHandler: function(form) {
-                $(':input[type="submit"]').prop('disabled', true);
-                var formData = new FormData(form);
-                formData.append("_token", "{{ csrf_token() }}");
 
-                $.ajax({
-                    url: $(form).attr('action'),
-                    type: $(form).attr('method'),
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    dataType: 'json',
-                    success: function(response) {
-                        $(':input[type="submit"]').prop('disabled', false);
-                        if (response.success) {
-                            toastr.success(response.message);
-                            $("#contact-form")[0].reset(); // Clear the form
-                            $(".modal").modal('hide'); // Close the modal
-                        } else {
-                            toastr.error(response.message);
-                        }
-                    },
-                    error: function(response) {
-                        $(':input[type="submit"]').prop('disabled', false);
-                        toastr.error(response.responseJSON.message);
-                    }
-                });
-            }
-        });
-    });
-</script> --}}
 
 <script>
     $(document).ready(function() {
