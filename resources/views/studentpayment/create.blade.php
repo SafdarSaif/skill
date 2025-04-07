@@ -21,7 +21,7 @@
         <!-- Course ID -->
         <div class="col-md-6">
             <label for="course_id" class="form-label">Course <span class="text-danger">*</span></label>
-            <select name="course_id" id="course_id" class="form-select" required>
+            <select name="course_id" id="course_id"  class="form-select" required>
                 <option value="">Select Course</option>
                 @foreach($course as $id => $name)
                     <option value="{{ $id }}">{{ $name }}</option>
@@ -32,13 +32,15 @@
         <!-- Amount -->
         <div class="col-md-6">
             <label for="amount" class="form-label">Amount <span class="text-danger">*</span></label>
-            <input type="number" name="amount" id="amount" class="form-control" required placeholder="Enter amount" min="0" step="0.01">
+            <input type="number" name="amount" id="amount" class="form-control" required placeholder="Enter amount"
+                min="0" step="0.01">
         </div>
 
         <!-- Transaction ID -->
         <div class="col-md-6">
             <label for="transaction_id" class="form-label">Transaction ID <span class="text-danger">*</span></label>
-            <input type="text" name="transaction_id" id="transaction_id" class="form-control" required placeholder="Enter transaction ID">
+            <input type="text" name="transaction_id" id="transaction_id" class="form-control" required
+                placeholder="Enter transaction ID">
         </div>
 
         <!-- Payment Status -->
@@ -54,7 +56,8 @@
         <!-- Payment Confirmation Date -->
         <div class="col-md-12">
             <label for="payment_confirmation_date" class="form-label">Payment Confirmation Date</label>
-            <input type="datetime-local" name="payment_confirmation_date" id="payment_confirmation_date" class="form-control">
+            <input type="datetime-local" name="payment_confirmation_date" id="payment_confirmation_date"
+                class="form-control">
         </div>
 
         <!-- Submit Buttons -->
@@ -67,7 +70,12 @@
 
 <!-- jQuery Validation -->
 <script>
+    // function getamount(course_id){
+
+
+    // }
     $(document).ready(function () {
+
         $("#payment-form").validate({
             rules: {
                 student_id: { required: true, number: true },
@@ -114,24 +122,26 @@
         });
 
         // get course Amount
-        $('#course_id').on('change',function(){
+        $('#course_id').on('change', function () {
+            var courseId = $(this).val();
+            if (!courseId) return;
+
             $.ajax({
-                url:"/course/course-amount/"+$(this).val(),
-                type:'get',
-                success:function(res)
-                {
-                    if(res.status=='success')
-                    {
-                        $('#amount').val(res.price);
-                        $('#amount').prop('readonly',true);
+                url: "/get-course-amount/" + courseId,
+                type: 'GET',
+                success: function (res) {
+                    if (res.status === 'success') {
+                        $('#amount').val(res.price).prop('readonly', true);
+                    } else {
+                        $('#amount').val('').prop('readonly', false);
                     }
-                    else
-                    {
-                        $('#amount').val();
-                        $('#amount').prop('readonly',false);
-                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('AJAX error:', error);
+                    $('#amount').val('').prop('readonly', false);
                 }
-            })
-        })
+            });
+        });
+
     });
 </script>

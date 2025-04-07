@@ -258,14 +258,39 @@ class CourseController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($courseID)
-    { {
-            try {
-                $category = Category::destroy($courseID);
-                return ['status' => 'success', 'message' => 'Course Category  deleted successfully!'];
-            } catch (\Throwable $e) {
-                return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    // public function destroy($courseID)
+    // { {
+    //         try {
+    //             $category = Category::destroy($courseID);
+    //             return ['status' => 'success', 'message' => 'Course Category  deleted successfully!'];
+    //         } catch (\Throwable $e) {
+    //             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    //         }
+    //     }
+    // }
+
+    public function destroy($id)
+    {
+
+        try {
+            $data = Course::findOrFail($id);
+            if ($data) {
+                Course::find($id)->delete();
+                return response()->json([
+                    'status' => 'success',
+                    'message' => $data->name . ' Deleted successfully!',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Data not found',
+                ]);
             }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
         }
     }
 

@@ -105,7 +105,7 @@
                                     '<button class="btn btn-sm btn-icon me-2" onclick="edit(\'/student/edit/' +
                                     full['id'] +
                                     '\' , \'modal-xl\')"><i class="ti ti-edit"></i></button>' +
-                                    '<button class="btn btn-sm btn-icon delete-record" onclick="destry(\'/student/destroy/' +
+                                    '<button class="btn btn-sm btn-icon delete-record" onclick="destryStatus(\'/student/delete_at_status/' +
                                     full['id'] +
                                     '\' , \'student-table\')"><i class="ti ti-trash"></i></button>' +
                                     '</span>'
