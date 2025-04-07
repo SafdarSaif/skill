@@ -64,7 +64,9 @@ class StudentPaymentController extends Controller
     public static function StudentPayment($mobile)
     {
         try {
-            $student = Students::where('mobile', $mobile)->first();
+            $student = Students::where('mobile', $mobile)
+            ->where('status', 1)
+            ->first();
             if ($student) {
                 $data = StudentPayment::where('student_id', $student->id)
                     ->with('course')

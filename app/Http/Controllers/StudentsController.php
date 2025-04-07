@@ -103,7 +103,13 @@ class StudentsController extends Controller
     public function getStudentDetails($mobile)
     {
         try {
-            $student = Students::where('mobile', $mobile)->with('progress')->first();
+            // $student = Students::where('mobile', $mobile)->with('progress')->first();
+            $student = Students::where('mobile', $mobile)
+                ->where('status', 1)
+                ->with('progress')
+                ->first();
+
+            //    dd($student);
 
             if (!$student) {
                 return response()->json(['status' => 'error', 'message' => 'No student found with this mobile number']);
@@ -346,6 +352,7 @@ class StudentsController extends Controller
     {
         try {
             $student = Students::where('mobile', $mobile)
+                ->where('status', 1)
                 ->with('progress', 'progress.course', 'progress.course.users')
                 ->first();
 
@@ -687,7 +694,7 @@ class StudentsController extends Controller
             'city' => 'required|string',
             'pincode' => 'required|digits:6',
             'country' => 'required|string',
-            'heighest_qualification' => 'required|string', // Fixed typo
+            'heighest_qualification' => 'required|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'signature' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:1024',
         ]);
@@ -866,7 +873,11 @@ class StudentsController extends Controller
                 }
             }
 
-            $student = Students::find($request->id);
+            // $student = Students::find($request->id);
+            $student = Students::where('id', $request->id)
+                   ->where('status', 1)
+                   ->first();
+
             if (!$student) {
                 return response()->json([
                     'status'  => 'error',
