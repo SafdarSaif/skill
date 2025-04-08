@@ -5,9 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\StudentProgress;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SubjectVideo extends Model {
     use HasFactory;
+    use SoftDeletes;
+    
 
     protected $fillable = [
         'subject_id', 'name', 'description', 'duration',

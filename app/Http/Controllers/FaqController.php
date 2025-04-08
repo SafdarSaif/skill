@@ -184,14 +184,38 @@ public function getFaqs(Request $request)
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($faqID)
-    { {
-            try {
-                $faqs = Faq::destroy($faqID);
-                return ['status' => 'success', 'message' => 'Faq  deleted successfully!'];
-            } catch (\Throwable $e) {
-                return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    // public function destroy($faqID)
+    // { {
+    //         try {
+    //             $faqs = Faq::destroy($faqID);
+    //             return ['status' => 'success', 'message' => 'Faq  deleted successfully!'];
+    //         } catch (\Throwable $e) {
+    //             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    //         }
+    //     }
+    // }
+
+    public function destroy($id)
+    {
+        try {
+            $data = Faq::findOrFail($id);
+            if ($data) { 
+                Faq::find($id)->delete();
+                return response()->json([
+                    'status' => 'success',
+                    'message' => $data->name . ' Deleted successfully!',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Data not found',
+                ]);
             }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
         }
     }
 

@@ -160,14 +160,38 @@ class ContactController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($contactID)
-    { {
-            try {
-                $contact = Contact::destroy($contactID);
-                return ['status' => 'success', 'message' => 'Contact  deleted successfully!'];
-            } catch (\Throwable $e) {
-                return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    // public function destroy($contactID)
+    // { {
+    //         try {
+    //             $contact = Contact::destroy($contactID);
+    //             return ['status' => 'success', 'message' => 'Contact  deleted successfully!'];
+    //         } catch (\Throwable $e) {
+    //             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    //         }
+    //     }
+    // }
+
+    public function destroy($id)
+    {
+        try {
+            $data = Contact::findOrFail($id);
+            if ($data) { 
+                Contact::find($id)->delete();
+                return response()->json([
+                    'status' => 'success',
+                    'message' => $data->name . ' Deleted successfully!',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Data not found',
+                ]);
             }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
         }
     }
 }

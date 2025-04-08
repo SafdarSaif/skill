@@ -75,7 +75,7 @@
                                     '<button class="btn btn-sm btn-icon me-2" onclick="edit(\'/slider/edit/' +
                                     full['id'] + '\', \'modal-lg\')">' +
                                     '<i class="ti ti-edit"></i></button>' +
-                                    '<button class="btn btn-sm btn-icon delete-record" onclick="destroy(\'/slider/destroy/' +
+                                    '<button class="btn btn-sm btn-icon delete-record" onclick="destry(\'/slider/destroy/' +
                                     full['id'] + '\', \'slidertable\')">' +
                                     '<i class="ti ti-trash"></i></button></span>'
                                 );

@@ -110,8 +110,27 @@ class SliderController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Slider $slider)
+    public function destroy($id)
     {
-        //
+        try {
+            $data = Slider::findOrFail($id);
+            if ($data) { 
+                Slider::find($id)->delete();
+                return response()->json([
+                    'status' => 'success',
+                    'message' => $data->name . ' Deleted successfully!',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Data not found',
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 }

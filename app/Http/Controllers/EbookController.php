@@ -299,14 +299,38 @@ class EbookController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($ebookId)
-    { {
-            try {
-                $ebook = Ebook::destroy($ebookId);
-                return ['status' => 'success', 'message' => 'Ebook  deleted successfully!'];
-            } catch (\Throwable $e) {
-                return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    // public function destroy($ebookId)
+    // { {
+    //         try {
+    //             $ebook = Ebook::destroy($ebookId);
+    //             return ['status' => 'success', 'message' => 'Ebook  deleted successfully!'];
+    //         } catch (\Throwable $e) {
+    //             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    //         }
+    //     }
+    // }
+
+    public function destroy($id)
+    {
+        try {
+            $data = Ebook::findOrFail($id);
+            if ($data) { 
+                Ebook::find($id)->delete();
+                return response()->json([
+                    'status' => 'success',
+                    'message' => $data->name . ' Deleted successfully!',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Data not found',
+                ]);
             }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
         }
     }
     public function status($id)
