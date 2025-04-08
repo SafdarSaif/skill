@@ -177,14 +177,36 @@ class SubjectController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy($subjectId)
-    { {
-            try {
-                $subject = Subject::destroy($subjectId);
-                return ['status' => 'success', 'message' => 'Subject deleted successfully!'];
-            } catch (\Throwable $e) {
-                return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
-            }
+    {
+    //  {
+    //         try {
+    //             $subject = Subject::destroy($subjectId);
+    //             return ['status' => 'success', 'message' => 'Subject deleted successfully!'];
+    //         } catch (\Throwable $e) {
+    //             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    //         }
+    //     }
+
+    try {
+        $data = Subject::findOrFail($subjectId);
+        if ($data) { 
+            Subject::find($subjectId)->delete();
+            return response()->json([
+                'status' => 'success',
+                'message' => $data->name . ' Deleted successfully!',
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Data not found',
+            ]);
         }
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage(),
+        ]);
+    }
     }
     public function status($id)
     {

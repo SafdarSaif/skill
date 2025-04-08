@@ -234,14 +234,36 @@ class SubjectVideoController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy($subjectvideoId)
-    { {
+    { 
+        
+            // try {
+            //     $subjectVideo = SubjectVideo::destroy($subjectvideoId);
+            //     return ['status' => 'success', 'message' => 'Subject Video deleted successfully!'];
+            // } catch (\Throwable $e) {
+            //     return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+            // }
+
             try {
-                $subjectVideo = SubjectVideo::destroy($subjectvideoId);
-                return ['status' => 'success', 'message' => 'Subject Video deleted successfully!'];
-            } catch (\Throwable $e) {
-                return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+                $data = SubjectVideo::findOrFail($subjectvideoId);
+                if ($data) {
+                    SubjectVideo::find($subjectvideoId)->delete();
+                    return response()->json([
+                        'status' => 'success',
+                        'message' => $data->name . ' Deleted successfully!',
+                    ]);
+                } else {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Data not found',
+                    ]);
+                }
+            } catch (\Exception $e) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => $e->getMessage(),
+                ]);
             }
-        }
+        
     }
     public function status($id)
     {

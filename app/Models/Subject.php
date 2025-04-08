@@ -6,10 +6,12 @@ use App\Http\Controllers\EbookController;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Course;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Subject extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'course_id',
