@@ -15,14 +15,38 @@ class NewsUpdateController extends Controller
     /**
      * Get all News for API request
      */
-    public function getNew()
+
+
+    // public function getNew()
+    // {
+    //     try {
+    //         // $news = NewsUpdate::where('status', 1)->get()->toArray();
+    //         $news = NewsUpdate::where('status', 1)
+    //             ->orderBy('created_at', 'desc')
+    //             ->get()
+    //             ->toArray();
+    //         return response()->json([
+    //             'status' => 'success',
+    //             'data' => $news
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Something went wrong! ' . $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
+
+   // API with  pagination and limit
+    public function getNew(Request $request)
     {
         try {
-            // $news = NewsUpdate::where('status', 1)->get()->toArray();
+            $perPage = $request->get('limit', 10); 
+
             $news = NewsUpdate::where('status', 1)
                 ->orderBy('created_at', 'desc')
-                ->get()
-                ->toArray();
+                ->paginate($perPage);
+
             return response()->json([
                 'status' => 'success',
                 'data' => $news
@@ -34,7 +58,6 @@ class NewsUpdateController extends Controller
             ], 500);
         }
     }
-
 
 
     /**
@@ -58,17 +81,17 @@ class NewsUpdateController extends Controller
     public function index(Request $request)
     {
         // if (Auth::check() && Auth::user()->hasPermissionTo('view news')) {
-            if ($request->ajax()) {
-                $data = NewsUpdate::orderBy('id', 'desc')->get();
+        if ($request->ajax()) {
+            $data = NewsUpdate::orderBy('id', 'desc')->get();
 
-                return DataTables::of($data)
-                    ->addIndexColumn()
-                    ->editColumn('created_at', function ($data) {
-                        return Carbon::createFromFormat('Y-m-d H:i:s', $data->created_at)->format('d-m-Y h:i A');
-                    })
-                    ->make(true);
-            }
-            return view('website.news.index');
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return Carbon::createFromFormat('Y-m-d H:i:s', $data->created_at)->format('d-m-Y h:i A');
+                })
+                ->make(true);
+        }
+        return view('website.news.index');
         // } else {
         //     return response()->view('errors.403', [], 403);
         // }

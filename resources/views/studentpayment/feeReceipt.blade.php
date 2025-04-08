@@ -1,46 +1,105 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+    <meta charset="UTF-8">
     <title>Fee Receipt</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f6f9;
+            padding: 40px 0;
+            margin: 0;
         }
-        .container {
-            width: 100%;
-            border: 1px solid #ddd;
-            padding: 20px;
+
+        .receipt-container {
+            max-width: 800px;
+            margin: auto;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
         }
-        h2 {
+
+        .receipt-header {
             text-align: center;
-            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
         }
+
+        .receipt-header h2 {
+            margin: 0;
+            color: #1e293b;
+            font-size: 28px;
+        }
+
+        .receipt-header p {
+            margin: 5px 0 0;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .section-title {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 18px;
+            margin-bottom: 10px;
+            border-left: 4px solid #0d6efd;
+            padding-left: 10px;
+            margin-top: 30px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-bottom: 20px;
         }
-        table th, table td {
-            border: 1px solid #ddd;
-            padding: 10px;
+
+        table th,
+        table td {
+            padding: 12px 15px;
+            border: 1px solid #e2e8f0;
+            font-size: 15px;
+        }
+
+        table th {
+            background-color: #f8fafc;
+            color: #1e293b;
             text-align: left;
+            width: 30%;
         }
-        .text-center {
-            text-align: center;
-        }
+
         .footer {
-            margin-top: 20px;
-            font-size: 12px;
             text-align: center;
-            color: #555;
+            margin-top: 40px;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .amount {
+            color: #16a34a;
+            font-weight: bold;
+        }
+
+        .status {
+            font-weight: bold;
+            text-transform: capitalize;
+            color: #0d6efd;
         }
     </style>
 </head>
+
 <body>
 
-    <div class="container">
-        <h2>Fee Receipt</h2>
+    <div class="receipt-container">
+        <div class="receipt-header">
+            <h2>Fee Receipt</h2>
+            <p>Transaction Summary</p>
+        </div>
 
+        <div class="section-title">Payment Details</div>
         <table>
             <tr>
                 <th>Transaction ID</th>
@@ -52,15 +111,15 @@
             </tr>
             <tr>
                 <th>Payment Status</th>
-                <td>{{ ucfirst($payment->payment_status) }}</td>
+                <td class="status">{{ ucfirst($payment->payment_status) }}</td>
             </tr>
             <tr>
                 <th>Amount Paid</th>
-                <td>{{ number_format($payment->amount, 2) }}</td>
+                <td class="amount">Rs. {{ number_format((float) $payment->amount, 2, '.', ',') }}</td>
             </tr>
         </table>
 
-        <h3>Student Details</h3>
+        <div class="section-title">Student Details</div>
         <table>
             <tr>
                 <th>Name</th>
@@ -74,13 +133,15 @@
                 <th>Mobile</th>
                 <td>{{ $student->mobile }}</td>
             </tr>
-            <tr>
-                <th>Address</th>
-                <td>{{ $student->address }}, {{ $student->city }}, {{ $student->state }} - {{ $student->pincode }}</td>
-            </tr>
+            {{-- Uncomment below if address is required
+        <tr>
+            <th>Address</th>
+            <td>{{ $student->address }}, {{ $student->city }}, {{ $student->state }} - {{ $student->pincode }}</td>
+        </tr>
+        --}}
         </table>
 
-        <h3>Course Details</h3>
+        <div class="section-title">Course Details</div>
         <table>
             <tr>
                 <th>Course Name</th>
@@ -92,14 +153,16 @@
             </tr>
             <tr>
                 <th>Price</th>
-                <td>{{ number_format($course->price, 2) }}</td>
+                <td class="amount">Rs. {{ number_format((float) $course->price, 2, '.', ',') }}</td>
             </tr>
         </table>
 
         <div class="footer">
-            Thank you for choosing us! For any assistance, contact our support team.
+            Thank you for choosing us! <br>
+            For any assistance, contact our support team at <strong>support@example.com</strong>.
         </div>
     </div>
 
 </body>
+
 </html>

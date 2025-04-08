@@ -129,6 +129,8 @@ Route::get('payment/status/{id}', [StudentPaymentController::class, 'status'])->
 Route::get('payemnt/get-payment-according-to-student-and-course/{student_id}/{course_id}', [StudentPaymentController::class, 'getPyamentByStudentIdCourseId'])->name('payment.get-payment-according-to-student-and-course');
 Route::get('/get-course-amount/{id}', [CourseController::class, 'getCourseAmount'])->name('getCourseAmount');
 
+Route::post('/fee-receipt', [StudentPaymentController::class, 'generateFeeReceipt'])->name('generate.fee.receipt');
+
 
 
 Route::get('/studentcourse', [StudentCourseController::class, 'index'])->name('studentcourse');

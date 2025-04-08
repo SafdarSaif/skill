@@ -73,7 +73,7 @@ Route::get('/get-contact', [ContactController::class, 'getContact'])->name('get-
 
 Route::get('/get-contact', [ContactController::class, 'getContact'])->name('get-contact');
 
-Route::post('/fee-receipt', [StudentPaymentController::class, 'generateFeeReceipt']);
+Route::post('/fee-receipt', [StudentPaymentController::class, 'generateFeeReceipt'])->name('fee-receipt');
 
 
 

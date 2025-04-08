@@ -21,10 +21,19 @@
                             data: 'course.name',
                             title: 'Course Name'
                         },
+                        // {
+                        //     data: 'transaction_id',
+                        //     title: 'Transaction ID'
+                        // },
                         {
                             data: 'transaction_id',
-                            title: 'Transaction ID'
+                            title: 'Transaction ID',
+                            render: function(data, type, full, meta) {
+                                return `<span style="cursor:pointer; color:blue;" onclick="generateReceipt('${data}')">${data}</span>`;
+                            }
                         },
+
+
                         {
                             data: 'payment_status',
                             title: 'Payment Status'
@@ -139,6 +148,57 @@
             }
         });
     </script>
+
+    <script type="text/javascript">
+        // window.generateReceipt = function(transactionId) {
+        //     // alert(transactionId);
+        //     $.ajax({
+        //         url: "{{ route('generate.fee.receipt') }}",
+        //         method: "POST",
+        //         data: {
+        //             txnid: transactionId,
+        //             _token: "{{ csrf_token() }}"
+        //         },
+        //         success: function(response) {
+        //             console.log(response);return false;
+
+        //             if (response.status === 'success') {
+        //                 window.open(response.pdf_url, '_blank');
+        //             } else {
+        //                 alert(response.message);
+        //             }
+        //         },
+        //         error: function(xhr) {
+        //             alert('Error generating receipt. Please try again.');
+        //             console.error(xhr.responseText);
+        //         }
+        //     });
+        // };
+        window.generateReceipt = function(transactionId) {
+            $.ajax({
+                url: "{{ route('generate.fee.receipt') }}",
+                method: "POST",
+                data: {
+                    txnid: transactionId,
+                    _token: "{{ csrf_token() }}"
+                },
+                success: function(response) {
+                    console.log(response);
+
+                    if (response.status === 'success') {
+                        window.open(response.pdf_url, '_blank'); // Open PDF in new tab
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    alert('Error generating receipt. Please try again.');
+                    console.error(xhr.responseText);
+                }
+            });
+        };
+    </script>
+
 
     <h4 class="mb-4">Payment List</h4>
     <div class="card">
