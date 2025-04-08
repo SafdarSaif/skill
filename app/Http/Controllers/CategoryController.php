@@ -306,6 +306,8 @@ class CategoryController extends Controller
             ]);
         }
     }
+
+    // API for get all category
     public function categories(Request $request)
     {
         try {

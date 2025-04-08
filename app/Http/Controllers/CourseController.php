@@ -65,12 +65,12 @@ class CourseController extends Controller
 
         try {
 
-            $courseArr = Course::find($request->course_id); // course details
+            $courseArr = Course::find($request->course_id); 
             if (!$courseArr) {
                 return response()->json(['status' => 'error', 'message' => 'Course not found!']);
             }
 
-            $studentArr = Students::find($request->student_id); // student details
+            $studentArr = Students::find($request->student_id); 
             if (!$studentArr) {
                 return response()->json(['status' => 'error', 'message' => 'Student not found!']);
             }

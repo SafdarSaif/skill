@@ -57,7 +57,7 @@
                                     '<button class="btn btn-sm btn-icon me-2" onclick="edit(\'/news/edit/' +
                                     full['id'] + '\', \'modal-lg\')">' +
                                     '<i class="ti ti-edit"></i></button>' +
-                                    '<button class="btn btn-sm btn-icon delete-record" onclick="destroy(\'/news/destroy/' +
+                                    '<button class="btn btn-sm btn-icon delete-record" onclick="destry(\'/news/destroy/' +
                                     full['id'] + '\', \'news-updates-table\')">' +
                                     '<i class="ti ti-trash"></i></button></span>'
                                 );
