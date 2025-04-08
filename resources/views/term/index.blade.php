@@ -51,9 +51,7 @@
                                         <button class="btn btn-sm btn-icon me-2" onclick="edit('/term/edit/${full['id']}', 'modal-lg')">
                                             <i class="ti ti-edit"></i>
                                         </button>
-                                        <button class="btn btn-sm btn-icon delete-record" onclick="destry('/term/destroy/${full['id']}', 'terms-table')">
-                                            <i class="ti ti-trash"></i>
-                                        </button>
+                                       
                                     </span>`;
                             }
                         }
@@ -105,7 +103,7 @@
                 });
 
                 // Enable Bootstrap tooltips
-                $('body').tooltip({ selector: '[data-bs-toggle="tooltip"]' });
+                // $('body').tooltip({ selector: '[data-bs-toggle="tooltip"]' });
             }
         });
     </script>

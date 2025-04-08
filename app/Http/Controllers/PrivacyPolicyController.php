@@ -53,9 +53,21 @@ class PrivacyPolicyController extends Controller
     /**
      * Show the form for creating a new resource.
      */
+    // public function create()
+    // {
+    //     return view('privacy.create');
+    // }
+
+
     public function create()
     {
-        return view('privacy.create');
+        $privacy = PrivacyPolicy::first();
+
+        if ($privacy) {
+            return redirect()->route('privacy.edit', $privacy->id);
+        }
+
+        return view('privacy.create'); // Else show the create view
     }
 
     /**

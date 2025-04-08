@@ -51,10 +51,21 @@ class TermsConditionController extends Controller
     /**
      * Show the form for creating a new resource.
      */
+    // public function create()
+    // {
+    //     return view('term.create');
+    // }
     public function create()
     {
-        return view('term.create');
+        $term = TermsCondition::first();
+
+        if ($term) {
+            return redirect()->route('term.edit', $term->id);
+        }
+
+        return view('term.create'); // Else show the create view
     }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -166,7 +177,7 @@ class TermsConditionController extends Controller
     {
         try {
             $data = TermsCondition::findOrFail($id);
-            if ($data) { 
+            if ($data) {
                 TermsCondition::find($id)->delete();
                 return response()->json([
                     'status' => 'success',

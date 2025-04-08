@@ -51,9 +51,7 @@
                                         <button class="btn btn-sm btn-icon me-2" onclick="edit('/privacy/edit/${full['id']}', 'modal-lg')">
                                             <i class="ti ti-edit"></i>
                                         </button>
-                                        <button class="btn btn-sm btn-icon delete-record" onclick="destry('/privacy/destroy/${full['id']}', 'privacy-table')">
-                                            <i class="ti ti-trash"></i>
-                                        </button>
+                                        
                                     </span>`;
                             }
                         }
@@ -106,7 +104,7 @@
                 });
 
                 // Enable Bootstrap tooltips
-                $('body').tooltip({ selector: '[data-bs-toggle="tooltip"]' });
+                // $('body').tooltip({ selector: '[data-bs-toggle="tooltip"]' });
             }
         });
     </script>
