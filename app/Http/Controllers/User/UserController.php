@@ -134,7 +134,7 @@ class UserController extends Controller
           'name' => 'required|string|max:255',
           'email' => 'required|email|unique:users,email,' . $userId,
           'mobile' => 'required|digits:10|unique:users,mobile,' . $userId,
-          'password' => 'nullable|min:6|confirmed',
+          'password' => 'nullable|min:6',
           'role_id' => 'nullable|exists:roles,id',
           'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048', // Validate `avatar`
       ]);

@@ -12,6 +12,7 @@ use Illuminate\Support\Carbon;
 use App\Http\Controllers\EasebuzzPaymentController;
 use App\Models\Students;
 use App\Models\CourseType;
+use App\Models\StudentCourse;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use stdClass;
@@ -34,22 +35,21 @@ class CourseController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            if(Auth::check() && Auth::user()->hasRole('Super Admin'))
-            {
-                $data = Course::with(['category','users'])->orderBy('id', 'desc')->get();
-            }
-            else
-            {
+            if (Auth::check() && Auth::user()->hasRole('Super Admin')) {
+                $data = Course::with(['category', 'users','type'])->orderBy('id', 'desc')->get();
+            } else {
                 $userId = Auth::user()->id;
-                $data = Course::with(['category'])->whereHas('users',function($query)use($userId){
-                    $query->where('id',$userId);
+                $data = Course::with(['category'])->whereHas('users', function ($query) use ($userId) {
+                    $query->where('id', $userId);
                 })->orderBy('id', 'desc')->get();
-             
             }
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->editColumn('category', function ($data) {
                     return $data->category ? $data->category->name : 'N/A';
+                })
+                ->addColumn('course_type', function ($data) {
+                    return $data->type ? $data->type->name : 'N/A';
                 })
                 ->editColumn('created_at', function ($data) {
                     return Carbon::createFromFormat('Y-m-d H:i:s', $data->created_at)->format('d-m-Y h:i A');
@@ -65,12 +65,12 @@ class CourseController extends Controller
 
         try {
 
-            $courseArr = Course::find($request->course_id); 
+            $courseArr = Course::find($request->course_id);
             if (!$courseArr) {
                 return response()->json(['status' => 'error', 'message' => 'Course not found!']);
             }
 
-            $studentArr = Students::find($request->student_id); 
+            $studentArr = Students::find($request->student_id);
             if (!$studentArr) {
                 return response()->json(['status' => 'error', 'message' => 'Student not found!']);
             }
@@ -152,7 +152,7 @@ class CourseController extends Controller
             }
 
             // Create a new course
-          
+
             $course = Course::create([
                 'name' => $request->name,
                 'description' => $request->description,
@@ -344,27 +344,35 @@ class CourseController extends Controller
         }
     }
 
-    public function coursesFunc(Request $request, $column = '', $value = '')
-    {
-        try {
-            $query = Course::with('category', 'users', 'subjects')->where('status', 1);
-            if (!empty($column) && !empty($value)) {
-                $query->where($column, $value);
-            }
 
-            $data = $query->get()->toArray();
-            if ($data) {
-                return response()->json(['status' => "success", 'message' => "All Course Lists", "data" => $data]);
-            } else {
-                return response()->json(['status' => "error", 'message' => "No Course Found"]);
-            }
-        } catch (Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage(),
-            ]);
-        }
-    }
+
+
+    // All course Api 
+    // public function coursesFunc(Request $request, $column = '', $value = '')
+    // {
+    //     try {
+    //         $query = Course::with('category', 'users', 'subjects')->where('status', 1);
+    //         if (!empty($column) && !empty($value)) {
+    //             $query->where($column, $value);
+    //         }
+
+    //         $data = $query->get()->toArray();
+    //         if ($data) {
+    //             return response()->json(['status' => "success", 'message' => "All Course Lists", "data" => $data]);
+    //         } else {
+    //             return response()->json(['status' => "error", 'message' => "No Course Found"]);
+    //         }
+    //     } catch (Exception $e) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => $e->getMessage(),
+    //         ]);
+    //     }
+    // }
+
+
+
+
 
     public function getCourseAmount($courseId)
     {
@@ -372,19 +380,294 @@ class CourseController extends Controller
         return response()->json(['status' => 'success', 'price' => $courseAmount]);
     }
 
-    public function getCourseByType($typeId = '')
+    // public function getCourseByType($typeId = '')
+    // {
+    //     try {
+    //         $courses = CourseType::where('status', 1)->whereHas('courses', function ($query) {
+    //             $query->where('status', true);
+    //         });
+    //         if ($typeId != '') {
+    //             $courses->where('id', $typeId);
+    //         }
+    //         $courses = $courses->get()->toArray();
+    //         return response()->json(['status' => 'success', 'message' => 'All courses', 'data' => $courses]);
+    //     } catch (Exception $e) {
+    //         return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    //     }
+    // }
+    // public function getCourseByType(Request $request, $typeId = 0)
+    // {
+    //     try {
+    //         $studentId = $request->header('student_id');
+    //         $limit = $request->header('limit', 10); 
+
+    //         // Base course query
+    //         $query = Course::with('category', 'users', 'subjects')
+    //             ->where('status', 1);
+
+    //         // Filter by course_type_id only if not 0
+    //         if ($typeId != 0) {
+    //             $query->where('type_id', $typeId);
+    //         }
+
+    //         // Paginate the results
+    //         $courses = $query->paginate($limit);
+
+    //         // Find courses student is enrolled in
+    //         $enrolledCourseIds = [];
+
+    //         if ($studentId) {
+    //             $enrolledCourseIds = StudentCourse::where('student_id', $studentId)
+    //                 ->pluck('course_id')
+    //                 ->toArray();
+    //         }
+
+    //         // Add is_enrolled flag
+    //         $courses->getCollection()->transform(function ($course) use ($enrolledCourseIds) {
+    //             $course->is_enrolled = in_array($course->id, $enrolledCourseIds);
+    //             return $course;
+    //         });
+
+    //         return response()->json([
+    //             'status' => 'success',
+    //             'message' => $typeId == 0 ? 'All Courses' : 'Courses by Type',
+    //             'data' => $courses->items(),
+    //             'pagination' => [
+    //                 'total' => $courses->total(),
+    //                 'per_page' => $courses->perPage(),
+    //                 'current_page' => $courses->currentPage(),
+    //                 'last_page' => $courses->lastPage(),
+    //                 'from' => $courses->firstItem(),
+    //                 'to' => $courses->lastItem(),
+    //             ]
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => $e->getMessage()
+    //         ]);
+    //     }
+    // }
+
+
+
+    public function getCourseByType(Request $request, $typeId = 0)
     {
         try {
-            $courses = CourseType::where('status', 1)->whereHas('courses',function($query){
-                $query->where('status',true);
-            });
-            if ($typeId != '') {
-                $courses->where('id', $typeId);
+            $studentId = $request->header('student_id');
+            $limit = $request->header('limit', 10);
+
+            // Get all course types (or specific one if $typeId != 0)
+            $courseTypesQuery = CourseType::where('status', 1)
+                ->whereHas('courses', function ($query) {
+                    $query->where('status', 1);
+                });
+
+            if ($typeId != 0) {
+                $courseTypesQuery->where('id', $typeId);
             }
-            $courses = $courses->get()->toArray();
-            return response()->json(['status' => 'success', 'message' => 'All courses', 'data' => $courses]);
-        } catch (Exception $e) {
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+
+            $courseTypes = $courseTypesQuery->get();
+
+            $enrolledCourseIds = [];
+            if ($studentId) {
+                $enrolledCourseIds = StudentCourse::where('student_id', $studentId)
+                    ->pluck('course_id')
+                    ->toArray();
+            }
+
+            $result = [];
+
+            foreach ($courseTypes as $type) {
+                // Get paginated courses for each type
+                $courses = Course::with('category', 'users', 'subjects')
+                    ->where('status', 1)
+                    ->where('type_id', $type->id)
+                    ->paginate($limit);
+
+                // Add is_enrolled flag
+                $courses->getCollection()->transform(function ($course) use ($enrolledCourseIds) {
+                    $course->is_enrolled = in_array($course->id, $enrolledCourseIds);
+                    return $course;
+                });
+
+                $result[] = [
+                    'type_id' => $type->id,
+                    'type_name' => $type->name,
+                    'courses' => $courses->items(),
+                    'pagination' => [
+                        'total' => $courses->total(),
+                        'per_page' => $courses->perPage(),
+                        'current_page' => $courses->currentPage(),
+                        'last_page' => $courses->lastPage(),
+                        'from' => $courses->firstItem(),
+                        'to' => $courses->lastItem(),
+                    ]
+                ];
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'message' => $typeId == 0 ? 'All Course Types with Courses' : 'Courses by Type',
+                'data' => $result
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+
+
+
+
+
+    //    Seprate API for  Banner course APi 
+    // public function bannerCoursesFunc(Request $request)
+    // {
+    //     try {
+    //         $limit = $request->input('limit', 10); 
+
+    //         $data = Course::with('category', 'users', 'subjects')
+    //             ->where('status', 1)
+    //             ->where('is_banner', 1)
+    //             ->paginate($limit);
+
+    //         if ($data->count()) {
+    //             return response()->json([
+    //                 'status' => "success",
+    //                 'message' => "Banner Course List",
+    //                 'data' => $data->items(),
+    //                 'pagination' => [
+    //                     'total' => $data->total(),
+    //                     'per_page' => $data->perPage(),
+    //                     'current_page' => $data->currentPage(),
+    //                     'last_page' => $data->lastPage(),
+    //                     'from' => $data->firstItem(),
+    //                     'to' => $data->lastItem(),
+    //                 ]
+    //             ]);
+    //         } else {
+    //             return response()->json([
+    //                 'status' => "error",
+    //                 'message' => "No Banner Courses Found"
+    //             ]);
+    //         }
+    //     } catch (Exception $e) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => $e->getMessage(),
+    //         ]);
+    //     }
+    // }
+
+
+    public function bannerCoursesFunc(Request $request)
+    {
+        try {
+            $limit = $request->header('limit', 10);
+
+            // Get student ID from request header
+            $studentId = $request->header('student_id');
+            // dd($studentId); 
+
+            $courses = Course::with('category', 'users', 'subjects')
+                ->where('status', 1)
+                ->where('is_banner', 1)
+                ->paginate($limit);
+
+            $enrolledCourseIds = [];
+
+            if ($studentId) {
+                $enrolledCourseIds = StudentCourse::where('student_id', $studentId)
+                    ->pluck('course_id')
+                    ->toArray();
+            }
+
+            // Add is_enrolled flag to each course
+            $courses->getCollection()->transform(function ($course) use ($enrolledCourseIds) {
+                $course->is_enrolled = in_array($course->id, $enrolledCourseIds);
+                return $course;
+            });
+
+            return response()->json([
+                'status' => "success",
+                'message' => "Banner Course List",
+                'data' => $courses->items(),
+                'pagination' => [
+                    'total' => $courses->total(),
+                    'per_page' => $courses->perPage(),
+                    'current_page' => $courses->currentPage(),
+                    'last_page' => $courses->lastPage(),
+                    'from' => $courses->firstItem(),
+                    'to' => $courses->lastItem(),
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+
+
+    public function coursesFunc(Request $request, $column = '', $value = '')
+    {
+        try {
+            $studentId = $request->header('student_id');
+            $limit = $request->header('limit', 10);
+
+            $query = Course::with('category', 'users', 'subjects')->where('status', 1);
+
+            if (!empty($column) && !empty($value)) {
+                $query->where($column, $value);
+            }
+
+            $courses = $query->paginate($limit);
+
+            $enrolledCourseIds = [];
+
+            if ($studentId) {
+                $enrolledCourseIds = StudentCourse::where('student_id', $studentId)
+                    ->pluck('course_id')
+                    ->toArray();
+            }
+
+            // Add is_enrolled flag to each course
+            $courses->getCollection()->transform(function ($course) use ($enrolledCourseIds) {
+                $course->is_enrolled = in_array($course->id, $enrolledCourseIds);
+                return $course;
+            });
+
+            if ($courses->count()) {
+                return response()->json([
+                    'status' => "success",
+                    'message' => "All Course Lists",
+                    'data' => $courses->items(),
+                    'pagination' => [
+                        'total' => $courses->total(),
+                        'per_page' => $courses->perPage(),
+                        'current_page' => $courses->currentPage(),
+                        'last_page' => $courses->lastPage(),
+                        'from' => $courses->firstItem(),
+                        'to' => $courses->lastItem(),
+                    ],
+                ]);
+            } else {
+                return response()->json([
+                    'status' => "error",
+                    'message' => "No Course Found",
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
         }
     }
 }

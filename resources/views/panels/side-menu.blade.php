@@ -130,7 +130,7 @@
         </li>
 
         <!-- Support System -->
-        <li class="menu-item {{ Route::is('news*', 'slider*', 'faq*', 'studentquery*') ? 'active open' : '' }}">
+        <li class="menu-item {{ Route::is('news*', 'slider*', 'faq*', 'studentquery*' ,'term*','privacy*','contact*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons ti ti-headset"></i>
                 <div data-i18n="Support System">Support System</div>

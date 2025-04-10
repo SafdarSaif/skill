@@ -265,3 +265,33 @@
         }
     });
 </script>
+
+
+
+<script>
+    $(document).ready(function () {
+        $("#pincode").on("keyup", function () {
+            let pincode = $(this).val().trim();
+            if (pincode.length === 6) {
+                $.ajax({
+                    url: "https://api.postalpincode.in/pincode/" + pincode,
+                    method: "GET",
+                    success: function (data) {
+                        if (data[0].Status === "Success") {
+                            let postOffice = data[0].PostOffice[0]; 
+                            $("#state").val(postOffice.State);
+                            $("#district").val(postOffice.District);
+                            $("#city").val(postOffice.Name);
+                            $("#country").val(postOffice.Country);
+                        } else {
+                            alert("Invalid Pincode!");
+                        }
+                    },
+                    error: function () {
+                        alert("Error fetching data!");
+                    }
+                });
+            }
+        });
+    });
+</script>

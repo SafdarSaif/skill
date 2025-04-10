@@ -256,7 +256,7 @@
                     method: "GET",
                     success: function (data) {
                         if (data[0].Status === "Success") {
-                            let postOffice = data[0].PostOffice[0]; // Get the first post office entry
+                            let postOffice = data[0].PostOffice[0]; 
                             $("#state").val(postOffice.State);
                             $("#district").val(postOffice.District);
                             $("#city").val(postOffice.Name);

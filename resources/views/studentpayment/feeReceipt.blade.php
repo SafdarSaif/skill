@@ -94,11 +94,17 @@
 <body>
 
     <div class="receipt-container">
+        {{-- <div class="receipt-header">
+            <h2>Fee Receipt</h2>
+            <p>Transaction Summary</p>
+        </div> --}}
+
         <div class="receipt-header">
+            <img src="assets/img/logo/logo 3.jpg" alt="Institute Logo" style="max-height: 80px; margin-bottom: 10px;">
             <h2>Fee Receipt</h2>
             <p>Transaction Summary</p>
         </div>
-
+        
         <div class="section-title">Payment Details</div>
         <table>
             <tr>
@@ -159,7 +165,7 @@
 
         <div class="footer">
             Thank you for choosing us! <br>
-            For any assistance, contact our support team at <strong>support@example.com</strong>.
+            For any assistance, contact our support team at <strong>support@edtechinnovate.com</strong>.
         </div>
     </div>
 

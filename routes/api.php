@@ -35,7 +35,7 @@ Route::get('/students-payment/{mobile_no}',[StudentPaymentController::class,'Stu
 Route::get('/pay-student-course-fee/{student_id}/{course_id}',[CourseController::class,'payStuCourseFee']);
 Route::get('/all-categories',[CategoryController::class,'categories']);
 Route::get('/all-courses/{column}/{value}',[CourseController::class,'coursesFunc']);
-Route::get('/all-courses',[CourseController::class,'coursesFunc']);
+// Route::get('/all-courses',[CourseController::class,'coursesFunc']);
 Route::post('/category-courses',[CategoryController::class,'getCategoryCourses']);
 Route::get('/course-wise-subjects', [SubjectController::class,'getCourseSubjects']);
 Route::get('/course-wise-subjects/{column}/{value}', [SubjectController::class,'getCourseSubjects']);
@@ -74,6 +74,15 @@ Route::get('/get-contact', [ContactController::class, 'getContact'])->name('get-
 Route::get('/get-contact', [ContactController::class, 'getContact'])->name('get-contact');
 
 Route::post('/fee-receipt', [StudentPaymentController::class, 'generateFeeReceipt'])->name('fee-receipt');
+
+
+
+
+
+// API modification for Frontend
+
+Route::get('/banner-courses', [CourseController::class, 'bannerCoursesFunc']);
+Route::get('/all-courses', [CourseController::class, 'coursesFunc']);
 
 
 
