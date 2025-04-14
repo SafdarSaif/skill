@@ -41,26 +41,41 @@ class ContactController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:contacts,email',
-            'phone' => 'required|digits:10',
+        // Validate inputs using Validator
+        $validator = Validator::make($request->all(), [
+            'name'    => 'required|string|max:255',
+            'email'   => 'required|email|unique:contacts,email',
+            'phone'   => 'required|digits:10',
             'subject' => 'required|string|max:255',
-            'message' => 'required|string',
+            'message' => 'required|string|min:10',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
 
         try {
             $contact = Contact::create([
-                'name' => $request->input('name'),
-                'email' => $request->input('email'),
-                'phone' => $request->input('phone'),
+                'name'    => $request->input('name'),
+                'email'   => $request->input('email'),
+                'phone'   => $request->input('phone'),
                 'subject' => $request->input('subject'),
                 'message' => $request->input('message'),
             ]);
 
-            return response()->json(['success' => true, 'message' => 'Lead stored successfully!', 'data' => $contact], 201);
+            return response()->json([
+                'status'  => 'success',
+                'message' => 'Your message has been sent successfully!',
+                'data'    => $contact
+            ], 201);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Failed to store lead.', 'error' => $e->getMessage()], 500);
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Something went wrong! ' . $e->getMessage()
+            ], 500);
         }
     }
 
@@ -91,9 +106,12 @@ class ContactController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Contact $contact)
+    public function edit($contactID)
     {
-        //
+        $contact = Contact::findOrFail($contactID);
+
+
+        return view('website.contact.edit', compact('contact'));
     }
 
     /**
@@ -101,20 +119,79 @@ class ContactController extends Controller
      */
     public function update(Request $request, Contact $contact)
     {
-        //
+        // Validate inputs using Validator
+        $validator = Validator::make($request->all(), [
+            'name'    => 'required|string|max:255',
+            'email'   => 'required|email' . $contact->id,
+            'phone'   => 'required|digits:10',
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string|min:10',
+        ]);
+    
+        if ($validator->fails()) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
+    
+        try {
+            $contact->update([
+                'name'    => $request->input('name'),
+                'email'   => $request->input('email'),
+                'phone'   => $request->input('phone'),
+                'subject' => $request->input('subject'),
+                'message' => $request->input('message'),
+            ]);
+    
+            return response()->json([
+                'status'  => 'success',
+                'message' => 'Contact details updated successfully!',
+                'data'    => $contact
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Failed to update contact: ' . $e->getMessage()
+            ], 500);
+        }
     }
-
+    
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($contactID)
-    { {
-            try {
-                $contact = Contact::destroy($contactID);
-                return ['status' => 'success', 'message' => 'Contact  deleted successfully!'];
-            } catch (\Throwable $e) {
-                return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    // public function destroy($contactID)
+    // { {
+    //         try {
+    //             $contact = Contact::destroy($contactID);
+    //             return ['status' => 'success', 'message' => 'Contact  deleted successfully!'];
+    //         } catch (\Throwable $e) {
+    //             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    //         }
+    //     }
+    // }
+
+    public function destroy($id)
+    {
+        try {
+            $data = Contact::findOrFail($id);
+            if ($data) { 
+                Contact::find($id)->delete();
+                return response()->json([
+                    'status' => 'success',
+                    'message' => $data->name . ' Deleted successfully!',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Data not found',
+                ]);
             }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
         }
     }
 }

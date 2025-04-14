@@ -21,13 +21,9 @@
     </form>
 </div>
 
-<!-- Include CKEditor -->
-<script src="https://cdn.ckeditor.com/4.20.1/standard/ckeditor.js"></script>
+
 <script>
     $(document).ready(function() {
-        // Initialize CKEditor
-        CKEDITOR.replace('content');
-
         $("#terms-form").validate({
             rules: {
                 content: {
@@ -43,10 +39,6 @@
             },
             submitHandler: function(form) {
                 $(':input[type="submit"]').prop('disabled', true);
-
-                for (instance in CKEDITOR.instances) {
-                    CKEDITOR.instances[instance].updateElement();
-                }
 
                 var formData = new FormData(form);
                 formData.append("_token", "{{ csrf_token() }}");

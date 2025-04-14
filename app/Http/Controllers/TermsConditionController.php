@@ -51,10 +51,21 @@ class TermsConditionController extends Controller
     /**
      * Show the form for creating a new resource.
      */
+    // public function create()
+    // {
+    //     return view('term.create');
+    // }
     public function create()
     {
-        return view('term.create');
+        $term = TermsCondition::first();
+
+        if ($term) {
+            return redirect()->route('term.edit', $term->id);
+        }
+
+        return view('term.create'); // Else show the create view
     }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -151,14 +162,38 @@ class TermsConditionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($termID)
-    { {
-            try {
-                $term = TermsCondition::destroy($termID);
-                return ['status' => 'success', 'message' => 'Faq  deleted successfully!'];
-            } catch (\Throwable $e) {
-                return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    // public function destroy($termID)
+    // { {
+    //         try {
+    //             $term = TermsCondition::destroy($termID);
+    //             return ['status' => 'success', 'message' => 'Faq  deleted successfully!'];
+    //         } catch (\Throwable $e) {
+    //             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    //         }
+    //     }
+    // }
+
+    public function destroy($id)
+    {
+        try {
+            $data = TermsCondition::findOrFail($id);
+            if ($data) {
+                TermsCondition::find($id)->delete();
+                return response()->json([
+                    'status' => 'success',
+                    'message' => $data->name . ' Deleted successfully!',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Data not found',
+                ]);
             }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
         }
     }
 

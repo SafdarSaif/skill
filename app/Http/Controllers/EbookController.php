@@ -16,30 +16,63 @@ class EbookController extends Controller
     /**
      * Display a listing of the resource.
      */
+    // public function index(Request $request)
+    // {
+    //     if ($request->ajax()) {
+    //         $data = Ebook::with(['subject', 'user'])
+    //             ->orderBy('id', 'desc')
+    //             ->get();
+
+    //         return DataTables::of($data)
+    //             ->addIndexColumn()
+    //             ->editColumn('created_at', function ($data) {
+    //                 return $data->created_at ? Carbon::parse($data->created_at)->format('d-m-Y h:i A') : 'N/A';
+    //             })
+
+    //             ->addColumn('subject_name', function ($data) {
+    //                 return $data->course ? $data->course->name : 'N/A';
+    //             })
+    //             ->addColumn('user_name', function ($data) {
+    //                 return $data->user ? $data->user->name : 'N/A';
+    //             })
+    //             ->make(true);
+    //     }
+
+    //     return view('subject.ebook.index');
+    // }
+
+
     public function index(Request $request)
-    {
-        if ($request->ajax()) {
-            $data = Ebook::with(['subject', 'user'])
-                ->orderBy('id', 'desc')
-                ->get();
+{
+    $subjectId = $request->query('id'); // optional filtering by subject_id
 
-            return DataTables::of($data)
-                ->addIndexColumn()
-                ->editColumn('created_at', function ($data) {
-                    return $data->created_at ? Carbon::parse($data->created_at)->format('d-m-Y h:i A') : 'N/A';
-                })
+    if ($request->ajax()) {
+        $query = Ebook::with(['subject', 'user'])
+            ->orderBy('id', 'desc');
 
-                ->addColumn('subject_name', function ($data) {
-                    return $data->course ? $data->course->name : 'N/A';
-                })
-                ->addColumn('user_name', function ($data) {
-                    return $data->user ? $data->user->name : 'N/A';
-                })
-                ->make(true);
+        if ($subjectId) {
+            $query->where('subject_id', $subjectId);
         }
 
-        return view('subject.ebook.index');
+        $data = $query->get();
+
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->editColumn('created_at', function ($data) {
+                return $data->created_at ? Carbon::parse($data->created_at)->format('d-m-Y h:i A') : 'N/A';
+            })
+            ->addColumn('subject_name', function ($data) {
+                return $data->subject ? $data->subject->name : 'N/A'; // fixed from 'course' to 'subject'
+            })
+            ->addColumn('user_name', function ($data) {
+                return $data->user ? $data->user->name : 'N/A';
+            })
+            ->make(true);
     }
+
+    return view('subject.ebook.index');
+}
+
 
     /**
      * Show the form for creating a new resource.
@@ -266,14 +299,38 @@ class EbookController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($ebookId)
-    { {
-            try {
-                $ebook = Ebook::destroy($ebookId);
-                return ['status' => 'success', 'message' => 'Ebook  deleted successfully!'];
-            } catch (\Throwable $e) {
-                return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    // public function destroy($ebookId)
+    // { {
+    //         try {
+    //             $ebook = Ebook::destroy($ebookId);
+    //             return ['status' => 'success', 'message' => 'Ebook  deleted successfully!'];
+    //         } catch (\Throwable $e) {
+    //             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    //         }
+    //     }
+    // }
+
+    public function destroy($id)
+    {
+        try {
+            $data = Ebook::findOrFail($id);
+            if ($data) { 
+                Ebook::find($id)->delete();
+                return response()->json([
+                    'status' => 'success',
+                    'message' => $data->name . ' Deleted successfully!',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Data not found',
+                ]);
             }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
         }
     }
     public function status($id)

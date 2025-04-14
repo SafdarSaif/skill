@@ -8,19 +8,47 @@
 
             if (dataTableNotes.length) {
                 dt_notes = dataTableNotes.DataTable({
-                    ajax: "{{ route('subjectnote') }}",
-                    columns: [
-                        { data: 'DT_RowIndex', title: 'No.' },
-                        { data: 'subject.name', title: 'Subject Name' },
-                        { data: 'name', title: 'Note Name' },
-                        { data: 'description', title: 'Description' },
-                        { data: 'upload_type', title: 'Type' },
-                        { data: 'file_path', title: 'File/URL' },
-                        { data: 'status', title: 'Status' },
-                        { data: '', title: 'Actions' },
-                    ],
-                    columnDefs: [
+                    // ajax: "{{ route('subjectnote') }}",
+                    ajax: {
+                        url: "{{ route('subjectnote') }}",
+                        data: function(d) {
+                            d.id = new URLSearchParams(window.location.search).get('id');
+                        }
+                    },
+                    columns: [{
+                            data: 'DT_RowIndex',
+                            title: 'No.'
+                        },
                         {
+                            data: 'subject.name',
+                            title: 'Subject Name'
+                        },
+                        {
+                            data: 'name',
+                            title: 'Note Name'
+                        },
+                        {
+                            data: 'description',
+                            title: 'Description'
+                        },
+                        {
+                            data: 'upload_type',
+                            title: 'Type'
+                        },
+                        {
+                            data: 'file_path',
+                            title: 'File/URL'
+                        },
+                        {
+                            data: 'status',
+                            title: 'Status'
+                        },
+                        {
+                            data: '',
+                            title: 'Actions'
+                        },
+                    ],
+                    columnDefs: [{
                             targets: 5,
                             render: function(data, type, full, meta) {
                                 return full['upload_type'] === 'pdf' ?

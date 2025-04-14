@@ -143,6 +143,45 @@
             }
         });
     }
+
+    
+    function destryStatus(url, table) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Delete it!',
+            customClass: {
+                confirmButton: 'btn btn-primary me-2 waves-effect waves-light',
+                cancelButton: 'btn btn-label-secondary waves-effect waves-light'
+            },
+            buttonsStyling: false
+        }).then(function (result) {
+            if (result.value) {
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    method: "DELETE",
+                    data: {
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function (response) {
+                        if (response.status == 'success') {
+                            toastr.success(response.message);
+                            if (table.length > 0) {
+                                $('#' + table).DataTable().ajax.reload();
+                            } else {
+                                window.location.reload();
+                            }
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    }
+                })
+            }
+        });
+    }
 </script>
 
 <script>

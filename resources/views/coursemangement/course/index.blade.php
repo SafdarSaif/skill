@@ -12,6 +12,9 @@
                             data: 'DT_RowIndex'
                         },
                         {
+                            data: 'course_type'
+                        },
+                        {
                             data: 'category'
                         },
                         {
@@ -38,14 +41,14 @@
                         },
                         {
                             // Name
-                            targets: 2,
+                            targets: 3,
                             render: function(data, type, full, meta) {
                                 return '<span class="text-nowrap">' + full['name'] + '</span>';
                             }
                         },
                         {
                             // Image Column
-                            targets: 3,
+                            targets: 4,
                             render: function(data, type, full, meta) {
                                 var imageUrl = full['image'] ? full['image'] : 'default-image.jpg';
                                 return '<img src="' + imageUrl +
@@ -54,7 +57,7 @@
                         },
                         {
                             // Status
-                            targets: 4,
+                            targets: 5,
                             render: function(data, type, full, meta) {
                                 var $checkedStatus = full['status'] == 1 ? 'checked' : '';
                                 var $nameStatus = full['status'] == 1 ? 'Yes' : 'No';
@@ -73,7 +76,7 @@
                         },
                         {
                             // Is Banner Column
-                            targets: 5,
+                            targets: 6,
                             render: function(data, type, full, meta) {
                                 var checked = full['is_banner'] == 1 ? 'checked' : '';
                                 return '<label class="switch">' +
@@ -171,6 +174,7 @@
                 <thead>
                     <tr>
                         <th>No.</th>
+                        <th>Course Type</th>
                         <th>Course Category</th>
                         <th>Name</th>
                         <th>Image</th>

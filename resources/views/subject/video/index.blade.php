@@ -8,7 +8,13 @@
 
             if (dataTableVideos.length) {
                 dt_videos = dataTableVideos.DataTable({
-                    ajax: "{{ route('subjectvideo') }}",
+                    // ajax: "{{ route('subjectvideo') }}",
+                    ajax: {
+                        url: "{{ route('subjectvideo') }}",
+                        data: function(d) {
+                            d.id = new URLSearchParams(window.location.search).get('id');
+                        }
+                    },
                     columns: [{
                             data: 'DT_RowIndex',
                             title: 'No.'

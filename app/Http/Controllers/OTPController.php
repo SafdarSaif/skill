@@ -13,7 +13,11 @@ class OTPController extends Controller
     public static function getOtp($mobileNo)
     {
         try{
-            $checkStudent = Students::where('mobile',$mobileNo)->first();
+            // $checkStudent = Students::where('mobile',$mobileNo)->first();
+            $checkStudent = Students::where('mobile', $mobileNo)
+                        ->where('status', 1)
+                        ->first();
+
            
         if($checkStudent!==null && $checkStudent->count())
         {

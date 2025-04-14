@@ -108,7 +108,7 @@ class StudentQueryController extends Controller
             'student_id' => 'required|exists:students,id',
             'email' => 'required|email|max:255',
             'phone' => 'required|digits:10',
-            'query' => 'required|string|min:10',
+            'query' => 'required|string',
             'answer' => 'nullable|string',
             'attachment.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048', // Allow multiple files
         ]);
@@ -219,7 +219,7 @@ class StudentQueryController extends Controller
             'student_name' => 'required|string|min:3|max:255',
             'email' => 'required|email|max:255',
             'phone' => 'required|digits:10',
-            'query' => 'required|string|min:10',
+            'query' => 'required|string',
             'answer' => 'nullable|string',
             'attachment.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048', // Allow multiple files
         ]);

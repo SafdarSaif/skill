@@ -15,14 +15,38 @@ class NewsUpdateController extends Controller
     /**
      * Get all News for API request
      */
-    public function getNew()
+
+
+    // public function getNew()
+    // {
+    //     try {
+    //         // $news = NewsUpdate::where('status', 1)->get()->toArray();
+    //         $news = NewsUpdate::where('status', 1)
+    //             ->orderBy('created_at', 'desc')
+    //             ->get()
+    //             ->toArray();
+    //         return response()->json([
+    //             'status' => 'success',
+    //             'data' => $news
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Something went wrong! ' . $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
+
+   // API with  pagination and limit
+    public function getNew(Request $request)
     {
         try {
-            // $news = NewsUpdate::where('status', 1)->get()->toArray();
+            $perPage = $request->get('limit', 10); 
+
             $news = NewsUpdate::where('status', 1)
                 ->orderBy('created_at', 'desc')
-                ->get()
-                ->toArray();
+                ->paginate($perPage);
+
             return response()->json([
                 'status' => 'success',
                 'data' => $news
@@ -34,7 +58,6 @@ class NewsUpdateController extends Controller
             ], 500);
         }
     }
-
 
 
     /**
@@ -57,21 +80,21 @@ class NewsUpdateController extends Controller
 
     public function index(Request $request)
     {
-        if (Auth::check() && Auth::user()->hasPermissionTo('view news')) {
-            if ($request->ajax()) {
-                $data = NewsUpdate::orderBy('id', 'desc')->get();
+        // if (Auth::check() && Auth::user()->hasPermissionTo('view news')) {
+        if ($request->ajax()) {
+            $data = NewsUpdate::orderBy('id', 'desc')->get();
 
-                return DataTables::of($data)
-                    ->addIndexColumn()
-                    ->editColumn('created_at', function ($data) {
-                        return Carbon::createFromFormat('Y-m-d H:i:s', $data->created_at)->format('d-m-Y h:i A');
-                    })
-                    ->make(true);
-            }
-            return view('website.news.index');
-        } else {
-            return response()->view('errors.403', [], 403);
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('created_at', function ($data) {
+                    return Carbon::createFromFormat('Y-m-d H:i:s', $data->created_at)->format('d-m-Y h:i A');
+                })
+                ->make(true);
         }
+        return view('website.news.index');
+        // } else {
+        //     return response()->view('errors.403', [], 403);
+        // }
     }
 
 
@@ -80,11 +103,14 @@ class NewsUpdateController extends Controller
      */
     public function create()
     {
-        if (Auth::check() && Auth::user()->hasPermissionTo('create news')) {
+        // if (Auth::check() && Auth::user()->hasPermissionTo('create news')) 
+        {
+
             return view('website.news.create');
-        } else {
-            return response()->view('errors.403', [], 403);
         }
+        //  else {
+        //     return response()->view('errors.403', [], 403);
+        // }
     }
 
     /**
@@ -217,35 +243,58 @@ class NewsUpdateController extends Controller
     //         }
     //     }
     // }
-    public function destroy($newID)
+    public function destroy($id)
     {
-        if (!Auth::user()->hasPermissionTo('delete news')) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Unauthorized access'
-            ], 403);
-        }
-
         try {
-            $news = NewsUpdate::findOrFail($newID);
-
-            if ($news->image) {
-                deleteImage($news->image);
+            $data = NewsUpdate::findOrFail($id);
+            if ($data) { 
+                NewsUpdate::find($id)->delete();
+                return response()->json([
+                    'status' => 'success',
+                    'message' => $data->name . ' Deleted successfully!',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Data not found',
+                ]);
             }
-
-            $news->delete();
-
-            return response()->json([
-                'status'  => 'success',
-                'message' => 'News deleted successfully!'
-            ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                'status'  => 'error',
-                'message' => 'Something went wrong! ' . $e->getMessage()
-            ], 500);
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
         }
     }
+    // public function destroy($newID)
+    // {
+    //     if (!Auth::user()->hasPermissionTo('delete news')) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Unauthorized access'
+    //         ], 403);
+    //     }
+
+    //     try {
+    //         $news = NewsUpdate::findOrFail($newID);
+
+    //         if ($news->image) {
+    //             deleteImage($news->image);
+    //         }
+
+    //         $news->delete();
+
+    //         return response()->json([
+    //             'status'  => 'success',
+    //             'message' => 'News deleted successfully!'
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status'  => 'error',
+    //             'message' => 'Something went wrong! ' . $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
 
     public function status($id)
     {

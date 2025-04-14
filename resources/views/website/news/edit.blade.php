@@ -39,13 +39,8 @@
     </form>
 </div>
 
-<!-- Include CKEditor -->
-<script src="https://cdn.ckeditor.com/4.20.1/standard/ckeditor.js"></script>
 <script>
     $(document).ready(function() {
-        // Initialize CKEditor
-        CKEDITOR.replace('edit-content');
-
         // Image Preview
         $("#edit-image").change(function(event) {
             let reader = new FileReader();
@@ -79,11 +74,6 @@
             submitHandler: function(form) {
                 $(':input[type="submit"]').prop('disabled', true);
 
-                // Update CKEditor content before submitting
-                for (instance in CKEDITOR.instances) {
-                    CKEDITOR.instances[instance].updateElement();
-                }
-
                 var formData = new FormData(form);
                 formData.append("_token", "{{ csrf_token() }}");
 
@@ -99,7 +89,7 @@
                         if (response.status === 'success') {
                             toastr.success(response.message);
                             $(".modal").modal('hide');
-                            $('#news-table').DataTable().ajax.reload();
+                            $('#news-updates-table').DataTable().ajax.reload();
                         } else {
                             toastr.error(response.message);
                         }

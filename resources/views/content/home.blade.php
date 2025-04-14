@@ -1,243 +1,607 @@
 @extends('layouts.main')
 @section('content')
-<div class="row g-4">
-    <!-- Main Stats Row -->
-    <div class="col-12">
-        <div class="row g-4">
-            <!-- Total Students -->
-            <div class="col-md-6 col-xl-3">
-                <div class="card border-0 shadow-sm bg-soft-sky">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div class="avatar bg-soft-primary p-3 rounded me-3">
-                                <i class="ti ti-users fs-4 text-primary"></i>
-                            </div>
-                            <div>
-                                <h5 class="mb-1 text-primary-dark">Total Students</h5>
-                                <h2 class="mb-0 text-primary">1,842</h2>
-                            </div>
-                        </div>
-                        <div class="mt-3">
-                            <span class="badge bg-soft-success text-success">+22.4%</span>
-                            <span class="text-muted ms-2">From last month</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Active Courses -->
-            <div class="col-md-6 col-xl-3">
-                <div class="card border-0 shadow-sm bg-soft-lavender">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div class="avatar bg-soft-info p-3 rounded me-3">
-                                <i class="ti ti-book fs-4 text-info"></i>
-                            </div>
-                            <div>
-                                <h5 class="mb-1 text-info-dark">Active Courses</h5>
-                                <h2 class="mb-0 text-info">58</h2>
-                            </div>
-                        </div>
-                        <div class="mt-3">
-                            <span class="badge bg-soft-success text-success">+12.4%</span>
-                            <span class="text-muted ms-2">New additions</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Completion Rate -->
-            <div class="col-md-6 col-xl-3">
-                <div class="card border-0 shadow-sm bg-soft-mint">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div class="avatar bg-soft-success p-3 rounded me-3">
-                                <i class="ti ti-certificate fs-4 text-success"></i>
-                            </div>
-                            <div>
-                                <h5 class="mb-1 text-success-dark">Completion Rate</h5>
-                                <h2 class="mb-0 text-success">86%</h2>
-                            </div>
-                        </div>
-                        <div class="mt-3">
-                            <span class="badge bg-soft-danger text-danger">-2.8%</span>
-                            <span class="text-muted ms-2">From last month</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Avg. Progress -->
-            <div class="col-md-6 col-xl-3">
-                <div class="card border-0 shadow-sm bg-soft-peach">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div class="avatar bg-soft-warning p-3 rounded me-3">
-                                <i class="ti ti-progress fs-4 text-warning"></i>
-                            </div>
-                            <div>
-                                <h5 class="mb-1 text-warning-dark">Avg. Progress</h5>
-                                <h2 class="mb-0 text-warning">78%</h2>
-                            </div>
-                        </div>
-                        <div class="mt-3">
-                            <span class="badge bg-soft-success text-success">+4.2%</span>
-                            <span class="text-muted ms-2">From last month</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Enrollment Chart -->
-    <div class="col-lg-8">
-        <div class="card border-0 shadow-sm bg-soft-cloud">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h5 class="mb-0 text-primary-dark">Enrollment Trends</h5>
-                    <div class="dropdown">
-                        <button class="btn btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
-                            <i class="ti ti-dots-vertical"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end">
-                            <a class="dropdown-item" href="#">View Report</a>
-                            <a class="dropdown-item" href="#">Export Data</a>
-                        </div>
-                    </div>
-                </div>
-                <canvas id="enrollmentChart" style="height: 250px"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <!-- Recent Activity -->
-    <div class="col-lg-4">
-        <div class="card border-0 shadow-sm bg-soft-lavender">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h5 class="mb-0 text-info-dark">Recent Enrollments</h5>
-                    <a href="{{ route('student') }}" class="btn btn-sm btn-soft-primary">View All</a>
-                </div>
-
-                <div class="list-group list-group-flush">
-                    <div class="list-group-item d-flex align-items-center px-0 bg-transparent">
-                        <div class="avatar avatar-sm bg-soft-primary rounded me-3">
-                            JD
-                        </div>
-                        <div class="flex-grow-1">
-                            <h6 class="mb-1">John Doe</h6>
-                            <small class="text-muted">Web Development</small>
-                        </div>
-                        <div class="text-end">
-                            <span class="badge bg-soft-success text-success">65%</span>
-                            <div class="text-muted small">2 days ago</div>
-                        </div>
-                    </div>
-                    <!-- Add more list items -->
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Course Progress Section -->
-    <div class="col-12">
-        <div class="card border-0 shadow-sm bg-soft-mint">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h5 class="mb-0 text-success-dark">Course Progress</h5>
-                    <div class="dropdown">
-                        <button class="btn btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
-                            <i class="ti ti-dots-vertical"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end">
-                            <a class="dropdown-item" href="#">Manage Courses</a>
-                            <a class="dropdown-item" href="#">View All</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row g-4">
-                    <div class="col-md-6">
-                        <div class="d-flex align-items-center p-3 bg-white rounded-3">
-                            <div class="flex-shrink-0">
-                                <div class="avatar avatar-sm bg-soft-primary text-primary rounded me-3">
-                                    WD
+    <div class="row g-4">
+        <!-- Main Stats Row -->
+        <div class="col-12">
+            <div class="row g-4">
+                <!-- Total Students -->
+                <div class="col-md-6 col-xl-3">
+                    <div class="card border-0 shadow-sm bg-soft-sky">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="avatar bg-soft-primary p-3 rounded me-3">
+                                    <i class="ti ti-users fs-4 text-primary"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-1 text-primary-dark">Total Students</h5>
+                                    <h2 class="mb-0 text-primary">{{ $studentCount }}</h2>
                                 </div>
                             </div>
-                            <div class="flex-grow-1">
-                                <div class="d-flex justify-content-between mb-2">
-                                    <h6 class="mb-0">Web Development</h6>
-                                    <small class="text-primary">65%</small>
+                            <div class="mt-3">
+                                <span
+                                    class="badge {{ $studentGrowth >= 0 ? 'bg-soft-success text-success' : 'bg-soft-danger text-danger' }}">
+                                    {{ $studentGrowth >= 0 ? '+' : '' }}{{ number_format($studentGrowth, 1) }}%
+                                </span>
+                                <span class="text-muted ms-2">From last month</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Courses -->
+                <div class="col-md-6 col-xl-3">
+                    <div class="card border-0 shadow-sm bg-soft-lavender">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="avatar bg-soft-info p-3 rounded me-3">
+                                    <i class="ti ti-book fs-4 text-info"></i>
                                 </div>
-                                <div class="progress" style="height: 6px;">
-                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 65%"></div>
+                                <div>
+                                    <h5 class="mb-1 text-info-dark">Active Courses</h5>
+                                    <h2 class="mb-0 text-info">{{ $courseCount }}</h2>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <span class="badge bg-soft-success text-success">+12.4%</span>
+                                <span class="text-muted ms-2">New additions</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Rate -->
+                <div class="col-md-6 col-xl-3">
+                    <div class="card border-0 shadow-sm bg-soft-mint">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="avatar bg-soft-success p-3 rounded me-3">
+                                    <i class="ti ti-certificate fs-4 text-success"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-1 text-success-dark">Users</h5>
+                                    <h2 class="mb-0 text-success">{{ $userCount }}</h2>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <span class="badge bg-soft-danger text-danger">-2.8%</span>
+                                <span class="text-muted ms-2">From last month</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Revenue -->
+                <div class="col-md-6 col-xl-3">
+                    <div class="card border-0 shadow-sm bg-soft-peach">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="avatar bg-soft-warning p-3 rounded me-3">
+                                    <i class="ti ti-progress fs-4 text-warning"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-1 text-warning-dark">Total Revenue</h5>
+                                    <h2 class="mb-0 text-warning">₹{{ number_format($totalRevenue, 0) }}</h2>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <span class="badge bg-soft-success text-success">+4.2%</span>
+                                <span class="text-muted ms-2">From last month</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enrollment Chart -->
+
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm bg-soft-cloud">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="mb-0 text-primary-dark">Enrollment Trends</h5>
+                        <div class="d-flex">
+                            <select id="yearFilter" class="form-select me-2">
+                                <!-- Years will be populated dynamically -->
+                            </select>
+                            <div class="dropdown">
+                                <button class="btn btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
+                                    <i class="ti ti-dots-vertical"></i>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-end">
+                                    <a class="dropdown-item" href="#" id="weeklyBtn">Weekly</a>
+                                    <a class="dropdown-item" href="#" id="monthlyBtn">Monthly</a>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!-- Add more courses -->
+                    <canvas id="enrollmentChart"></canvas>
                 </div>
             </div>
         </div>
+
+        <!-- Payment Methods Bar Chart -->
+
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm bg-white rounded">
+                <div class="card-body">
+                    <!-- Header -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0 text-primary fw-bold">Payment Chart</h5>
+                        <div class="d-flex align-items-center">
+                            <!-- Year Dropdown -->
+                            {{-- <select id="yearSelect" class="form-select form-select-sm me-2 border-primary text-primary">
+                                <!-- Years will be populated dynamically -->
+                            </select> --}}
+                            <!-- Weekly & Monthly Toggle -->
+                            <div class="btn-group btn-group-sm" role="group">
+                                <button type="button" class="btn btn-primary " id="paymentWeeklyBtn">Weekly</button>
+                                <button type="button" class="btn btn-outline-primary"
+                                    id="paymentMonthlyBtn">Monthly</button>
+                            </div>
+                            <!-- View All Button -->
+                            <a href="{{ route('payment') }}" class="btn btn-sm btn-outline-primary ms-2">View All</a>
+                        </div>
+                    </div>
+
+                    <!-- Chart Section -->
+                    <div class="position-relative" style="height: 270px;">
+                        <canvas id="paymentChart"></canvas>
+                    </div>
+                    {{-- <div class="mt-4">
+                        <div class="row text-center">
+                            <div class="col-3">
+                                <div class="payment-method">
+                                    <span class="badge-dot bg-primary"></span>
+                                    <small class="text-muted">Credit Card</small>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="payment-method">
+                                    <span class="badge-dot bg-success"></span>
+                                    <small class="text-muted">PayPal</small>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="payment-method">
+                                    <span class="badge-dot bg-warning"></span>
+                                    <small class="text-muted">Bank Transfer</small>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="payment-method">
+                                    <span class="badge-dot bg-secondary"></span>
+                                    <small class="text-muted">Other</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div> --}}
+                </div>
+            </div>
+        </div>
+
+        <!-- Course Progress Section -->
+
+        <div class="col-12">
+            <div class="row">
+                {{-- ✅ Course Trends --}}
+                <div class="col-6">
+                    <div class="card border-0 shadow-sm bg-soft-mint h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="mb-0 text-success-dark">Course Trends</h5>
+                                <div class="dropdown">
+                                    <button class="btn btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
+                                        <i class="ti ti-dots-vertical"></i>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <a class="dropdown-item" href="#">Manage Courses</a>
+                                        <a class="dropdown-item" href="#">View All</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Scrollable Course Trends --}}
+                            {{-- <div style="max-height: 360px; overflow-y: auto;" class="row g-4">
+                                @foreach ($courses->sortByDesc('completion_rate')->take(10) as $course)
+
+                                    <div class="col-md-12">
+                                        <div class="d-flex align-items-center p-3 bg-white rounded-3">
+                                            <div class="flex-shrink-0">
+                                                <div class="avatar avatar-sm bg-soft-primary text-primary rounded me-3">
+                                                    {{ substr($course->name, 0, 2) }}
+                                                </div>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="d-flex justify-content-between mb-2">
+                                                    <h6 class="mb-0">{{ $course->name }}</h6>
+                                                    <small class="text-primary">{{ $course->completion_rate }}%</small>
+                                                </div>
+                                                <div class="progress" style="height: 6px;">
+                                                    <div class="progress-bar bg-primary" role="progressbar"
+                                                        style="width: {{ $course->completion_rate }}%"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div> --}}
+                            <div style="max-height: 360px; overflow-y: auto;" class="row g-4">
+                                @foreach ($courses->sortByDesc('students_count')->take(10) as $course)
+                                    <div class="col-md-12">
+                                        <div class="d-flex align-items-center p-3 bg-white rounded-3">
+                                            <div class="flex-shrink-0">
+                                                <div class="avatar avatar-sm bg-soft-primary text-primary rounded me-3">
+                                                    {{ substr($course->name, 0, 2) }}
+                                                </div>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="d-flex justify-content-between mb-2">
+                                                    <h6 class="mb-0">{{ $course->name }}</h6>
+                                                    <small class="text-primary">
+                                                        {{ $course->students_count }} Enrollments
+                                                        ({{ number_format($course->enrollment_percent, 1) }}%)
+                                                    </small>
+                                                </div>
+                                                <div class="progress" style="height: 6px;">
+                                                    <div class="progress-bar bg-primary" role="progressbar"
+                                                        style="width: {{ $course->enrollment_percent }}%">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+
+                {{-- ✅ Recent Enrollments --}}
+                <div class="col-6">
+                    <div class="card border-0 shadow-sm bg-soft-blue h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="mb-0 text-primary">Recent Enrolled Courses</h5>
+                                <span class="badge bg-primary-light text-primary">
+                                    Total Enrolled Courses: {{ $totalEnrollments }}
+                                </span>
+                            </div>
+
+                            <ul class="list-group list-group-flush" style="max-height: 360px; overflow-y: auto;">
+                                @foreach ($recentEnrollments->take(6) as $enrollment)
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>{{ $enrollment->student->name ?? 'N/A' }}</strong>
+                                            <div class="small text-muted">
+                                                Enrolled in: {{ $enrollment->course->name ?? 'Unknown Course' }}
+                                            </div>
+                                        </div>
+                                        <span class="badge bg-primary">
+                                            {{ $enrollment->created_at->format('d M Y') }}
+                                        </span>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
     </div>
-</div>
 
-<style>
-    .card {
-        border-radius: 1rem;
-        transition: transform 0.2s ease;
-        border: 1px solid rgba(0,0,0,0.05);
-    }
+    <style>
+        .card {
+            border-radius: 1rem;
+            transition: transform 0.2s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
 
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.05);
-    }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+        }
 
-    /* Soft Color Schemes */
-    .bg-soft-sky { background-color: #f0f9ff; }
-    .bg-soft-lavender { background-color: #f8f5ff; }
-    .bg-soft-mint { background-color: #f0fdf4; }
-    .bg-soft-peach { background-color: #fff1f2; }
-    .bg-soft-cloud { background-color: #f8fafc; }
+        /* Soft Color Schemes */
+        .bg-soft-sky {
+            background-color: #f0f9ff;
+        }
 
-    .text-primary-dark { color: #1d4ed8; }
-    .text-info-dark { color: #3b82f6; }
-    .text-success-dark { color: #059669; }
-    .text-warning-dark { color: #d97706; }
+        .bg-soft-lavender {
+            background-color: #f8f5ff;
+        }
 
-    .btn-soft-primary {
-        background-color: rgba(29,78,216,0.1);
-        color: #1d4ed8;
-        border: none;
-    }
+        .bg-soft-mint {
+            background-color: #f0fdf4;
+        }
 
-    .btn-soft-primary:hover {
-        background-color: rgba(29,78,216,0.2);
-    }
+        .bg-soft-peach {
+            background-color: #fff1f2;
+        }
 
-    .bg-soft-primary { background-color: rgba(29,78,216,0.1); }
-    .bg-soft-success { background-color: rgba(5,150,105,0.1); }
-    .bg-soft-info { background-color: rgba(59,130,246,0.1); }
-    .bg-soft-warning { background-color: rgba(217,119,6,0.1); }
-    .bg-soft-danger { background-color: rgba(220,38,38,0.1); }
+        .bg-soft-cloud {
+            background-color: #f8fafc;
+        }
 
-    .avatar {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
-    }
+        .text-primary-dark {
+            color: #1d4ed8;
+        }
 
-    .progress-bar {
-        background-color: #1d4ed8;
-        border-radius: 4px;
-    }
+        .text-info-dark {
+            color: #3b82f6;
+        }
 
-    .list-group-item {
-        background-color: transparent;
-        border-color: rgba(0,0,0,0.05);
-    }
-</style>
+        .text-success-dark {
+            color: #059669;
+        }
+
+        .text-warning-dark {
+            color: #d97706;
+        }
+
+        .btn-soft-primary {
+            background-color: rgba(29, 78, 216, 0.1);
+            color: #1d4ed8;
+            border: none;
+        }
+
+        .btn-soft-primary:hover {
+            background-color: rgba(29, 78, 216, 0.2);
+        }
+
+        .bg-soft-primary {
+            background-color: rgba(29, 78, 216, 0.1);
+        }
+
+        .bg-soft-success {
+            background-color: rgba(5, 150, 105, 0.1);
+        }
+
+        .bg-soft-info {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        .bg-soft-warning {
+            background-color: rgba(217, 119, 6, 0.1);
+        }
+
+        .bg-soft-danger {
+            background-color: rgba(220, 38, 38, 0.1);
+        }
+
+        .avatar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .progress-bar {
+            background-color: #1d4ed8;
+            border-radius: 4px;
+        }
+
+        .list-group-item {
+            background-color: transparent;
+            border-color: rgba(0, 0, 0, 0.05);
+        }
+
+
+        /* css for piechart */
+
+        #enrollmentChart {
+            height: 250px !important;
+            max-height: 250px !important;
+        }
+
+        .badge-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .payment-method {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-group .btn.active {
+            background-color: rgba(29, 78, 216, 0.2);
+            color: #1d4ed8;
+            font-weight: 500;
+        }
+    </style>
+
+    <!-- Chart.js Script -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('enrollmentChart').getContext('2d');
+            let enrollmentChart;
+
+            function populateYearFilter() {
+                const yearFilter = document.getElementById('yearFilter');
+                const currentYear = new Date().getFullYear();
+                for (let year = currentYear; year >= currentYear - 5; year--) {
+                    let option = new Option(year, year);
+                    yearFilter.appendChild(option);
+                }
+                yearFilter.value = currentYear;
+            }
+
+            function loadChartData(type, year) {
+                fetch(`/dashboard/enrollment-data?type=${type}&year=${year}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const chartData = {
+                            labels: data.labels,
+                            datasets: [{
+                                label: `${type.charAt(0).toUpperCase() + type.slice(1)} Enrollments (${year})`,
+                                data: data.values,
+                                backgroundColor: 'rgba(29, 78, 216, 0.2)',
+                                borderColor: 'rgba(29, 78, 216, 1)',
+                                borderWidth: 2,
+                                tension: 0.4,
+                                fill: true
+                            }]
+                        };
+
+                        const config = {
+                            type: 'line',
+                            data: chartData,
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    legend: {
+                                        position: 'top'
+                                    },
+                                    tooltip: {
+                                        mode: 'index',
+                                        intersect: false
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        max: 100,
+                                        ticks: {
+                                            stepSize: 10
+                                        }
+                                    }
+                                },
+                                interaction: {
+                                    mode: 'nearest',
+                                    axis: 'x',
+                                    intersect: false
+                                }
+                            }
+                        };
+
+                        if (enrollmentChart) {
+                            enrollmentChart.destroy();
+                        }
+                        enrollmentChart = new Chart(ctx, config);
+                    });
+            }
+
+            populateYearFilter();
+            const selectedYear = document.getElementById('yearFilter').value;
+            loadChartData('weekly', selectedYear);
+
+            document.getElementById('weeklyBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                const selectedYear = document.getElementById('yearFilter').value;
+                loadChartData('weekly', selectedYear);
+            });
+
+            document.getElementById('monthlyBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                const selectedYear = document.getElementById('yearFilter').value;
+                loadChartData('monthly', selectedYear);
+            });
+
+            document.getElementById('yearFilter').addEventListener('change', function() {
+                const type = document.querySelector('.dropdown-menu .active')?.id || 'weekly';
+                loadChartData(type, this.value);
+            });
+        });
+    </script>
+
+
+    {{-- // Payment Methods Chart --}}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('paymentChart').getContext('2d');
+            let paymentChart;
+
+            const weeklyBtn = document.getElementById('paymentWeeklyBtn');
+            const monthlyBtn = document.getElementById('paymentMonthlyBtn');
+
+            function fetchPaymentData(type = 'weekly', year = new Date().getFullYear()) {
+                fetch(`/payment-data?type=${type}&year=${year}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        updateChart(data.labels, data.values, type);
+                    });
+            }
+
+            function updateChart(labels, values, type) {
+                if (paymentChart) {
+                    paymentChart.destroy();
+                }
+
+                paymentChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: `${type.charAt(0).toUpperCase() + type.slice(1)} Payments`,
+                            data: values,
+                            backgroundColor: 'rgba(75, 192, 192, 0.8)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `₹${context.raw}`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    precision: 0,
+                                    callback: (value) => `₹${value}`
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Utility to toggle active/inactive styles
+            function setActiveButton(activeBtn, inactiveBtn) {
+                activeBtn.classList.add('active', 'btn-primary');
+                activeBtn.classList.remove('btn-outline-primary');
+                inactiveBtn.classList.remove('active', 'btn-primary');
+                inactiveBtn.classList.add('btn-outline-primary');
+            }
+
+            // Initial fetch (weekly)
+            fetchPaymentData('weekly');
+            setActiveButton(weeklyBtn, monthlyBtn);
+
+            // Weekly button click
+            weeklyBtn.addEventListener('click', function() {
+                fetchPaymentData('weekly');
+                setActiveButton(weeklyBtn, monthlyBtn);
+            });
+
+            // Monthly button click
+            monthlyBtn.addEventListener('click', function() {
+                fetchPaymentData('monthly');
+                setActiveButton(monthlyBtn, weeklyBtn);
+            });
+        });
+    </script>
 @endsection

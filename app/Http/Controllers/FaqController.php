@@ -15,24 +15,45 @@ class FaqController extends Controller
     /**
      * Get all FAQs for API request
      */
-    public function getFaqs()
-    {
-        try {
-            $faqs = Faq::where('status', 1)->get()->toArray();
-            return response()->json([
-                'status' => 'success',
-                'data' => $faqs
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Something went wrong! ' . $e->getMessage()
-            ], 500);
-        }
-    }
+    // public function getFaqs()
+    // {
+    //     try {
+    //         $faqs = Faq::where('status', 1)->get()->toArray();
+    //         return response()->json([
+    //             'status' => 'success',
+    //             'data' => $faqs
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Something went wrong! ' . $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
     
 
 
+// API for FAQ with pagination and limit
+public function getFaqs(Request $request)
+{
+    try {
+        $perPage = $request->get('limit', 1); // Default: 10 FAQs per page
+
+        $faqs = Faq::where('status', 1)
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $faqs
+        ], 200);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Something went wrong! ' . $e->getMessage()
+        ], 500);
+    }
+}
 
 
 
@@ -163,14 +184,38 @@ class FaqController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($faqID)
-    { {
-            try {
-                $faqs = Faq::destroy($faqID);
-                return ['status' => 'success', 'message' => 'Faq  deleted successfully!'];
-            } catch (\Throwable $e) {
-                return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    // public function destroy($faqID)
+    // { {
+    //         try {
+    //             $faqs = Faq::destroy($faqID);
+    //             return ['status' => 'success', 'message' => 'Faq  deleted successfully!'];
+    //         } catch (\Throwable $e) {
+    //             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    //         }
+    //     }
+    // }
+
+    public function destroy($id)
+    {
+        try {
+            $data = Faq::findOrFail($id);
+            if ($data) { 
+                Faq::find($id)->delete();
+                return response()->json([
+                    'status' => 'success',
+                    'message' => $data->name . ' Deleted successfully!',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Data not found',
+                ]);
             }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
         }
     }
 

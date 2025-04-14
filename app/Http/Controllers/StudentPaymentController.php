@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\StudentPayment;
-use Barryvdh\DomPDF\Facade\Pdf;
+Use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Carbon;
@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\File;
 
 class StudentPaymentController extends Controller
 {
+
+
     /**
      * Display a listing of the resource.
      */
@@ -64,7 +66,9 @@ class StudentPaymentController extends Controller
     public static function StudentPayment($mobile)
     {
         try {
-            $student = Students::where('mobile', $mobile)->first();
+            $student = Students::where('mobile', $mobile)
+                ->where('status', 1)
+                ->first();
             if ($student) {
                 $data = StudentPayment::where('student_id', $student->id)
                     ->with('course')
@@ -86,7 +90,8 @@ class StudentPaymentController extends Controller
     public function create()
     {
         $student = Students::pluck('name', 'id');
-        $course = Course::pluck('name', 'id');
+        // $course = Course::pluck('name', 'id');
+        $course = Course::select('id', 'name', 'price')->get();
 
         return view('studentpayment.create', compact('student', 'course'));
     }
@@ -195,7 +200,7 @@ class StudentPaymentController extends Controller
 
     public function getPyamentByStudentIdCourseId($studentId, $courseId)
     {
-        $transactionData = StudentPayment::where('course_id', $courseId)->where('student_id', $studentId)->get();
+        $transactionData = StudentPayment::where('course_id', $courseId)->where('student_id', $studentId)->where('payment_status', 'completed')->get();
         if ($transactionData->isNotEmpty()) {
             return response()->json(['status' => 'success', 'payments' => $transactionData]);
         }
@@ -203,10 +208,11 @@ class StudentPaymentController extends Controller
     }
 
 
-    public function generateFeeReceipt(Request $request){
-        try{
+    public function generateFeeReceipt(Request $request)
+    {
+        try {
 
-            $paymentData = StudentPayment::where('transaction_id', $request->txnid)->with('course','student')->first();
+            $paymentData = StudentPayment::where('transaction_id', $request->txnid)->with('course', 'student')->first();
             if (!$paymentData) {
                 return response()->json([
                     'status' => 'error',
@@ -221,29 +227,26 @@ class StudentPaymentController extends Controller
 
             $pdf = Pdf::loadView('studentpayment.feeReceipt', $data);
             $filePath = 'fee_receipt_' . $request->txnid . '.pdf';
-            if(!is_dir(public_path('uploads/fee-receipt')))
-            {
+            if (!is_dir(public_path('uploads/fee-receipt'))) {
                 File::makeDirectory(public_path('uploads/fee-receipt'));
             }
             $pdf->save(public_path('uploads/fee-receipt/' . $filePath));
             // return asset('storage/' . $filePath);
-           
-            $storagePath = '/uploads/fee-receipt/'.$filePath;
-            
+
+            $storagePath = '/uploads/fee-receipt/' . $filePath;
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'Fee receipt generated successfully.',
                 'transaction_id' => $request->txnid,
                 'pdf_url' => $storagePath,
             ]);
-
-        }catch (Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Something went wrong while retrieving the fee receipt. Please try again later!',
                 'error' => $e->getMessage(),
             ]);
-        
         }
     }
 }

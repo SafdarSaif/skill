@@ -53,9 +53,21 @@ class PrivacyPolicyController extends Controller
     /**
      * Show the form for creating a new resource.
      */
+    // public function create()
+    // {
+    //     return view('privacy.create');
+    // }
+
+
     public function create()
     {
-        return view('privacy.create');
+        $privacy = PrivacyPolicy::first();
+
+        if ($privacy) {
+            return redirect()->route('privacy.edit', $privacy->id);
+        }
+
+        return view('privacy.create'); // Else show the create view
     }
 
     /**
@@ -149,14 +161,38 @@ class PrivacyPolicyController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($privacyID)
-    { {
-            try {
-                $privacy = PrivacyPolicy::destroy($privacyID);
-                return ['status' => 'success', 'message' => 'Faq  deleted successfully!'];
-            } catch (\Throwable $e) {
-                return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    // public function destroy($privacyID)
+    // { {
+    //         try {
+    //             $privacy = PrivacyPolicy::destroy($privacyID);
+    //             return ['status' => 'success', 'message' => 'Faq  deleted successfully!'];
+    //         } catch (\Throwable $e) {
+    //             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    //         }
+    //     }
+    // }
+
+    public function destroy($id)
+    {
+        try {
+            $data = PrivacyPolicy::findOrFail($id);
+            if ($data) { 
+                PrivacyPolicy::find($id)->delete();
+                return response()->json([
+                    'status' => 'success',
+                    'message' => $data->name . ' Deleted successfully!',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Data not found',
+                ]);
             }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
         }
     }
 

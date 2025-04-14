@@ -15,21 +15,53 @@ class SubjectVideoController extends Controller
     /**
      * Display a listing of the resource.
      */
+    // public function index(Request $request)
+    // {
+    //     if ($request->ajax()) {
+    //         $data = SubjectVideo::with(['subject', 'user'])
+    //             ->orderBy('id', 'desc')
+    //             ->get();
+
+    //         return DataTables::of($data)
+    //             ->addIndexColumn()
+    //             ->editColumn('created_at', function ($data) {
+    //                 return $data->created_at ? Carbon::parse($data->created_at)->format('d-m-Y h:i A') : 'N/A';
+    //             })
+
+    //             ->addColumn('subject_name', function ($data) {
+    //                 return $data->course ? $data->course->name : 'N/A';
+    //             })
+    //             ->addColumn('user_name', function ($data) {
+    //                 return $data->user ? $data->user->name : 'N/A';
+    //             })
+    //             ->make(true);
+    //     }
+
+    //     return view('subject.video.index');
+    // }
+
+
+
     public function index(Request $request)
     {
+        $id = $request->query('id');
+
         if ($request->ajax()) {
-            $data = SubjectVideo::with(['subject', 'user'])
-                ->orderBy('id', 'desc')
-                ->get();
+            $query = SubjectVideo::with(['subject', 'user'])->orderBy('id', 'desc');
+
+            if ($id) {
+                $query->where('subject_id', $id);
+            }
+
+            $data = $query->get();
 
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->editColumn('created_at', function ($data) {
                     return $data->created_at ? Carbon::parse($data->created_at)->format('d-m-Y h:i A') : 'N/A';
                 })
-
                 ->addColumn('subject_name', function ($data) {
-                    return $data->course ? $data->course->name : 'N/A';
+                    return $data->subject ? $data->subject->name : 'N/A';
                 })
                 ->addColumn('user_name', function ($data) {
                     return $data->user ? $data->user->name : 'N/A';
@@ -39,6 +71,7 @@ class SubjectVideoController extends Controller
 
         return view('subject.video.index');
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -69,7 +102,7 @@ class SubjectVideoController extends Controller
             'upload_type' => 'required|in:youtube,local',
             // 'video_url'   => 'nullable|required_if:upload_type,youtube|url|regex:/^https?:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+$/',
             'video_url'   => 'nullable|required_if:upload_type,youtube|url',
-            'video_file'  => 'nullable|required_if:upload_type,local|max:51200',
+            'video_file'  => 'nullable|required_if:upload_type,local',
         ]);
 
         if ($validator->fails()) {
@@ -166,7 +199,7 @@ class SubjectVideoController extends Controller
             'position'    => 'required|integer|in:0,1',
             'upload_type' => 'required|in:youtube,local',
             'video_url'   => 'nullable|required_if:upload_type,youtube|url|regex:/^https?:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+$/',
-            'video_file'  => 'nullable|mimes:mp4,avi,mkv,mov|max:51200',
+            'video_file'  => 'nullable|mimes:mp4,avi,mkv,mov',
 
         ]);
 
@@ -189,18 +222,18 @@ class SubjectVideoController extends Controller
                 $videoUrl = uploadFile($request->file('video_file'), 'subject_videos');
             }
 
-              // Convert HH:MM:SS to seconds
-              $durationInSeconds = null;
-              if ($request->filled('duration')) {
-                  preg_match('/^(\d{2}):(\d{2}):(\d{2})$/', $request->duration, $matches);
-                  if ($matches) {
-                      $hours   = (int) $matches[1];
-                      $minutes = (int) $matches[2];
-                      $seconds = (int) $matches[3];
-  
-                      $durationInSeconds = ($hours * 3600) + ($minutes * 60) + $seconds;
-                  }
-              }
+            // Convert HH:MM:SS to seconds
+            $durationInSeconds = null;
+            if ($request->filled('duration')) {
+                preg_match('/^(\d{2}):(\d{2}):(\d{2})$/', $request->duration, $matches);
+                if ($matches) {
+                    $hours   = (int) $matches[1];
+                    $minutes = (int) $matches[2];
+                    $seconds = (int) $matches[3];
+
+                    $durationInSeconds = ($hours * 3600) + ($minutes * 60) + $seconds;
+                }
+            }
 
             // Update the subject video
             $subjectVideo->update([
@@ -234,14 +267,36 @@ class SubjectVideoController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy($subjectvideoId)
-    { {
+    { 
+        
+            // try {
+            //     $subjectVideo = SubjectVideo::destroy($subjectvideoId);
+            //     return ['status' => 'success', 'message' => 'Subject Video deleted successfully!'];
+            // } catch (\Throwable $e) {
+            //     return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+            // }
+
             try {
-                $subjectVideo = SubjectVideo::destroy($subjectvideoId);
-                return ['status' => 'success', 'message' => 'Subject Video deleted successfully!'];
-            } catch (\Throwable $e) {
-                return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+                $data = SubjectVideo::findOrFail($subjectvideoId);
+                if ($data) {
+                    SubjectVideo::find($subjectvideoId)->delete();
+                    return response()->json([
+                        'status' => 'success',
+                        'message' => $data->name . ' Deleted successfully!',
+                    ]);
+                } else {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Data not found',
+                    ]);
+                }
+            } catch (\Exception $e) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => $e->getMessage(),
+                ]);
             }
-        }
+        
     }
     public function status($id)
     {

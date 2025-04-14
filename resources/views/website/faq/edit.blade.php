@@ -8,7 +8,6 @@
         class="row g-3">
         @csrf
 
-
         <!-- FAQ Question -->
         <div class="col-md-12">
             <label for="question" class="form-label">Question <span class="text-danger">*</span></label>
@@ -19,7 +18,7 @@
         <!-- FAQ Answer -->
         <div class="col-md-12">
             <label for="answer" class="form-label">Answer <span class="text-danger">*</span></label>
-            <textarea name="answer" id="content" class="form-control" rows="4" required>{{ $faq->answer }}</textarea>
+            <textarea name="answer" id="answer" class="form-control" rows="4" required>{{ $faq->answer }}</textarea>
         </div>
 
         <!-- Submit Buttons -->
@@ -30,13 +29,9 @@
     </form>
 </div>
 
-<!-- Include CKEditor -->
-<script src="https://cdn.ckeditor.com/4.20.1/standard/ckeditor.js"></script>
+<!-- jQuery Validation Script Without CKEditor -->
 <script>
-    $(document).ready(function() {
-        // Initialize CKEditor
-        CKEDITOR.replace('content');
-
+    $(document).ready(function () {
         $("#faq-edit-form").validate({
             rules: {
                 question: {
@@ -58,12 +53,8 @@
                     minlength: "Answer must be at least 10 characters long"
                 }
             },
-            submitHandler: function(form) {
+            submitHandler: function (form) {
                 $(':input[type="submit"]').prop('disabled', true);
-
-                for (instance in CKEDITOR.instances) {
-                    CKEDITOR.instances[instance].updateElement();
-                }
 
                 var formData = new FormData(form);
                 formData.append("_token", "{{ csrf_token() }}");
@@ -75,7 +66,7 @@
                     processData: false,
                     contentType: false,
                     dataType: 'json',
-                    success: function(response) {
+                    success: function (response) {
                         $(':input[type="submit"]').prop('disabled', false);
                         if (response.status === 'success') {
                             toastr.success(response.message);
@@ -85,7 +76,7 @@
                             toastr.error(response.message);
                         }
                     },
-                    error: function(response) {
+                    error: function (response) {
                         $(':input[type="submit"]').prop('disabled', false);
                         toastr.error(response.responseJSON.message);
                     }

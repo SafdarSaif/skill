@@ -18,7 +18,7 @@
             <label for="image" class="form-label">Image</label>
             <input type="file" name="image" id="image" class="form-control">
         </div>
-        
+
         <!-- News Content -->
         <div class="col-md-12">
             <label for="content" class="form-label">Content <span class="text-danger">*</span></label>
@@ -33,13 +33,8 @@
     </form>
 </div>
 
-<!-- Include CKEditor -->
-<script src="https://cdn.ckeditor.com/4.20.1/standard/ckeditor.js"></script>
 <script>
     $(document).ready(function() {
-        // Initialize CKEditor
-        CKEDITOR.replace('content');
-
         $("#news-form").validate({
             rules: {
                 title: {
@@ -63,10 +58,6 @@
             },
             submitHandler: function(form) {
                 $(':input[type="submit"]').prop('disabled', true);
-                
-                for (instance in CKEDITOR.instances) {
-                    CKEDITOR.instances[instance].updateElement();
-                }
 
                 var formData = new FormData(form);
                 formData.append("_token", "{{ csrf_token() }}");
@@ -83,7 +74,7 @@
                         if (response.status === 'success') {
                             toastr.success(response.message);
                             $(".modal").modal('hide');
-                            $('#news-table').DataTable().ajax.reload();
+                            $('#news-updates-table').DataTable().ajax.reload();
                         } else {
                             toastr.error(response.message);
                         }

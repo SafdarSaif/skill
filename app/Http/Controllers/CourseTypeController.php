@@ -135,17 +135,41 @@ class CourseTypeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($coursetypeID)
-    { {
-            try {
-                $courseType = CourseType::destroy($coursetypeID);
-                return ['status' => 'success', 'message' => 'Course Type  deleted successfully!'];
-            } catch (\Throwable $e) {
-                return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    // public function destroy($coursetypeID)
+    // { {
+    //         try {
+    //             $courseType = CourseType::destroy($coursetypeID);
+    //             return ['status' => 'success', 'message' => 'Course Type  deleted successfully!'];
+    //         } catch (\Throwable $e) {
+    //             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    //         }
+    //     }
+    // }
+
+    public function destroy($id)
+    {
+
+        try {
+            $data = CourseType::findOrFail($id);
+            if ($data) {
+                CourseType::find($id)->delete();
+                return response()->json([
+                    'status' => 'success',
+                    'message' => $data->name . '  Deleted successfully!',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Data not found',
+                ]);
             }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
         }
     }
-
     public function status($id)
     {
         try {

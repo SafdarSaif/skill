@@ -117,7 +117,7 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label" for="highest_qualification">Highest Qualification</label>
-                        <input type="text" id="highest_qualification" name="highest_qualification"
+                        <input type="text" id="heighest_qualification" name="heighest_qualification"
                             class="form-control" placeholder="Enter qualification" required>
                     </div>
                 </div>
@@ -256,7 +256,7 @@
                     method: "GET",
                     success: function (data) {
                         if (data[0].Status === "Success") {
-                            let postOffice = data[0].PostOffice[0]; // Get the first post office entry
+                            let postOffice = data[0].PostOffice[0]; 
                             $("#state").val(postOffice.State);
                             $("#district").val(postOffice.District);
                             $("#city").val(postOffice.Name);

@@ -246,14 +246,39 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($categoryId)
-    { {
-            try {
-                $category = Category::destroy($categoryId);
-                return ['status' => 'success', 'message' => 'Course Category  deleted successfully!'];
-            } catch (\Throwable $e) {
-                return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    // public function destroy($categoryId)
+    // { {
+    //         try {
+    //             $category = Category::destroy($categoryId);
+    //             return ['status' => 'success', 'message' => 'Course Category  deleted successfully!'];
+    //         } catch (\Throwable $e) {
+    //             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    //         }
+    //     }
+    // }
+
+    public function destroy($id)
+    {
+
+        try {
+            $data = Category::findOrFail($id);
+            if ($data) {
+                Category::find($id)->delete();
+                return response()->json([
+                    'status' => 'success',
+                    'message' => $data->name . ' Deleted successfully!',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Data not found',
+                ]);
             }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
         }
     }
 
@@ -281,10 +306,14 @@ class CategoryController extends Controller
             ]);
         }
     }
+
+    // API for get all category
     public function categories(Request $request)
     {
         try {
-            $data = Category::with('courses')->where('status', 1)->get();
+            $data = Category::whereHas('courses',function($query){
+                $query->where('status',true);
+            })->where('status', 1)->get();
             if ($data->isNotEmpty()) {
                 return response()->json(['status' => "success", 'message' => "All Active Category Lists", "data" => $data]);
             } else {

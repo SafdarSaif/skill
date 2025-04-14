@@ -6,7 +6,6 @@
 
     <form id="edit-privacy-form" action="{{ route('privacy.update', $privacy->id) }}" method="POST" enctype="multipart/form-data" class="row g-3">
         @csrf
-      
 
         <!-- Privacy Policy Content -->
         <div class="col-md-12">
@@ -22,13 +21,9 @@
     </form>
 </div>
 
-<!-- Include CKEditor -->
-<script src="https://cdn.ckeditor.com/4.20.1/standard/ckeditor.js"></script>
-<script>
-    $(document).ready(function() {
-        // Initialize CKEditor
-        CKEDITOR.replace('edit-content');
 
+<script>
+    $(document).ready(function () {
         $("#edit-privacy-form").validate({
             rules: {
                 content: {
@@ -42,11 +37,7 @@
                     minlength: "Content must be at least 20 characters long"
                 }
             },
-            submitHandler: function(form) {
-                for (instance in CKEDITOR.instances) {
-                    CKEDITOR.instances[instance].updateElement();
-                }
-
+            submitHandler: function (form) {
                 $(':input[type="submit"]').prop('disabled', true);
 
                 var formData = new FormData(form);
@@ -58,7 +49,7 @@
                     processData: false,
                     contentType: false,
                     dataType: 'json',
-                    success: function(response) {
+                    success: function (response) {
                         $(':input[type="submit"]').prop('disabled', false);
                         if (response.status === 'success') {
                             toastr.success(response.message);
@@ -68,7 +59,7 @@
                             toastr.error(response.message);
                         }
                     },
-                    error: function(xhr) {
+                    error: function (xhr) {
                         $(':input[type="submit"]').prop('disabled', false);
                         toastr.error(xhr.responseJSON?.message || "An error occurred");
                     }
