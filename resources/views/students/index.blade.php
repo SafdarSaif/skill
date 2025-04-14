@@ -21,6 +21,10 @@
                             data: 'mobile'
                         },
                         {
+                            data: 'enrolled'
+                        },
+
+                        {
                             data: ''
                         },
                     ],
@@ -40,7 +44,7 @@
                         },
                         {
                             // Name
-                            targets: 2,
+                            targets: 4,
                             render: function(data, type, full, meta) {
                                 var $checkedStatus = full['status'] == 1 ? 'checked' : '';
                                 var $nameStatus = full['status'] == 1 ? 'Yes' : 'No';
@@ -64,13 +68,28 @@
                         },
 
                         {
-                            targets: 3,
+                            targets: 2,
                             orderable: false,
                             render: function(data, type, full, meta) {
                                 var $data = full['mobile'];
                                 return '<span class="text-nowrap">' + $data + '</span>';
                             }
                         },
+                        {
+                            targets: 3,
+                            render: function(data, type, full, meta) {
+                                var enrolled = full['is_enrolled'] == 1 ?
+                                    `<span class="badge bg-label-success rounded-pill d-inline-flex align-items-center px-3 py-1">
+                    <i class="ti ti-check me-1"></i> Enrolled
+               </span>` :
+                                    `<span class="badge bg-label-secondary rounded-pill d-inline-flex align-items-center px-3 py-1">
+                    <i class="ti ti-minus me-1"></i> Not Enrolled
+               </span>`;
+                                return enrolled;
+                            }
+                        },
+
+
                         // {
                         //     // Actions
                         //     targets: -1,
@@ -177,8 +196,9 @@
                     <tr>
                         <th>No.</th>
                         <th>Name</th>
-                        <th>Status</th>
                         <th>Phone</th>
+                        <th>Enrolled</th>
+                        <th>Status</th>
                         <th></th>
                     </tr>
                 </thead>

@@ -10,6 +10,8 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 use App\Models\StudentCourse;
 use App\Models\Subject;
+use Illuminate\Support\Facades\Auth;
+
 
 class StudentProgressController extends Controller
 {
@@ -250,44 +252,97 @@ class StudentProgressController extends Controller
      * Display a listing of the resource.
      */
 
+    //  public function index(Request $request)
+    //  {
+    //      if ($request->ajax()) {
+    //          $data = StudentProgress::with(['student', 'course', 'subject', 'video'])
+    //              ->orderBy('id', 'desc')
+    //              ->get();
+     
+    //             //  dd($data->toArray()); // Debugging step
+    //          return DataTables::of($data)
+    //              ->addIndexColumn()
+    //              ->addColumn('student_name', function ($data) {
+    //                  return optional($data->student)->name ?? 'N/A';
+    //              })
+    //              ->addColumn('course_name', function ($data) {
+    //                  return optional($data->course)->name ?? 'N/A';
+    //                 //  dd($data->course);
+    //              })
+    //              ->addColumn('subject_name', function ($data) {
+    //                  return optional($data->subject)->name ?? 'N/A';
+    //              })
+    //              ->addColumn('video_name', function ($data) {
+    //                  return optional($data->video)->name?? 'N/A';
+    //              })
+    //              ->editColumn('progress', function ($data) {
+    //                  return isset($data->progress) ? $data->progress . '%' : '0%';
+    //              })
+    //              ->editColumn('progress_status', function ($data) {
+    //                  return ucfirst($data->progress_status ?? 'N/A');
+    //              })
+    //              ->editColumn('created_at', function ($data) {
+    //                  return $data->created_at ? \Carbon\Carbon::parse($data->created_at)->format('d-m-Y h:i A') : 'N/A';
+    //              })
+    //              ->make(true);
+    //      }
+     
+    //      return view('studentprogress.index');
+    //  }
+     
+
      public function index(Request $request)
-     {
-         if ($request->ajax()) {
-             $data = StudentProgress::with(['student', 'course', 'subject', 'video'])
-                 ->orderBy('id', 'desc')
-                 ->get();
-     
-                //  dd($data->toArray()); // Debugging step
-             return DataTables::of($data)
-                 ->addIndexColumn()
-                 ->addColumn('student_name', function ($data) {
-                     return optional($data->student)->name ?? 'N/A';
-                 })
-                 ->addColumn('course_name', function ($data) {
-                     return optional($data->course)->name ?? 'N/A';
-                    //  dd($data->course);
-                 })
-                 ->addColumn('subject_name', function ($data) {
-                     return optional($data->subject)->name ?? 'N/A';
-                 })
-                 ->addColumn('video_name', function ($data) {
-                     return optional($data->video)->name?? 'N/A';
-                 })
-                 ->editColumn('progress', function ($data) {
-                     return isset($data->progress) ? $data->progress . '%' : '0%';
-                 })
-                 ->editColumn('progress_status', function ($data) {
-                     return ucfirst($data->progress_status ?? 'N/A');
-                 })
-                 ->editColumn('created_at', function ($data) {
-                     return $data->created_at ? \Carbon\Carbon::parse($data->created_at)->format('d-m-Y h:i A') : 'N/A';
-                 })
-                 ->make(true);
-         }
-     
-         return view('studentprogress.index');
-     }
-     
+{
+    if ($request->ajax()) {
+        if (auth()->check() && auth()->user()->hasRole("Super Admin")) {
+            // Super Admin sees all progress records
+            $data = StudentProgress::with(['student', 'course', 'subject', 'video'])
+                ->orderBy('id', 'desc')
+                ->get();
+        } else {
+            $userId = auth()->id();
+
+            // Get course IDs added by current user
+            $course_ids = Course::where('added_by', $userId)->pluck('id');
+
+            // Filter progress records where course belongs to current user
+            $data = StudentProgress::with(['student', 'course', 'subject', 'video'])
+                ->whereIn('course_id', $course_ids)
+                ->orderBy('id', 'desc')
+                ->get();
+        }
+
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->addColumn('student_name', function ($data) {
+                return optional($data->student)->name ?? 'N/A';
+            })
+            ->addColumn('course_name', function ($data) {
+                return optional($data->course)->name ?? 'N/A';
+            })
+            ->addColumn('subject_name', function ($data) {
+                return optional($data->subject)->name ?? 'N/A';
+            })
+            ->addColumn('video_name', function ($data) {
+                return optional($data->video)->name ?? 'N/A';
+            })
+            ->editColumn('progress', function ($data) {
+                return isset($data->progress) ? $data->progress . '%' : '0%';
+            })
+            ->editColumn('progress_status', function ($data) {
+                return ucfirst($data->progress_status ?? 'N/A');
+            })
+            ->editColumn('created_at', function ($data) {
+                return $data->created_at
+                    ? \Carbon\Carbon::parse($data->created_at)->format('d-m-Y h:i A')
+                    : 'N/A';
+            })
+            ->make(true);
+    }
+
+    return view('studentprogress.index');
+}
+
 
     // public function index(Request $request)
     // {

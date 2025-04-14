@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+
 
 
 class SubjectController extends Controller
@@ -16,27 +18,65 @@ class SubjectController extends Controller
     /**
      * Display a listing of the resource.
      */
+    // public function index(Request $request)
+    // {
+    //     if ($request->ajax()) {
+    //         $data = Subject::with(['course'])
+    //             ->orderBy('id', 'desc')
+    //             ->get();
+
+    //         return DataTables::of($data)
+    //             ->addIndexColumn()
+    //             ->editColumn('created_at', function ($data) {
+    //                 return $data->created_at ? Carbon::parse($data->created_at)->format('d-m-Y h:i A') : 'N/A';
+    //             })
+
+    //             ->addColumn('course_name', function ($data) {
+    //                 return $data->course ? $data->course->name : 'N/A';
+    //             })
+    //             ->make(true);
+    //     }
+
+    //     return view('subject.index');
+    // }
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Subject::with(['course'])
-                ->orderBy('id', 'desc')
-                ->get();
+            if (auth()->check() && auth()->user()->hasRole("Super Admin")) {
+                // Super Admin sees all subjects
+                $data = Subject::with('course')
+                    ->orderBy('id', 'desc')
+                    ->get();
+            } else {
+                $userId = auth()->id();
+
+                // Get courses added by current user
+                $courseIds = Course::where('added_by', $userId)->pluck('id');
+
+                // Get subjects linked to those courses
+                $data = Subject::with('course')
+                    ->whereIn('course_id', $courseIds)
+                    ->orderBy('id', 'desc')
+                    ->get();
+            }
 
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->editColumn('created_at', function ($data) {
-                    return $data->created_at ? Carbon::parse($data->created_at)->format('d-m-Y h:i A') : 'N/A';
+                    return $data->created_at
+                        ? \Carbon\Carbon::parse($data->created_at)->format('d-m-Y h:i A')
+                        : 'N/A';
                 })
-
                 ->addColumn('course_name', function ($data) {
-                    return $data->course ? $data->course->name : 'N/A';
+                    return optional($data->course)->name ?? 'N/A';
                 })
                 ->make(true);
         }
 
         return view('subject.index');
     }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -178,35 +218,35 @@ class SubjectController extends Controller
      */
     public function destroy($subjectId)
     {
-    //  {
-    //         try {
-    //             $subject = Subject::destroy($subjectId);
-    //             return ['status' => 'success', 'message' => 'Subject deleted successfully!'];
-    //         } catch (\Throwable $e) {
-    //             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
-    //         }
-    //     }
+        //  {
+        //         try {
+        //             $subject = Subject::destroy($subjectId);
+        //             return ['status' => 'success', 'message' => 'Subject deleted successfully!'];
+        //         } catch (\Throwable $e) {
+        //             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+        //         }
+        //     }
 
-    try {
-        $data = Subject::findOrFail($subjectId);
-        if ($data) { 
-            Subject::find($subjectId)->delete();
-            return response()->json([
-                'status' => 'success',
-                'message' => $data->name . ' Deleted successfully!',
-            ]);
-        } else {
+        try {
+            $data = Subject::findOrFail($subjectId);
+            if ($data) {
+                Subject::find($subjectId)->delete();
+                return response()->json([
+                    'status' => 'success',
+                    'message' => $data->name . ' Deleted successfully!',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Data not found',
+                ]);
+            }
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Data not found',
+                'message' => $e->getMessage(),
             ]);
         }
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => $e->getMessage(),
-        ]);
-    }
     }
     public function status($id)
     {

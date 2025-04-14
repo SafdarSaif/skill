@@ -10,6 +10,8 @@ use Illuminate\Support\Carbon;
 use App\Models\Course;
 use App\Models\Students;
 use App\Models\StudentPayment;
+use Illuminate\Support\Facades\Auth;
+
 
 class StudentCourseController extends Controller
 {
@@ -17,29 +19,73 @@ class StudentCourseController extends Controller
      * Display a listing of the resource.
      */
 
+    // public function index(Request $request)
+    // {
+    //     if ($request->ajax()) {
+    //         $data = StudentCourse::with(['student', 'course'])
+    //             ->orderBy('id', 'desc')
+    //             ->get();
+
+    //         return DataTables::of($data)
+    //             ->addIndexColumn()
+    //             ->editColumn('created_at', function ($data) {
+    //                 return $data->created_at ? Carbon::parse($data->created_at)->format('d-m-Y h:i A') : 'N/A';
+    //             })
+    //             ->addColumn('student_name', function ($data) {
+    //                 return $data->student ? $data->student->name : 'N/A';
+    //             })
+    //             ->addColumn('course_name', function ($data) {
+    //                 return $data->course ? $data->course->name : 'N/A';
+    //             })
+    //             ->make(true);
+    //     }
+
+    //     return view('studentcourse.index');
+    // }
+
+
+
+    // Segregated by user role
+
     public function index(Request $request)
-    {
-        if ($request->ajax()) {
+{
+    if ($request->ajax()) {
+        if (auth()->check() && auth()->user()->hasRole("Super Admin")) {
+            // Super Admin sees all records
             $data = StudentCourse::with(['student', 'course'])
                 ->orderBy('id', 'desc')
                 ->get();
+        } else {
+            $userId = auth()->id();
 
-            return DataTables::of($data)
-                ->addIndexColumn()
-                ->editColumn('created_at', function ($data) {
-                    return $data->created_at ? Carbon::parse($data->created_at)->format('d-m-Y h:i A') : 'N/A';
-                })
-                ->addColumn('student_name', function ($data) {
-                    return $data->student ? $data->student->name : 'N/A';
-                })
-                ->addColumn('course_name', function ($data) {
-                    return $data->course ? $data->course->name : 'N/A';
-                })
-                ->make(true);
+            // Get course IDs added by current user
+            $course_ids = Course::where('added_by', $userId)->pluck('id');
+
+            // Only show student-courses where course belongs to current user
+            $data = StudentCourse::with(['student', 'course'])
+                ->whereIn('course_id', $course_ids)
+                ->orderBy('id', 'desc')
+                ->get();
         }
 
-        return view('studentcourse.index');
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->editColumn('created_at', function ($data) {
+                return $data->created_at
+                    ? Carbon::parse($data->created_at)->format('d-m-Y h:i A')
+                    : 'N/A';
+            })
+            ->addColumn('student_name', function ($data) {
+                return $data->student ? $data->student->name : 'N/A';
+            })
+            ->addColumn('course_name', function ($data) {
+                return $data->course ? $data->course->name : 'N/A';
+            })
+            ->make(true);
     }
+
+    return view('studentcourse.index');
+}
 
 
 

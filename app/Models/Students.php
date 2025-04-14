@@ -30,6 +30,7 @@ class Students extends Model
         'status',
         'image',
         'signature',
+        'added_by',
     ];
 
 
