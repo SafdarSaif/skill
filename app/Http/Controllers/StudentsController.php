@@ -46,35 +46,75 @@ class StudentsController extends Controller
 
 
 
+    // public function index(Request $request)
+    // {
+    //     if ($request->ajax()) {
+    //         if (Auth::check() && Auth::user()->hasRole("Super Admin")) {
+    //             $data = Students::orderBy('id', 'desc')->get();
+    //         } else {
+    //             $userId = Auth::user()->id;
+    //             $data = Course::whereHas('users', function($query)use($userId){ $query->where('id',$userId);
+    //             })->orderBy('id', 'desc')->get();
+
+    //             $course_ids = Course::where('added_by', $userId)->pluck('id');
+
+    //             $data = Students::with('studentCourses')->whereHas('studentCourses', function ($query) use ($course_ids) {
+    //                 $query->whereIn('course_id', $course_ids);
+    //             })->orderBy('id', 'desc')->get();
+
+
+    //             //    dd($data);
+    //         }
+
+    //         return DataTables::of($data)
+    //             ->addIndexColumn()
+    //             ->editColumn('created_at', function ($data) {
+    //                 return Carbon::createFromFormat('Y-m-d H:i:s', $data->created_at)->format('d-m-Y h:i A');
+    //             })
+    //             ->make(true);
+    //     }
+    //     return view('students.index');
+    // }
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
             if (Auth::check() && Auth::user()->hasRole("Super Admin")) {
-                $data = Students::orderBy('id', 'desc')->get();
+                $data = Students::with('studentCourses')->orderBy('id', 'desc')->get();
             } else {
-                $userId = Auth::user()->id;
-                // $data = Course::whereHas('users', function($query)use($userId){ $query->where('id',$userId);
-                // })->orderBy('id', 'desc')->get();
-
+                $userId = Auth::id();
+    
+                // Get courses added by current user
                 $course_ids = Course::where('added_by', $userId)->pluck('id');
-
-                $data = Students::with('studentCourses')->whereHas('studentCourses', function ($query) use ($course_ids) {
-                    $query->whereIn('course_id', $course_ids);
-                })->orderBy('id', 'desc')->get();
-
-
-                //    dd($data);
+    
+                // Get students either:
+                // - assigned to those courses, OR
+                // - added directly by current user
+                $data = Students::with('studentCourses')
+                    ->where(function ($query) use ($course_ids, $userId) {
+                        $query->whereHas('studentCourses', function ($q) use ($course_ids) {
+                            $q->whereIn('course_id', $course_ids);
+                        })
+                        ->orWhere('added_by', $userId);
+                    })
+                    ->orderBy('id', 'desc')
+                    ->get();
             }
-
+    
             return DataTables::of($data)
                 ->addIndexColumn()
+                ->addColumn('is_enrolled', function ($data) {
+                    return $data->studentCourses->isNotEmpty() ? 1 : 0;
+                })
                 ->editColumn('created_at', function ($data) {
-                    return Carbon::createFromFormat('Y-m-d H:i:s', $data->created_at)->format('d-m-Y h:i A');
+                    return Carbon::parse($data->created_at)->format('d-m-Y h:i A');
                 })
                 ->make(true);
         }
+    
         return view('students.index');
     }
+    
     /**
      * Get all course wise subjects and subject wise e-books, notes, videos API
      */
@@ -629,9 +669,10 @@ class StudentsController extends Controller
                 'heighest_qualification' => $request->heighest_qualification,
                 'image' => $imagePath,
                 'signature' => $signaturePath,
+                'added_by' => Auth::user()->id,
                 'status' => 1, // Default active status
             ]);
-
+            // dd($student);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Student added successfully!',
@@ -876,8 +917,8 @@ class StudentsController extends Controller
 
             // $student = Students::find($request->id);
             $student = Students::where('id', $request->id)
-                   ->where('status', 1)
-                   ->first();
+                ->where('status', 1)
+                ->first();
 
             if (!$student) {
                 return response()->json([
@@ -966,12 +1007,13 @@ class StudentsController extends Controller
         }
     }
 
-    public function deleteAt($id){
+    public function deleteAt($id)
+    {
 
-          try { 
+        try {
             $student = Students::findOrFail($id);
             if ($student) {
-                Students::find($id)->delete(); 
+                Students::find($id)->delete();
                 return response()->json([
                     'status' => 'success',
                     'message' => $student->name . ' Deleted successfully!',
@@ -987,6 +1029,6 @@ class StudentsController extends Controller
                 'status' => 'error',
                 'message' => $e->getMessage(),
             ]);
-        }   
+        }
     }
 }

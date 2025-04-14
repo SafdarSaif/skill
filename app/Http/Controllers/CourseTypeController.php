@@ -30,6 +30,30 @@ class CourseTypeController extends Controller
         return view('coursemangement.coursetype.index');
     }
 
+
+    // public function index(Request $request)
+    // {
+    //     if ($request->ajax()) {
+    //         if (Auth::check() && Auth::user()->hasRole('Super Admin')) {
+    //             $data = CourseType::orderBy('id', 'desc')->get();
+    //         } else {
+    //             $userId = Auth::user()->id;
+    //             $data = CourseType::whereHas('users', function ($query) use ($userId) {
+    //                 $query->where('id', $userId);
+    //             })->orderBy('id', 'desc')->get();
+    //         }
+
+    //         return DataTables::of($data)
+    //             ->addIndexColumn()
+    //             ->editColumn('created_at', function ($data) {
+    //                 return Carbon::createFromFormat('Y-m-d H:i:s', $data->created_at)->format('d-m-Y h:i A');
+    //             })
+    //             ->make(true);
+    //     }
+
+    //     return view('coursemangement.coursetype.index');
+    // }
+
     /**
      * Show the form for creating a new resource.
      */
