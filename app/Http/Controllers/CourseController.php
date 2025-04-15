@@ -385,6 +385,8 @@ class CourseController extends Controller
         return response()->json(['status' => 'success', 'price' => $courseAmount]);
     }
 
+
+    // API
     // public function getCourseByType($typeId = '')
     // {
     //     try {
@@ -406,11 +408,13 @@ class CourseController extends Controller
     //     try {
     //         $studentId = $request->header('student_id');
     //         $limit = $request->header('limit', 10);
+    //         $page = $request->header('page', 1); 
 
     //         // Get all course types (or specific one if $typeId != 0)
     //         $courseTypesQuery = CourseType::where('status', 1)
     //             ->whereHas('courses', function ($query) {
-    //                 $query->where('status', 1);
+    //                 $query->where('status', 1)
+    //                     ->where('is_banner', 0); // ✅ Only non-banner courses
     //             });
 
     //         if ($typeId != 0) {
@@ -429,11 +433,11 @@ class CourseController extends Controller
     //         $result = [];
 
     //         foreach ($courseTypes as $type) {
-    //             // Get paginated courses for each type
     //             $courses = Course::with('category', 'users', 'subjects')
     //                 ->where('status', 1)
+    //                 ->where('is_banner', 0) 
     //                 ->where('type_id', $type->id)
-    //                 ->paginate($limit);
+    //                 ->paginate($limit, ['*'], 'page', $page);
 
     //             // Add is_enrolled flag
     //             $courses->getCollection()->transform(function ($course) use ($enrolledCourseIds) {
@@ -452,6 +456,8 @@ class CourseController extends Controller
     //                     'last_page' => $courses->lastPage(),
     //                     'from' => $courses->firstItem(),
     //                     'to' => $courses->lastItem(),
+    //                     'next_page_url' => $courses->nextPageUrl(),
+    //                     'prev_page_url' => $courses->previousPageUrl(),
     //                 ]
     //             ];
     //         }
@@ -471,77 +477,82 @@ class CourseController extends Controller
 
 
     public function getCourseByType(Request $request, $typeId = 0)
-{
-    try {
-        $studentId = $request->header('student_id');
-        $limit = $request->header('limit', 10);
-        $page = $request->header('page', 1); // Optional: add page from header for paginated results
+    {
+        try {
+            $studentId = $request->header('student_id');
+            $limit = $request->header('limit', 10);
+            $page = $request->header('page', 1);
+            $onlyHomepage = $request->header('only_home', false); // Optional: Add header flag for homepage filtering
 
-        // Get all course types (or specific one if $typeId != 0)
-        $courseTypesQuery = CourseType::where('status', 1)
-            ->whereHas('courses', function ($query) {
-                $query->where('status', 1)
-                      ->where('is_banner', 0); // ✅ Only non-banner courses
-            });
+            // Build base query
+            $courseTypesQuery = CourseType::where('status', 1)
+                ->whereHas('courses', function ($query) {
+                    $query->where('status', 1)
+                        ->where('is_banner', 0); // ✅ Only non-banner courses
+                });
 
-        if ($typeId != 0) {
-            $courseTypesQuery->where('id', $typeId);
+            if ($typeId != 0) {
+                $courseTypesQuery->where('id', $typeId);
+            }
+
+            if ($onlyHomepage) {
+                $courseTypesQuery->where('is_active_on_home', 1);
+            }
+
+            $courseTypes = $courseTypesQuery->get();
+
+            $enrolledCourseIds = [];
+            if ($studentId) {
+                $enrolledCourseIds = StudentCourse::where('student_id', $studentId)
+                    ->pluck('course_id')
+                    ->toArray();
+            }
+
+            $result = [];
+
+            foreach ($courseTypes as $type) {
+                $courses = Course::with('category', 'users', 'subjects')
+                    ->where('status', 1)
+                    ->where('is_banner', 0)
+                    ->where('type_id', $type->id)
+                    ->paginate($limit, ['*'], 'page', $page);
+
+                // Mark enrolled courses
+                $courses->getCollection()->transform(function ($course) use ($enrolledCourseIds) {
+                    $course->is_enrolled = in_array($course->id, $enrolledCourseIds);
+                    return $course;
+                });
+
+                $result[] = [
+                    'type_id' => $type->id,
+                    'type_name' => $type->name,
+                    'is_active_on_home' => $type->is_active_on_home,
+                    'courses' => $courses->items(),
+                    'pagination' => [
+                        'total' => $courses->total(),
+                        'per_page' => $courses->perPage(),
+                        'current_page' => $courses->currentPage(),
+                        'last_page' => $courses->lastPage(),
+                        'from' => $courses->firstItem(),
+                        'to' => $courses->lastItem(),
+                        'next_page_url' => $courses->nextPageUrl(),
+                        'prev_page_url' => $courses->previousPageUrl(),
+                    ]
+                ];
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'message' => $typeId == 0 ? 'All Course Types with Courses' : 'Courses by Type',
+                'data' => $result
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
         }
-
-        $courseTypes = $courseTypesQuery->get();
-
-        $enrolledCourseIds = [];
-        if ($studentId) {
-            $enrolledCourseIds = StudentCourse::where('student_id', $studentId)
-                ->pluck('course_id')
-                ->toArray();
-        }
-
-        $result = [];
-
-        foreach ($courseTypes as $type) {
-            // Paginated non-banner courses for this type
-            $courses = Course::with('category', 'users', 'subjects')
-                ->where('status', 1)
-                ->where('is_banner', 0) // ✅ Ensure only non-banner
-                ->where('type_id', $type->id)
-                ->paginate($limit, ['*'], 'page', $page);
-
-            // Add is_enrolled flag
-            $courses->getCollection()->transform(function ($course) use ($enrolledCourseIds) {
-                $course->is_enrolled = in_array($course->id, $enrolledCourseIds);
-                return $course;
-            });
-
-            $result[] = [
-                'type_id' => $type->id,
-                'type_name' => $type->name,
-                'courses' => $courses->items(),
-                'pagination' => [
-                    'total' => $courses->total(),
-                    'per_page' => $courses->perPage(),
-                    'current_page' => $courses->currentPage(),
-                    'last_page' => $courses->lastPage(),
-                    'from' => $courses->firstItem(),
-                    'to' => $courses->lastItem(),
-                    'next_page_url' => $courses->nextPageUrl(),
-                    'prev_page_url' => $courses->previousPageUrl(),
-                ]
-            ];
-        }
-
-        return response()->json([
-            'status' => 'success',
-            'message' => $typeId == 0 ? 'All Course Types with Courses' : 'Courses by Type',
-            'data' => $result
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => $e->getMessage()
-        ]);
     }
-}
 
 
 
