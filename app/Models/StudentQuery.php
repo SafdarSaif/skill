@@ -24,4 +24,9 @@ class StudentQuery extends Model
     {
         return $this->belongsTo(Students::class, 'student_id'); // Assuming 'student_id' is the foreign key in 'student_queries' table
     }
+
+    public function video()
+    {
+        return $this->belongsTo(SubjectVideo::class, 'video_id');
+    }
 }

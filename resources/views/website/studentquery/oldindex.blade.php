@@ -112,34 +112,17 @@
                             targets: -1, // Actions column
                             searchable: false,
                             orderable: false,
-                            // render: function(data, type, full, meta) {
-                            //     return `
-                        //         <span class="text-nowrap">
-                        //             <button class="btn btn-sm btn-icon me-2" onclick="edit('/studentquery/edit/${full['id']}', 'modal-lg')">
-                        //                 <i class="ti ti-edit"></i>
-                        //             </button>
-                        //             <button class="btn btn-sm btn-icon delete-record" onclick="destry('/studentquery/destroy/${full['id']}', 'student-query-table')">
-                        //                 <i class="ti ti-trash"></i>
-                        //             </button>
-                        //         </span>`;
-                            // }
                             render: function(data, type, full, meta) {
                                 return `
-                              <span class="text-nowrap">
-                               <button class="btn btn-sm btn-icon me-2" onclick="view('/studentquery/show/${full['id']}/${full['student_id']}', 'modal-lg')">
-                             <i class="ti ti-eye"></i>
-                             </button>
-
-
-                             <button class="btn btn-sm btn-icon me-2" onclick="edit('/studentquery/edit/${full['id']}', 'modal-xl')">
-                           <i class="ti ti-edit"></i>
-                          </button>
-                      <button class="btn btn-sm btn-icon delete-record" onclick="destry('/studentquery/destroy/${full['id']}', 'student-query-table')">
-                       <i class="ti ti-trash"></i>
-                        </button>
-                         </span>`;
+                                    <span class="text-nowrap">
+                                        <button class="btn btn-sm btn-icon me-2" onclick="edit('/studentquery/edit/${full['id']}', 'modal-lg')">
+                                            <i class="ti ti-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-icon delete-record" onclick="destry('/studentquery/destroy/${full['id']}', 'student-query-table')">
+                                            <i class="ti ti-trash"></i>
+                                        </button>
+                                    </span>`;
                             }
-
                         }
                     ],
                     aaSorting: false,
@@ -191,13 +174,6 @@
         });
     </script>
 
-    <script>
-        function view(url) {
-            window.location.href = url;
-        }
-    </script>
-
-
     <h4 class="mb-4">Student Queries</h4>
     <div class="card">
         <div class="card-datatable table-responsive">
@@ -216,4 +192,6 @@
             </table>
         </div>
     </div>
+
+    
 @endsection

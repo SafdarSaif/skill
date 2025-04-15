@@ -196,6 +196,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/studentquery/update/{id}', [StudentQueryController::class, 'update'])->name('studentquery.update');
     Route::delete('/studentquery/destroy/{id}', [StudentQueryController::class, 'destroy'])->name('studentquery.destroy');
     Route::get('studentquery/status/{id}', [StudentQueryController::class, 'status'])->name('studentquery.status');
+    Route::get('studentquery/show/{id}/{student_id}', [StudentQueryController::class, 'show'])->name('studentquery.show');
+// Route to edit the video query
+Route::get('videoquery/editquery/{id}', [StudentQueryController::class, 'editquery'])->name('videoquery.edit');
 
 
     Route::get('/subjectvideo', [SubjectVideoController::class, 'index'])->name('subjectvideo');
