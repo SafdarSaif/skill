@@ -38,14 +38,45 @@ class StudentQueryController extends Controller
     // New Flow 
 
 
+    // public function index(Request $request)
+    // {
+    //     if ($request->ajax()) {
+    //         $data = StudentQuery::with('student')
+    //             ->orderBy('id', 'desc')
+    //             ->get()
+    //             ->unique('student_id') 
+    //             ->values(); 
+
+    //         return DataTables::of($data)
+    //             ->addIndexColumn()
+    //             ->addColumn('name', function ($row) {
+    //                 return $row->student ? $row->student->name : 'N/A';
+    //             })
+    //             ->addColumn('email', function ($row) {
+    //                 return $row->student ? $row->student->email : 'N/A';
+    //             })
+    //             ->addColumn('query', function ($row) {
+    //                 return $row->query ?? 'N/A';
+    //             })
+    //             // ->addColumn('attachment', function ($row) {
+    //             //     return $row->attachment;
+    //             // })
+    //             ->addColumn('status', function ($row) {
+    //                 return $row->status;
+    //             })
+    //             ->editColumn('created_at', function ($data) {
+    //                 return Carbon::createFromFormat('Y-m-d H:i:s', $data->created_at)->format('d-m-Y h:i A');
+    //             })
+    //             ->make(true);
+    //     }
+
+    //     return view('website.studentquery.index');
+    // }
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = StudentQuery::with('student')
-                ->orderBy('id', 'desc')
-                ->get()
-                ->unique('student_id') 
-                ->values(); 
+            $data = StudentQuery::getGroupedStudentQueries();
 
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -55,18 +86,28 @@ class StudentQueryController extends Controller
                 ->addColumn('email', function ($row) {
                     return $row->student ? $row->student->email : 'N/A';
                 })
-                ->addColumn('query', function ($row) {
-                    return $row->query ?? 'N/A';
+                ->addColumn('query_count', function ($row) {
+                    return $row->total_queries;
                 })
-                // ->addColumn('attachment', function ($row) {
-                //     return $row->attachment;
-                // })
+                ->addColumn('latest_query', function ($row) {
+                    $latest = StudentQuery::find($row->latest_id);
+                    return $latest ? $latest->query : 'N/A';
+                })
+                ->addColumn('attachment', function ($row) {
+                    $latest = StudentQuery::find($row->latest_id);
+                    return $latest ? $latest->attachment : null;
+                })
                 ->addColumn('status', function ($row) {
-                    return $row->status;
+                    $latest = StudentQuery::find($row->latest_id);
+                    return $latest ? $latest->status : 0;
                 })
-                ->editColumn('created_at', function ($data) {
-                    return Carbon::createFromFormat('Y-m-d H:i:s', $data->created_at)->format('d-m-Y h:i A');
+                ->addColumn('id', function ($row) {
+                    return $row->latest_id;
                 })
+                ->addColumn('student_id', function ($row) {
+                    return $row->student_id;
+                })
+                ->rawColumns(['attachment'])
                 ->make(true);
         }
 
@@ -485,10 +526,10 @@ class StudentQueryController extends Controller
         $allQueries = StudentQuery::where('video_id', $videoQuery->video_id)->get();
         $subjectvideo = SubjectVideo::pluck('Name', 'id')->toArray();
         $student = Students::find($videoQuery->student_id); // ← Get full student record
-    
+
         return view('website.studentquery.reslove', compact('videoQuery', 'allQueries', 'subjectvideo', 'student'));
     }
-    
+
 
 
 
@@ -499,19 +540,19 @@ class StudentQueryController extends Controller
             'answer' => 'required|string|min:5',
             'attachment.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
         ]);
-    
+
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
                 'message' => $validator->errors()->first(),
             ], 422);
         }
-    
+
         try {
             $studentQuery = StudentQuery::findOrFail($id);
-    
+
             $attachmentPath = json_decode($studentQuery->attachment, true) ?? ['answer' => [], 'question' => []];
-    
+
             // Upload new files and merge
             if ($request->hasFile('attachment')) {
                 foreach ($request->file('attachment') as $file) {
@@ -519,12 +560,12 @@ class StudentQueryController extends Controller
                     $attachmentPath['answer'][] = $filePath;
                 }
             }
-    
+
             $studentQuery->answer = $request->input('answer');
             $studentQuery->attachment = json_encode($attachmentPath, JSON_FORCE_OBJECT);
             $studentQuery->status = 1;
             $studentQuery->save();
-    
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'Answer submitted successfully!',
@@ -537,7 +578,7 @@ class StudentQueryController extends Controller
             ], 500);
         }
     }
-    
+
 
 
 
@@ -662,7 +703,7 @@ class StudentQueryController extends Controller
     {
         try {
             $query = StudentQuery::findOrFail($id);
-    
+
             // Delete attachments
             if (!empty($query->attachment)) {
                 $attachments = json_decode($query->attachment, true);
@@ -677,14 +718,12 @@ class StudentQueryController extends Controller
                     }
                 }
             }
-    
+
             $query->delete();
-    
+
             return response()->json(['status' => true, 'message' => 'Query deleted successfully.']);
         } catch (\Exception $e) {
             return response()->json(['status' => false, 'message' => 'Error deleting query.']);
         }
     }
-    
-
 }

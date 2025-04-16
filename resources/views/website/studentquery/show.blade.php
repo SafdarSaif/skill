@@ -92,14 +92,14 @@
                             data: 'video_name',
                             title: 'Video Name'
                         },
-                        {
-                            data: 'phone',
-                            title: 'Mobile Number'
-                        },
-                        {
-                            data: 'email',
-                            title: 'Email'
-                        },
+                        // {
+                        //     data: 'phone',
+                        //     title: 'Mobile Number'
+                        // },
+                        // {
+                        //     data: 'email',
+                        //     title: 'Email'
+                        // },
                         {
                             data: 'total_queries',
                             title: 'Number of Queries'
@@ -157,8 +157,8 @@
                     <tr>
                         <th>Query ID</th>
                         <th>Video Name</th>
-                        <th>Mobile Number</th>
-                        <th>Email</th>
+                        {{-- <th>Mobile Number</th>
+                        <th>Email</th> --}}
                         <th>Number of Queries</th>
                         <th>Action</th>
                     </tr>
