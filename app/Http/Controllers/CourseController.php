@@ -799,35 +799,37 @@ class CourseController extends Controller
     public function coursesFunc(Request $request, $column = '', $value = '')
     {
         try {
+            // Get headers
             $limit = $request->header('limit', 10);
             $page = $request->header('page', 1);
             $studentId = $request->header('student_id');
-
+    
+            // Build query
             $query = Course::with('category', 'users', 'subjects')
-                ->where('status', 1);
-
-            // Apply filter based on column and value if provided
-            if (!empty($column) && !empty($value)) {
-                $query->where($column, $value);
-            }
-
-            // Paginate with headers
+                ->where('status', 1)
+                ->when(!empty($column) && !empty($value), function ($q) use ($column, $value) {
+                    return $q->where($column, $value);
+                });
+    
+            // Paginate result
             $courses = $query->paginate($limit, ['*'], 'page', $page);
-
+    
+            // Get enrolled course IDs for student
             $enrolledCourseIds = [];
-
+    
             if ($studentId) {
                 $enrolledCourseIds = StudentCourse::where('student_id', $studentId)
                     ->pluck('course_id')
                     ->toArray();
             }
-
-            // Add is_enrolled flag to each course
+    
+            // Mark enrolled courses
             $courses->getCollection()->transform(function ($course) use ($enrolledCourseIds) {
                 $course->is_enrolled = in_array($course->id, $enrolledCourseIds);
                 return $course;
             });
-
+    
+            // Return response
             return response()->json([
                 'status' => "success",
                 'message' => "All Course Lists",
@@ -850,6 +852,7 @@ class CourseController extends Controller
             ]);
         }
     }
+    
 
 
 

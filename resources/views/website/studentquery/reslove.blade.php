@@ -1,82 +1,81 @@
 <div class="modal-body position-relative">
-    <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"
-        aria-label="Close"></button>
+    <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
 
     <style>
         .modal-body h3 {
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .card {
-            border-radius: 12px;
-            transition: all 0.3s ease-in-out;
+            border-radius: 1rem;
+            transition: 0.3s ease-in-out;
         }
 
         .card:hover {
-            box-shadow: 0 4px 20px rgba(0, 123, 255, 0.1);
+            box-shadow: 0 8px 24px rgba(0, 123, 255, 0.15);
         }
 
         .form-label {
+            font-weight: 600;
             font-size: 0.95rem;
-            font-weight: 500;
-            color: #333;
         }
 
-        textarea.form-control[readonly],
-        input.form-control[readonly] {
-            background-color: #f5f5f5;
-            border-color: #ddd;
+        .form-control[readonly] {
+            background-color: #f8f9fa;
             cursor: not-allowed;
+            border-color: #dee2e6;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #0d6efd;
+        }
+
+        .form-section {
+            margin-bottom: 1.25rem;
         }
 
         .list-unstyled a {
             text-decoration: none;
-            transition: color 0.2s ease;
+            color: #0d6efd;
         }
 
         .list-unstyled a:hover {
-            color: #0056b3;
+            text-decoration: underline;
         }
 
         .btn-success {
-            font-weight: 500;
+            font-weight: 600;
             padding: 0.5rem 1.5rem;
+            border-radius: 0.5rem;
         }
 
         .btn-secondary {
-            padding: 0.4rem 1.5rem;
+            border-radius: 0.5rem;
         }
 
-        .card-body label {
+        .attachment-link {
+            display: inline-block;
             margin-bottom: 0.25rem;
-        }
-
-        .text-muted.small {
-            font-size: 0.8rem;
-        }
-
-        .section-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #0056b3;
-            margin-bottom: 1rem;
-        }
-
-        .form-section {
-            margin-bottom: 1.5rem;
-        }
-
-        .select-disabled {
-            background-color: #f9f9f9;
-            border-color: #ddd;
-            cursor: not-allowed;
+            font-size: 0.9rem;
         }
     </style>
 
     <div class="text-center mb-4">
-        <h3 class="mb-2 text-primary">🎓 Solve Student Doubts</h3>
+        <h3 class="text-primary">🎓 Solve Student Doubts</h3>
         <p class="text-muted">Review and respond to student-submitted queries below.</p>
     </div>
+
+    @if ($student)
+        <div class="text-center mb-4">
+            <h5 class="text-primary">👤 <strong>{{ $student->name }}</strong></h5>
+            <p class="text-muted">
+                📞 {{ $student->mobile ?? 'N/A' }} <br>
+                📧 {{ $student->email ?? 'N/A' }}
+            </p>
+        </div>
+    @endif
 
     <div class="row g-4">
         @foreach ($allQueries as $query)
@@ -84,18 +83,14 @@
                 $attachments = $query->attachment ? json_decode($query->attachment, true) : [];
             @endphp
 
-            <!-- Query Details -->
+            <!-- Student Query -->
             <div class="col-md-6">
-                <div class="card h-100 border-0 shadow-sm">
+                <div class="card shadow-sm h-100">
                     <div class="card-body">
-                        <h5 class="text-dark mb-3">
-                            Query ID: #{{ $query->id }}
-                            <span class="float-end text-muted small">
-                                {{ $query->created_at->format('d M Y, h:i A') }}
-                            </span>
+                        <h5 class="mb-3">Query ID: #{{ $query->id }}
+                            <span class="float-end text-muted small">{{ $query->created_at->format('d M Y') }}</span>
                         </h5>
                         <hr>
-
                         <div class="form-section">
                             <label class="form-label">Student Query</label>
                             <textarea class="form-control" rows="4" readonly>{{ $query->query }}</textarea>
@@ -107,7 +102,7 @@
                                 <ul class="list-unstyled">
                                     @foreach ($attachments['question'] as $filePath)
                                         <li>
-                                            <a href="{{ asset($filePath) }}" target="_blank" class="text-primary">
+                                            <a href="{{ asset($filePath) }}" target="_blank" class="attachment-link">
                                                 📎 {{ basename($filePath) }}
                                             </a>
                                         </li>
@@ -119,13 +114,11 @@
                 </div>
             </div>
 
-            <!-- Answer Section -->
+            <!-- Answer Form -->
             <div class="col-md-6">
-                <div class="card h-100 border-0 shadow-sm">
+                <div class="card shadow-sm h-100">
                     <div class="card-body">
-                        <form id="edit-student-query-form-{{ $query->id }}"
-                            action="{{ route('studentquery.update', $query->id) }}" method="POST"
-                            enctype="multipart/form-data">
+                        <form id="student-query-form-{{ $query->id }}" action="{{ route('studentquery.update', $query->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             @method('POST')
 
@@ -145,7 +138,7 @@
                                     <ul class="list-unstyled">
                                         @foreach ($attachments['answer'] as $filePath)
                                             <li>
-                                                <a href="{{ asset($filePath) }}" target="_blank" class="text-primary">
+                                                <a href="{{ asset($filePath) }}" target="_blank" class="attachment-link">
                                                     📎 {{ basename($filePath) }}
                                                 </a>
                                             </li>
@@ -155,10 +148,7 @@
                             @endif
 
                             <div class="text-end">
-                                {{-- <button type="submit" class="btn btn-success px-4">✅ Submit Answer</button> --}}
-                                <button type="button" class="btn btn-success px-4 submit-answer-btn"
-                                    data-id="{{ $query->id }}">✅ Submit Answer</button>
-
+                                <button type="button" class="btn btn-success submit-answer-btn" data-id="{{ $query->id }}">✅ Submit Answer</button>
                             </div>
                         </form>
                     </div>
@@ -167,15 +157,20 @@
         @endforeach
     </div>
 </div>
+
 <div class="modal-footer justify-content-end">
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 </div>
 
-
 <script>
-    $(document).ready(function () {
+    $(function () {
+        $('.submit-answer-btn').on('click', function () {
+            const id = $(this).data('id');
+            $(`#student-query-form-${id}`).submit();
+        });
+
         @foreach ($allQueries as $query)
-            $("#edit-student-query-form-{{ $query->id }}").validate({
+            $(`#student-query-form-{{ $query->id }}`).validate({
                 rules: {
                     answer: {
                         required: true,
@@ -184,18 +179,15 @@
                 },
                 messages: {
                     answer: {
-                        required: "Please write an answer",
-                        minlength: "Answer must be at least 5 characters"
+                        required: "Please provide an answer",
+                        minlength: "Answer should be at least 5 characters"
                     }
                 },
-                submitHandler: function(form) {
-                    let formId = $(form).attr('id');
-                    let submitBtn = $(form).find('button[type="submit"]');
-                    submitBtn.prop('disabled', true);
-    
-                    let formData = new FormData(form);
-                    formData.append("_token", "{{ csrf_token() }}");
-    
+                submitHandler: function (form) {
+                    const $btn = $(form).find('.submit-answer-btn');
+                    $btn.prop('disabled', true);
+
+                    const formData = new FormData(form);
                     $.ajax({
                         url: $(form).attr('action'),
                         type: $(form).attr('method'),
@@ -203,18 +195,18 @@
                         processData: false,
                         contentType: false,
                         dataType: 'json',
-                        success: function(response) {
-                            submitBtn.prop('disabled', false);
-                            if (response.status === 'success' || response.status === true) {
-                                toastr.success(response.message || "Answer submitted successfully!");
-                                $(".modal").modal('hide');
-                                $('#student-query-table').DataTable().ajax.reload(); // Optional reload
+                        success: function (res) {
+                            $btn.prop('disabled', false);
+                            if (res.status === 'success' || res.status === true) {
+                                toastr.success(res.message || "Answer submitted successfully!");
+                                $('.modal').modal('hide');
+                                $('#student-query-table').DataTable().ajax.reload();
                             } else {
-                                toastr.error(response.message || "Something went wrong.");
+                                toastr.error(res.message || "Something went wrong.");
                             }
                         },
-                        error: function(xhr) {
-                            submitBtn.prop('disabled', false);
+                        error: function (xhr) {
+                            $btn.prop('disabled', false);
                             toastr.error(xhr.responseJSON?.message || "Submission failed!");
                         }
                     });
@@ -222,5 +214,4 @@
             });
         @endforeach
     });
-    </script>
-    
+</script>

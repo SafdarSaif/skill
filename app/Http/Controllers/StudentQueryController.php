@@ -44,8 +44,8 @@ class StudentQueryController extends Controller
             $data = StudentQuery::with('student')
                 ->orderBy('id', 'desc')
                 ->get()
-                ->unique('student_id') // Keep only one query per student
-                ->values(); // Reset keys
+                ->unique('student_id') 
+                ->values(); 
 
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -58,9 +58,9 @@ class StudentQueryController extends Controller
                 ->addColumn('query', function ($row) {
                     return $row->query ?? 'N/A';
                 })
-                ->addColumn('attachment', function ($row) {
-                    return $row->attachment;
-                })
+                // ->addColumn('attachment', function ($row) {
+                //     return $row->attachment;
+                // })
                 ->addColumn('status', function ($row) {
                     return $row->status;
                 })
@@ -161,13 +161,13 @@ class StudentQueryController extends Controller
         }
 
         try {
-            $attachmentPath = ['answer' => []];
+            $attachmentPath = ['question' => []];
 
             if ($request->hasFile('attachment')) {
                 $index = 0;
                 foreach ($request->file('attachment') as $file) {
                     $filePath = uploadFile($file, 'attachments');
-                    $attachmentPath['answer'][(string) $index] = $filePath;
+                    $attachmentPath['question'][(string) $index] = $filePath;
                     $index++;
                 }
             }
@@ -179,7 +179,7 @@ class StudentQueryController extends Controller
                 'phone' => $request->input('phone'),
                 'query' => $request->input('query'),
                 'answer' => $request->input('answer', null),
-                'attachment' => !empty($attachmentPath['answer']) ? json_encode($attachmentPath, JSON_FORCE_OBJECT) : null, // Ensure forced JSON object format
+                'attachment' => !empty($attachmentPath['question']) ? json_encode($attachmentPath, JSON_FORCE_OBJECT) : null, // Ensure forced JSON object format
             ]);
 
             return response()->json([
@@ -462,79 +462,86 @@ class StudentQueryController extends Controller
 
 
 
+    //     public function editquery($id)
+    // {
+    //     // Fetch the specific query
+    //     $videoQuery = StudentQuery::findOrFail($id);
+
+    //     // Fetch all queries by the same student (assuming you want to show multiple queries)
+    //     $allQueries = StudentQuery::where('student_id', $videoQuery->student_id)->get();
+
+    //     // Fetch video list for dropdown
+    //     $subjectvideo = SubjectVideo::pluck('Name', 'id')->toArray();
+
+    //     // Fetch student list for dropdown
+    //     $student = Students::pluck('name', 'id')->toArray();
+
+    //     return view('website.studentquery.reslove', compact('videoQuery', 'allQueries', 'subjectvideo', 'student'));
+    // }
+
     public function editquery($id)
-{
-    // Fetch the specific query
-    $videoQuery = StudentQuery::findOrFail($id);
-
-    // Fetch all queries by the same student (assuming you want to show multiple queries)
-    $allQueries = StudentQuery::where('student_id', $videoQuery->student_id)->get();
-
-    // Fetch video list for dropdown
-    $subjectvideo = SubjectVideo::pluck('Name', 'id')->toArray();
-
-    // Fetch student list for dropdown
-    $student = Students::pluck('name', 'id')->toArray();
-
-    return view('website.studentquery.reslove', compact('videoQuery', 'allQueries', 'subjectvideo', 'student'));
-}
-
-
-
-
-
-public function updateAnswer(Request $request, $id)
-{
-    $validator = Validator::make($request->all(), [
-        'answer' => 'required|string|min:5',
-        'attachment.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
-    ]);
-
-    if ($validator->fails()) {
-        return response()->json([
-            'status' => 'error',
-            'message' => $validator->errors()->first(),
-        ], 422);
+    {
+        $videoQuery = StudentQuery::findOrFail($id);
+        $allQueries = StudentQuery::where('video_id', $videoQuery->video_id)->get();
+        $subjectvideo = SubjectVideo::pluck('Name', 'id')->toArray();
+        $student = Students::find($videoQuery->student_id); // ← Get full student record
+    
+        return view('website.studentquery.reslove', compact('videoQuery', 'allQueries', 'subjectvideo', 'student'));
     }
+    
 
-    try {
-        $studentQuery = StudentQuery::findOrFail($id);
 
-        // Decode old attachments (if any)
-        $attachmentPath = json_decode($studentQuery->attachment, true) ?? ['answer' => []];
 
-        // Append new files to 'answer' array
-        if ($request->hasFile('attachment')) {
-            foreach ($request->file('attachment') as $file) {
-                $filePath = uploadFile($file, 'attachments'); // You must define uploadFile() helper
-                $attachmentPath['answer'][] = $filePath;
-            }
-        }
 
-        // Update only answer and attachment fields
-        $studentQuery->update([
-            'answer' => $request->input('answer'),
-            'attachment' => !empty($attachmentPath['answer']) ? json_encode($attachmentPath, JSON_FORCE_OBJECT) : null,
-            'status' => 1,
+    public function updateAnswer(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'answer' => 'required|string|min:5',
+            'attachment.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
         ]);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Answer submitted successfully!',
-            'data' => $studentQuery
-        ], 200);
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Failed to submit answer: ' . $e->getMessage()
-        ], 500);
+    
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $validator->errors()->first(),
+            ], 422);
+        }
+    
+        try {
+            $studentQuery = StudentQuery::findOrFail($id);
+    
+            $attachmentPath = json_decode($studentQuery->attachment, true) ?? ['answer' => [], 'question' => []];
+    
+            // Upload new files and merge
+            if ($request->hasFile('attachment')) {
+                foreach ($request->file('attachment') as $file) {
+                    $filePath = uploadFile($file, 'attachments'); // Define this helper
+                    $attachmentPath['answer'][] = $filePath;
+                }
+            }
+    
+            $studentQuery->answer = $request->input('answer');
+            $studentQuery->attachment = json_encode($attachmentPath, JSON_FORCE_OBJECT);
+            $studentQuery->status = 1;
+            $studentQuery->save();
+    
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Answer submitted successfully!',
+                'data' => $studentQuery
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to submit answer: ' . $e->getMessage()
+            ], 500);
+        }
     }
-}
+    
 
 
 
 
-   
 
 
 
@@ -650,4 +657,34 @@ public function updateAnswer(Request $request, $id)
             ]);
         }
     }
+
+    public function destroyQuery($id)
+    {
+        try {
+            $query = StudentQuery::findOrFail($id);
+    
+            // Delete attachments
+            if (!empty($query->attachment)) {
+                $attachments = json_decode($query->attachment, true);
+                foreach (['question', 'answer'] as $type) {
+                    if (!empty($attachments[$type])) {
+                        foreach ($attachments[$type] as $filePath) {
+                            $fullPath = public_path($filePath);
+                            if (file_exists($fullPath)) {
+                                @unlink($fullPath);
+                            }
+                        }
+                    }
+                }
+            }
+    
+            $query->delete();
+    
+            return response()->json(['status' => true, 'message' => 'Query deleted successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => false, 'message' => 'Error deleting query.']);
+        }
+    }
+    
+
 }
