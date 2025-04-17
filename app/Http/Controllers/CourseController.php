@@ -743,54 +743,113 @@ class CourseController extends Controller
 
 
 
+    // public function coursesFunc(Request $request, $column = '', $value = '')
+    // {
+    //     try {
+    //         $studentId = $request->header('student_id');
+    //         $limit = $request->header('limit', 10);
+    //         $page = $request->header('page', 1); 
+
+
+    //         $query = Course::with('category', 'users', 'subjects')->where('status', 1);
+
+    //         if (!empty($column) && !empty($value)) {
+    //             $query->where($column, $value);
+    //         }
+
+    //         $courses = $query->paginate($limit);
+
+    //         $enrolledCourseIds = [];
+
+    //         if ($studentId) {
+    //             $enrolledCourseIds = StudentCourse::where('student_id', $studentId)
+    //                 ->pluck('course_id')
+    //                 ->toArray();
+    //         }
+
+    //         // Add is_enrolled flag to each course
+    //         $courses->getCollection()->transform(function ($course) use ($enrolledCourseIds) {
+    //             $course->is_enrolled = in_array($course->id, $enrolledCourseIds);
+    //             return $course;
+    //         });
+
+    //         if ($courses->count()) {
+    //             return response()->json([
+    //                 'status' => "success",
+    //                 'message' => "All Course Lists",
+    //                 'data' => $courses->items(),
+    //                 'pagination' => [
+    //                     'total' => $courses->total(),
+    //                     'per_page' => $courses->perPage(),
+    //                     'current_page' => $courses->currentPage(),
+    //                     'last_page' => $courses->lastPage(),
+    //                     'from' => $courses->firstItem(),
+    //                     'to' => $courses->lastItem(),
+    //                 ],
+    //             ]);
+    //         } else {
+    //             return response()->json([
+    //                 'status' => "error",
+    //                 'message' => "No Course Found",
+    //             ]);
+    //         }
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => $e->getMessage(),
+    //         ]);
+    //     }
+    // }
+
     public function coursesFunc(Request $request, $column = '', $value = '')
     {
         try {
-            $studentId = $request->header('student_id');
+            // Get headers
             $limit = $request->header('limit', 10);
-
-            $query = Course::with('category', 'users', 'subjects')->where('status', 1);
-
-            if (!empty($column) && !empty($value)) {
-                $query->where($column, $value);
-            }
-
-            $courses = $query->paginate($limit);
-
+            $page = $request->header('page', 1);
+            $studentId = $request->header('student_id');
+    
+            // Build query
+            $query = Course::with('category', 'users', 'subjects')
+                ->where('status', 1)
+                ->when(!empty($column) && !empty($value), function ($q) use ($column, $value) {
+                    return $q->where($column, $value);
+                });
+    
+            // Paginate result
+            $courses = $query->paginate($limit, ['*'], 'page', $page);
+    
+            // Get enrolled course IDs for student
             $enrolledCourseIds = [];
-
+    
             if ($studentId) {
                 $enrolledCourseIds = StudentCourse::where('student_id', $studentId)
                     ->pluck('course_id')
                     ->toArray();
             }
-
-            // Add is_enrolled flag to each course
+    
+            // Mark enrolled courses
             $courses->getCollection()->transform(function ($course) use ($enrolledCourseIds) {
                 $course->is_enrolled = in_array($course->id, $enrolledCourseIds);
                 return $course;
             });
-
-            if ($courses->count()) {
-                return response()->json([
-                    'status' => "success",
-                    'message' => "All Course Lists",
-                    'data' => $courses->items(),
-                    'pagination' => [
-                        'total' => $courses->total(),
-                        'per_page' => $courses->perPage(),
-                        'current_page' => $courses->currentPage(),
-                        'last_page' => $courses->lastPage(),
-                        'from' => $courses->firstItem(),
-                        'to' => $courses->lastItem(),
-                    ],
-                ]);
-            } else {
-                return response()->json([
-                    'status' => "error",
-                    'message' => "No Course Found",
-                ]);
-            }
+    
+            // Return response
+            return response()->json([
+                'status' => "success",
+                'message' => "All Course Lists",
+                'data' => $courses->items(),
+                'pagination' => [
+                    'total' => $courses->total(),
+                    'per_page' => $courses->perPage(),
+                    'current_page' => $courses->currentPage(),
+                    'last_page' => $courses->lastPage(),
+                    'from' => $courses->firstItem(),
+                    'to' => $courses->lastItem(),
+                    'next_page_url' => $courses->nextPageUrl(),
+                    'prev_page_url' => $courses->previousPageUrl(),
+                ]
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -798,13 +857,15 @@ class CourseController extends Controller
             ]);
         }
     }
+    
+
 
 
     public function bannerCoursesFunc(Request $request)
     {
         try {
             $limit = $request->header('limit', 10);
-            $page = $request->header('page', 1); // Get the page number from headers (default to 1)
+            $page = $request->header('page', 1);
 
             // Get student ID from request header
             $studentId = $request->header('student_id');

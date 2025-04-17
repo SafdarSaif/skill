@@ -25,10 +25,10 @@
                             data: 'query',
                             title: 'Query'
                         },
-                        // {
-                        //     data: 'attachment',
-                        //     title: 'Attachments'
-                        // },
+                        {
+                            data: 'attachment',
+                            title: 'Attachments'
+                        },
                         {
                             data: 'status',
                             title: 'Status'
@@ -40,57 +40,57 @@
                     ],
                     columnDefs: [
 
-                        // {
-                        //     targets: 4, // Attachments column
-                        //     render: function(data, type, full, meta) {
-                        //         var attachmentsHtml = '';
+                        {
+                            targets: 4, // Attachments column
+                            render: function(data, type, full, meta) {
+                                var attachmentsHtml = '';
 
-                        //         // console.log(full['attachment']); 
+                                // console.log(full['attachment']); 
 
-                        //         if (full['attachment']) {
-                        //             try {
-                        //                 // Decode any HTML entities (to convert &quot; back to ")
-                        //                 let decodedData = $("<textarea/>").html(full['attachment'])
-                        //                     .text();
+                                if (full['attachment']) {
+                                    try {
+                                        // Decode any HTML entities (to convert &quot; back to ")
+                                        let decodedData = $("<textarea/>").html(full['attachment'])
+                                            .text();
 
-                        //                 // Parse JSON string to object
-                        //                 let attachments = JSON.parse(decodedData);
+                                        // Parse JSON string to object
+                                        let attachments = JSON.parse(decodedData);
 
-                        //                 // Display Question Attachments
-                        //                 if (attachments['question'] && Object.keys(attachments[
-                        //                         'question']).length) {
-                        //                     attachmentsHtml += `<strong>Question:</strong><ul>`;
-                        //                     Object.values(attachments['question']).forEach(file => {
-                        //                         attachmentsHtml +=
-                        //                             `<li><a href="${file}" target="_blank">${file.split('/').pop()}</a></li>`;
-                        //                     });
-                        //                     attachmentsHtml += `</ul>`;
-                        //                 }
+                                        // Display Question Attachments
+                                        if (attachments['question'] && Object.keys(attachments[
+                                                'question']).length) {
+                                            attachmentsHtml += `<strong>Question:</strong><ul>`;
+                                            Object.values(attachments['question']).forEach(file => {
+                                                attachmentsHtml +=
+                                                    `<li><a href="${file}" target="_blank">${file.split('/').pop()}</a></li>`;
+                                            });
+                                            attachmentsHtml += `</ul>`;
+                                        }
 
-                        //                 // Display Answer Attachments
-                        //                 if (attachments['answer'] && Object.keys(attachments[
-                        //                         'answer']).length) {
-                        //                     attachmentsHtml += `<strong>Answer:</strong><ul>`;
-                        //                     Object.values(attachments['answer']).forEach(file => {
-                        //                         attachmentsHtml +=
-                        //                             `<li><a href="${file}" target="_blank">${file.split('/').pop()}</a></li>`;
-                        //                     });
-                        //                     attachmentsHtml += `</ul>`;
-                        //                 }
+                                        // Display Answer Attachments
+                                        if (attachments['answer'] && Object.keys(attachments[
+                                                'answer']).length) {
+                                            attachmentsHtml += `<strong>Answer:</strong><ul>`;
+                                            Object.values(attachments['answer']).forEach(file => {
+                                                attachmentsHtml +=
+                                                    `<li><a href="${file}" target="_blank">${file.split('/').pop()}</a></li>`;
+                                            });
+                                            attachmentsHtml += `</ul>`;
+                                        }
 
-                        //             } catch (e) {
-                        //                 console.error("Error parsing attachments:", e);
-                        //                 attachmentsHtml = 'Invalid Attachment Data';
-                        //             }
-                        //         }
+                                    } catch (e) {
+                                        console.error("Error parsing attachments:", e);
+                                        attachmentsHtml = 'Invalid Attachment Data';
+                                    }
+                                }
 
-                        //         return attachmentsHtml || 'No Attachments';
-                        //     }
-                        // },
+                                return attachmentsHtml || 'No Attachments';
+                            }
+                        },
 
 
                         {
-                            targets: 4,
+                            targets: 5,
                             render: function(data, type, full, meta) {
                                 var checked = full['status'] == 1 ? 'checked' : '';
                                 var statusText = full['status'] == 1 ? 'Resolved' : 'Pending';
@@ -112,29 +112,17 @@
                             targets: -1, // Actions column
                             searchable: false,
                             orderable: false,
-                            // render: function(data, type, full, meta) {
-                            //     return `
-                        //         <span class="text-nowrap">
-                        //             <button class="btn btn-sm btn-icon me-2" onclick="edit('/studentquery/edit/${full['id']}', 'modal-lg')">
-                        //                 <i class="ti ti-edit"></i>
-                        //             </button>
-                        //             <button class="btn btn-sm btn-icon delete-record" onclick="destry('/studentquery/destroy/${full['id']}', 'student-query-table')">
-                        //                 <i class="ti ti-trash"></i>
-                        //             </button>
-                        //         </span>`;
-                            // }
                             render: function(data, type, full, meta) {
                                 return `
-                              <span class="text-nowrap">
-                               <button class="btn btn-sm btn-icon me-2" onclick="view('/studentquery/show/${full['id']}/${full['student_id']}', 'modal-lg')">
-                             <i class="ti ti-eye"></i>
-                             </button>
-                      <button class="btn btn-sm btn-icon delete-record" onclick="destry('/studentquery/destroy/${full['id']}', 'student-query-table')">
-                       <i class="ti ti-trash"></i>
-                        </button>
-                         </span>`;
+                                    <span class="text-nowrap">
+                                        <button class="btn btn-sm btn-icon me-2" onclick="edit('/studentquery/edit/${full['id']}', 'modal-lg')">
+                                            <i class="ti ti-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-icon delete-record" onclick="destry('/studentquery/destroy/${full['id']}', 'student-query-table')">
+                                            <i class="ti ti-trash"></i>
+                                        </button>
+                                    </span>`;
                             }
-
                         }
                     ],
                     aaSorting: false,
@@ -186,13 +174,6 @@
         });
     </script>
 
-    <script>
-        function view(url) {
-            window.location.href = url;
-        }
-    </script>
-
-
     <h4 class="mb-4">Student Queries</h4>
     <div class="card">
         <div class="card-datatable table-responsive">
@@ -203,7 +184,7 @@
                         <th>Student Name</th>
                         <th>Email</th>
                         <th>Query</th>
-                        {{-- <th>Attachemts</th> --}}
+                        <th>Attachemts</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
@@ -211,4 +192,6 @@
             </table>
         </div>
     </div>
+
+    
 @endsection
