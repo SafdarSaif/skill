@@ -35,7 +35,7 @@
                         },
                     ],
                     columnDefs: [
-                        
+
                         {
                             targets: 3,
                             render: function(data, type, full, meta) {
@@ -62,9 +62,10 @@
                         {
                             targets: 4,
                             render: function(data, type, full, meta) {
-                                return data ? moment(data).format('DD-MM-YYYY HH:mm A') : 'N/A';
+                                return data ? moment(data).format('D MMMM YYYY') : 'N/A';
                             }
                         },
+
                         {
                             targets: -1,
                             searchable: false,

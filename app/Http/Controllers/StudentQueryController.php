@@ -297,9 +297,12 @@ class StudentQueryController extends Controller
         $validator = Validator::make($request->all(), [
             'video_id' => 'required|exists:subject_videos,id',
             'student_id' => 'required|exists:students,id',
-            'student_name' => 'required|string|min:3|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'required|digits:10',
+            // 'student_name' => 'required|string|min:3|max:255',
+            // 'email' => 'required|email|max:255',
+            // 'phone' => 'required|digits:10',
+            'student_name' => 'nullable|string|min:3|max:255',
+            'email' => 'nullable|email|max:255',
+            'phone' => 'nullable|digits:10',
             'query' => 'required|string',
             'answer' => 'nullable|string',
             'attachment.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048', // Allow multiple files

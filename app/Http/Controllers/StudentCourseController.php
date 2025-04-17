@@ -72,9 +72,10 @@ class StudentCourseController extends Controller
             ->addIndexColumn()
             ->editColumn('created_at', function ($data) {
                 return $data->created_at
-                    ? Carbon::parse($data->created_at)->format('d-m-Y h:i A')
+                    ? Carbon::parse($data->created_at)->format('d F Y')
                     : 'N/A';
             })
+            
             ->addColumn('student_name', function ($data) {
                 return $data->student ? $data->student->name : 'N/A';
             })
