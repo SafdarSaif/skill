@@ -22,9 +22,18 @@
                             title: 'Email'
                         },
                         {
-                            data: 'query',
-                            title: 'Query'
+                            data: 'query_count',
+                            title: 'Total Query'
                         },
+                        {
+                            data: 'latest_query',
+                            title: 'Latest Query',
+                            render: function(data, type, full, meta) {
+                                if (!data) return '';
+                                return data.length > 50 ? data.substring(0, 50) + '...' : data;
+                            }
+                        },
+
                         // {
                         //     data: 'attachment',
                         //     title: 'Attachments'
@@ -90,7 +99,7 @@
 
 
                         {
-                            targets: 4,
+                            targets: 5,
                             render: function(data, type, full, meta) {
                                 var checked = full['status'] == 1 ? 'checked' : '';
                                 var statusText = full['status'] == 1 ? 'Resolved' : 'Pending';
@@ -108,34 +117,52 @@
 
 
                         },
-                        {
-                            targets: -1, // Actions column
-                            searchable: false,
-                            orderable: false,
-                            // render: function(data, type, full, meta) {
-                            //     return `
-                        //         <span class="text-nowrap">
-                        //             <button class="btn btn-sm btn-icon me-2" onclick="edit('/studentquery/edit/${full['id']}', 'modal-lg')">
-                        //                 <i class="ti ti-edit"></i>
-                        //             </button>
-                        //             <button class="btn btn-sm btn-icon delete-record" onclick="destry('/studentquery/destroy/${full['id']}', 'student-query-table')">
-                        //                 <i class="ti ti-trash"></i>
-                        //             </button>
-                        //         </span>`;
-                            // }
-                            render: function(data, type, full, meta) {
-                                return `
-                              <span class="text-nowrap">
-                               <button class="btn btn-sm btn-icon me-2" onclick="view('/studentquery/show/${full['id']}/${full['student_id']}', 'modal-lg')">
-                             <i class="ti ti-eye"></i>
-                             </button>
-                      <button class="btn btn-sm btn-icon delete-record" onclick="destry('/studentquery/destroy/${full['id']}', 'student-query-table')">
-                       <i class="ti ti-trash"></i>
-                        </button>
-                         </span>`;
-                            }
+                    //     {
+                    //         targets: -1, // Actions column
+                    //         searchable: false,
+                    //         orderable: false,
+                    //         // render: function(data, type, full, meta) {
+                    //         //     return `
+                    //     //         <span class="text-nowrap">
+                    //     //             <button class="btn btn-sm btn-icon me-2" onclick="edit('/studentquery/edit/${full['id']}', 'modal-lg')">
+                    //     //                 <i class="ti ti-edit"></i>
+                    //     //             </button>
+                    //     //             <button class="btn btn-sm btn-icon delete-record" onclick="destry('/studentquery/destroy/${full['id']}', 'student-query-table')">
+                    //     //                 <i class="ti ti-trash"></i>
+                    //     //             </button>
+                    //     //         </span>`;
+                    //         // }
+                    //         render: function(data, type, full, meta) {
+                    //             return `
+                    //           <span class="text-nowrap">
+                    //            <button class="btn btn-sm btn-icon me-2" onclick="view('/studentquery/show/${full['id']}/${full['student_id']}')">
+                    //          <i class="ti ti-eye"></i>
+                    //          </button>
+                    //   <button class="btn btn-sm btn-icon delete-record" onclick="destry('/studentquery/destroy/${full['id']}', 'student-query-table')">
+                    //    <i class="ti ti-trash"></i>
+                    //     </button>
+                    //      </span>`;
+                    //         }
 
-                        }
+                    //     }
+
+                    {
+    targets: -1,
+    searchable: false,
+    orderable: false,
+    render: function(data, type, full, meta) {
+        return `
+        <span class="text-nowrap">
+            <a class="btn btn-sm btn-icon me-2" href="/studentquery/show/${full['id']}/${full['student_id']}">
+                <i class="ti ti-eye"></i>
+            </a>
+            <button class="btn btn-sm btn-icon delete-record" onclick="destry('/studentquery/destroy/${full['id']}', 'student-query-table')">
+                <i class="ti ti-trash"></i>
+            </button>
+        </span>`;
+    }
+}
+
                     ],
                     aaSorting: false,
                     dom: '<"row mx-1"' +
@@ -186,11 +213,11 @@
         });
     </script>
 
-    <script>
+    {{-- <script>
         function view(url) {
             window.location.href = url;
         }
-    </script>
+    </script> --}}
 
 
     <h4 class="mb-4">Student Queries</h4>
@@ -202,8 +229,8 @@
                         <th>No.</th>
                         <th>Student Name</th>
                         <th>Email</th>
-                        <th>Query</th>
-                        {{-- <th>Attachemts</th> --}}
+                        <th>Total Query</th>
+                        <th>Latest Query</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>

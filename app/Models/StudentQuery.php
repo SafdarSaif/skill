@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class StudentQuery extends Model
 {
@@ -28,5 +29,18 @@ class StudentQuery extends Model
     public function video()
     {
         return $this->belongsTo(SubjectVideo::class, 'video_id');
+    }
+
+    public static function getGroupedStudentQueries()
+    {
+        return self::select(
+                'student_id',
+                DB::raw('MAX(id) as latest_id'),
+                DB::raw('COUNT(*) as total_queries')
+            )
+            ->groupBy('student_id')
+            ->with('student')
+            ->orderByDesc('latest_id')
+            ->get();
     }
 }

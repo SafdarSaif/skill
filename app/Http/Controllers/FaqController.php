@@ -37,7 +37,7 @@ class FaqController extends Controller
 public function getFaqs(Request $request)
 {
     try {
-        $perPage = $request->get('limit', 1); // Default: 10 FAQs per page
+        $perPage = $request->get('limit', 10); // Default: 10 FAQs per page
 
         $faqs = Faq::where('status', 1)
             ->orderBy('created_at', 'desc')

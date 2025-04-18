@@ -87,7 +87,9 @@
             <div class="col-md-6">
                 <div class="card shadow-sm h-100">
                     <div class="card-body">
-                        <h5 class="mb-3">Query ID: #{{ $query->id }}
+                        {{-- <h5 class="mb-3">Query ID: #{{ $query->id }} --}}
+                            <h5 class="mb-3">#{{ $loop->iteration }}
+
                             <span class="float-end text-muted small">{{ $query->created_at->format('d M Y') }}</span>
                         </h5>
                         <hr>
