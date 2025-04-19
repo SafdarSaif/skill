@@ -8,6 +8,8 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Models\NewsRead;
+use App\Models\Students;
 
 class NewsUpdateController extends Controller
 {
@@ -17,14 +19,36 @@ class NewsUpdateController extends Controller
      */
 
 
-    // public function getNew()
+    public function getNew()
+    {
+        try {
+            // $news = NewsUpdate::where('status', 1)->get()->toArray();
+            $news = NewsUpdate::where('status', 1)
+                ->orderBy('created_at', 'desc')
+                ->get()
+                ->toArray();
+            return response()->json([
+                'status' => 'success',
+                'data' => $news
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong! ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+   // API with  pagination and limit
+    // public function getNew(Request $request)
     // {
     //     try {
-    //         // $news = NewsUpdate::where('status', 1)->get()->toArray();
+    //         $perPage = $request->get('limit', 10); 
+
     //         $news = NewsUpdate::where('status', 1)
     //             ->orderBy('created_at', 'desc')
-    //             ->get()
-    //             ->toArray();
+    //             ->paginate($perPage);
+
     //         return response()->json([
     //             'status' => 'success',
     //             'data' => $news
@@ -37,27 +61,49 @@ class NewsUpdateController extends Controller
     //     }
     // }
 
-   // API with  pagination and limit
-    public function getNew(Request $request)
-    {
-        try {
-            $perPage = $request->get('limit', 10); 
 
-            $news = NewsUpdate::where('status', 1)
-                ->orderBy('created_at', 'desc')
-                ->paginate($perPage);
-
-            return response()->json([
-                'status' => 'success',
-                'data' => $news
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Something went wrong! ' . $e->getMessage()
-            ], 500);
-        }
-    }
+    // public function getNew(Request $request)
+    // {
+    //     try {
+    //         $studentId = $request->header('student_id');
+    
+    //         if (!$studentId) {
+    //             return response()->json([
+    //                 'status' => 'error',
+    //                 'message' => 'student_id is required in headers'
+    //             ], 422);
+    //         }
+    
+    //         $readIds = NewsRead::where('student_id', $studentId)
+    //             ->pluck('news_update_id')
+    //             ->toArray();
+    
+    //         $readNews = NewsUpdate::whereIn('id', $readIds)
+    //             ->where('status', 1)
+    //             ->orderBy('created_at', 'desc')
+    //             ->get();
+    
+    //         $unreadNews = NewsUpdate::whereNotIn('id', $readIds)
+    //             ->where('status', 1)
+    //             ->orderBy('created_at', 'desc')
+    //             ->get();
+    
+    //         return response()->json([
+    //             'status' => 'success',
+    //             'data' => [
+    //                 'read' => $readNews,
+    //                 'unread' => $unreadNews
+    //             ]
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Something went wrong! ' . $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
+    
+    
 
 
     /**

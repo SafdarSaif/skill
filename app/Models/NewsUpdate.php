@@ -13,4 +13,10 @@ class NewsUpdate extends Model
     use SoftDeletes;
 
     protected $fillable = ['name', 'content', 'image', 'status'];
+
+    public function readers()
+    {
+        return $this->belongsToMany(Students::class, 'news_reads')
+            ->withPivot('read_at');
+    }
 }

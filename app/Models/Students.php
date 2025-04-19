@@ -34,7 +34,8 @@ class Students extends Model
     ];
 
 
-    public function studentCourses(){
+    public function studentCourses()
+    {
         return $this->hasMany(StudentCourse::class, 'student_id')->with('course');
     }
 
@@ -47,6 +48,15 @@ class Students extends Model
         return $this->hasMany(StudentProgress::class, 'student_id');
     }
 
- 
-}
 
+
+
+    /**
+     * Define relationship: A student has many news.
+     */
+    public function readNews()
+    {
+        return $this->belongsToMany(NewsUpdate::class, 'news_reads')
+            ->withPivot('read_at');
+    }
+}
