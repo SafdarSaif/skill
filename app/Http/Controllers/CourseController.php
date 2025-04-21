@@ -557,6 +557,7 @@ class CourseController extends Controller
 
 
     public function getCourseByType(Request $request, $typeId = 0)
+    
     {
         try {
             $studentId = $request->header('student_id');
@@ -573,9 +574,10 @@ class CourseController extends Controller
 
             // Get all course types based on conditions
             $courseTypesQuery = CourseType::where('status', 1)
-                ->whereHas('courses', function ($query) {
-                    $query->where('status', 1)->where('is_banner', 0);
-                });
+                ->with(['courses'=>function ($query) {
+                    $query->where('status', 1);
+
+                }]);
 
             if ($typeId != 0) {
                 $courseTypesQuery->where('id', $typeId);
@@ -593,7 +595,6 @@ class CourseController extends Controller
             foreach ($courseTypes as $type) {
                 $courses = Course::with('category', 'users', 'subjects')
                     ->where('status', 1)
-                    ->where('is_banner', 0)
                     ->where('type_id', $type->id)
                     ->paginate($limit, ['*'], 'page', $page);
 
