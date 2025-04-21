@@ -552,6 +552,7 @@ class CourseController extends Controller
 
 
     public function getCourseByType(Request $request, $typeId = 0)
+    
     {
         try {
             $studentId = $request->header('student_id');
