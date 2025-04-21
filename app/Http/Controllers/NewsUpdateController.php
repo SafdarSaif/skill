@@ -105,64 +105,67 @@ class NewsUpdateController extends Controller
 
 
     public function getNew(Request $request)
-    {
-        try {
-            $studentId = $request->header('student_id');
-            $limit = (int) $request->header('limit', 10); // Default limit = 10
-            $page = (int) $request->header('page', 1);     // Default page = 1
+{
+    try {
+        $studentId = $request->header('student_id');
+        $limit = (int) $request->header('limit', 10); // Default limit = 10
+        $page = (int) $request->header('page', 1);    // Default page = 1
 
-            if (!$studentId) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'student_id is required in headers'
-                ], 422);
-            }
+        // Base query for active news
+        $query = NewsUpdate::where('status', 1)->orderBy('created_at', 'desc');
 
-            // Get IDs of news the student has read
+        // Total counts before pagination
+        $totalCount = $query->count();
+
+        $readIds = [];
+        $readCount = 0;
+        $unreadCount = $totalCount;
+
+        // If student ID is provided, calculate read/unread
+        if ($studentId) {
             $readIds = NewsRead::where('student_id', $studentId)
                 ->pluck('news_update_id')
                 ->toArray();
 
-            // Base query for all active news
-            $query = NewsUpdate::where('status', 1)->orderBy('created_at', 'desc');
-
-            // Total counts before pagination
-            $totalCount = $query->count();
             $readCount = NewsUpdate::whereIn('id', $readIds)->where('status', 1)->count();
             $unreadCount = $totalCount - $readCount;
-
-            // Apply pagination
-            $newsPaginated = $query->skip(($page - 1) * $limit)->take($limit)->get();
-
-            // Mark read status
-            $newsWithReadStatus = $newsPaginated->map(function ($news) use ($readIds) {
-                $news->read = in_array($news->id, $readIds);
-                return $news;
-            });
-
-            return response()->json([
-                'status' => 'success',
-                'data' => [
-                    'content' => $newsWithReadStatus,
-                    'count' => [
-                        'total' => $totalCount,
-                        'read' => $readCount,
-                        'unread' => $unreadCount
-                    ],
-                    'pagination' => [
-                        'current_page' => $page,
-                        'per_page' => $limit,
-                        'total_pages' => ceil($totalCount / $limit)
-                    ]
-                ]
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Something went wrong! ' . $e->getMessage()
-            ], 500);
         }
+
+        // Apply pagination
+        $newsPaginated = $query->skip(($page - 1) * $limit)->take($limit)->get();
+
+        // Mark read/unread status only if student ID exists
+        $newsWithReadStatus = $newsPaginated->map(function ($news) use ($readIds, $studentId) {
+            $news->read = $studentId ? in_array($news->id, $readIds) : null;
+            return $news;
+        });
+
+        return response()->json([
+            'status' => true,
+            'data' => [
+                'content' => $newsWithReadStatus,
+                'count' => [
+                    'total' => $totalCount,
+                    'read' => $readCount,
+                    'unread' => $unreadCount
+                ],
+                'pagination' => [
+                    'current_page' => $page,
+                    'per_page' => $limit,
+                    'total_pages' => ceil($totalCount / $limit)
+                ]
+            ]
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Something went wrong!',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
+
 
 
 
