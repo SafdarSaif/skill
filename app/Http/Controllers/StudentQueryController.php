@@ -240,18 +240,21 @@ class StudentQueryController extends Controller
     /**
      * Display the specified resource.
      */
-    // Api for student query
+    // Api for student query old
+    
+
     // public function getQuery(Request $request)
     // {
+    //     // Validate input data
     //     $validator = Validator::make($request->all(), [
     //         'video_id' => 'required|exists:subject_videos,id',
     //         'student_id' => 'required|exists:students,id',
-    //         'student_name' => 'required|string|min:3|max:255',
-    //         'email' => 'required|email|max:255',
-    //         'phone' => 'required|digits:10',
-    //         'query' => 'required|string|min:10',
+    //         'student_name' => 'nullable|string|min:3|max:255',
+    //         'email' => 'nullable|email|max:255',
+    //         'phone' => 'nullable|digits:10',
+    //         'query' => 'required|string',
     //         'answer' => 'nullable|string',
-    //         'attachment' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
+    //         'attachment.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048', 
     //     ]);
 
     //     if ($validator->fails()) {
@@ -262,10 +265,16 @@ class StudentQueryController extends Controller
     //     }
 
     //     try {
-    //         $attachmentPath = $request->hasFile('attachment')
-    //             ? uploadFile($request->file('attachment'), 'attachments')
-    //             : null;
+    //         $attachmentPath = ['question' => []];
 
+    //         if ($request->hasFile('attachment')) {
+    //             $index = 0;
+    //             foreach ($request->file('attachment') as $file) {
+    //                 $filePath = uploadFile($file, 'attachments');
+    //                 $attachmentPath['question'][(string) $index] = $filePath;
+    //                 $index++;
+    //             }
+    //         }
 
     //         $studentQuery = StudentQuery::create([
     //             'video_id' => $request->input('video_id'),
@@ -275,7 +284,7 @@ class StudentQueryController extends Controller
     //             'phone' => $request->input('phone'),
     //             'query' => $request->input('query'),
     //             'answer' => $request->input('answer', null),
-    //             'attachment' => $attachmentPath,
+    //             'attachment' => json_encode($attachmentPath, JSON_FORCE_OBJECT),
     //         ]);
 
     //         return response()->json([
@@ -291,65 +300,72 @@ class StudentQueryController extends Controller
     //     }
     // }
 
-    public function getQuery(Request $request)
-    {
-        // Validate input data
-        $validator = Validator::make($request->all(), [
-            'video_id' => 'required|exists:subject_videos,id',
-            'student_id' => 'required|exists:students,id',
-            // 'student_name' => 'required|string|min:3|max:255',
-            // 'email' => 'required|email|max:255',
-            // 'phone' => 'required|digits:10',
-            'student_name' => 'nullable|string|min:3|max:255',
-            'email' => 'nullable|email|max:255',
-            'phone' => 'nullable|digits:10',
-            'query' => 'required|string',
-            'answer' => 'nullable|string',
-            'attachment.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048', // Allow multiple files
+
+// modified at 18/04/2025
+
+public function getQuery(Request $request)
+{
+    // Validate input data
+    $validator = Validator::make($request->all(), [
+        'video_id' => 'required|exists:subject_videos,id',
+        'student_id' => 'required|exists:students,id',
+        'student_name' => 'nullable|string|min:3|max:255',
+        'email' => 'nullable|email|max:255',
+        'phone' => 'nullable|digits:10',
+        'query' => 'required|string',
+        'answer' => 'nullable|string',
+        'attachment.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $validator->errors()->first(),
+        ], 422);
+    }
+
+    try {
+        // Upload files only under "question"
+        $attachmentPath = ['question' => []];
+
+        if ($request->hasFile('attachment')) {
+            foreach ($request->file('attachment') as $file) {
+                $filePath = uploadFile($file, 'attachments');
+                $attachmentPath['question'][] = $filePath;
+            }
+        }
+
+        // Store query in database
+        $studentQuery = StudentQuery::create([
+            'video_id' => $request->input('video_id'),
+            'student_id' => $request->input('student_id'),
+            'name' => $request->input('student_name'),
+            'email' => $request->input('email'),
+            'phone' => $request->input('phone'),
+            'query' => $request->input('query'),
+            'answer' => $request->input('answer', null),
+            'attachment' => json_encode($attachmentPath, JSON_FORCE_OBJECT),
         ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $validator->errors()->first(),
-            ], 422);
-        }
+        // Prepare response
+        $data = $studentQuery->toArray();
+        $data['attachments'] = json_decode($studentQuery->attachment, true);
+        unset($data['attachment']);
 
-        try {
-            $attachmentPath = ['question' => []];
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Student query added successfully!',
+            'data' => $data
+        ], 200);
 
-            if ($request->hasFile('attachment')) {
-                $index = 0;
-                foreach ($request->file('attachment') as $file) {
-                    $filePath = uploadFile($file, 'attachments');
-                    $attachmentPath['question'][(string) $index] = $filePath;
-                    $index++;
-                }
-            }
-
-            $studentQuery = StudentQuery::create([
-                'video_id' => $request->input('video_id'),
-                'student_id' => $request->input('student_id'),
-                'name' => $request->input('student_name'),
-                'email' => $request->input('email'),
-                'phone' => $request->input('phone'),
-                'query' => $request->input('query'),
-                'answer' => $request->input('answer', null),
-                'attachment' => json_encode($attachmentPath, JSON_FORCE_OBJECT),
-            ]);
-
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Student query added successfully!',
-                'data' => $studentQuery
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to add student query: ' . $e->getMessage()
-            ], 500);
-        }
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Failed to add student query: ' . $e->getMessage()
+        ], 500);
     }
+}
+
 
 
 
