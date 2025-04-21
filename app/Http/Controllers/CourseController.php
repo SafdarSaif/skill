@@ -570,7 +570,8 @@ class CourseController extends Controller
             // Get all course types based on conditions
             $courseTypesQuery = CourseType::where('status', 1)
                 ->with(['courses'=>function ($query) {
-                    $query->where('status', 1)->where('is_banner', 0);
+                    $query->where('status', 1);
+
                 }]);
 
             if ($typeId != 0) {
