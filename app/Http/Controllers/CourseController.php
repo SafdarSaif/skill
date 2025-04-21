@@ -590,7 +590,6 @@ class CourseController extends Controller
             foreach ($courseTypes as $type) {
                 $courses = Course::with('category', 'users', 'subjects')
                     ->where('status', 1)
-                    ->where('is_banner', 0)
                     ->where('type_id', $type->id)
                     ->paginate($limit, ['*'], 'page', $page);
 
