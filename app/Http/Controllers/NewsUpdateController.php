@@ -19,27 +19,27 @@ class NewsUpdateController extends Controller
      */
 
 
-    public function getNew()
-    {
-        try {
-            // $news = NewsUpdate::where('status', 1)->get()->toArray();
-            $news = NewsUpdate::where('status', 1)
-                ->orderBy('created_at', 'desc')
-                ->get()
-                ->toArray();
-            return response()->json([
-                'status' => 'success',
-                'data' => $news
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Something went wrong! ' . $e->getMessage()
-            ], 500);
-        }
-    }
+    // public function getNew()
+    // {
+    //     try {
+    //         // $news = NewsUpdate::where('status', 1)->get()->toArray();
+    //         $news = NewsUpdate::where('status', 1)
+    //             ->orderBy('created_at', 'desc')
+    //             ->get()
+    //             ->toArray();
+    //         return response()->json([
+    //             'status' => 'success',
+    //             'data' => $news
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Something went wrong! ' . $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
 
-   // API with  pagination and limit
+    // API with  pagination and limit
     // public function getNew(Request $request)
     // {
     //     try {
@@ -66,28 +66,28 @@ class NewsUpdateController extends Controller
     // {
     //     try {
     //         $studentId = $request->header('student_id');
-    
+
     //         if (!$studentId) {
     //             return response()->json([
     //                 'status' => 'error',
     //                 'message' => 'student_id is required in headers'
     //             ], 422);
     //         }
-    
+
     //         $readIds = NewsRead::where('student_id', $studentId)
     //             ->pluck('news_update_id')
     //             ->toArray();
-    
+
     //         $readNews = NewsUpdate::whereIn('id', $readIds)
     //             ->where('status', 1)
     //             ->orderBy('created_at', 'desc')
     //             ->get();
-    
+
     //         $unreadNews = NewsUpdate::whereNotIn('id', $readIds)
     //             ->where('status', 1)
     //             ->orderBy('created_at', 'desc')
     //             ->get();
-    
+
     //         return response()->json([
     //             'status' => 'success',
     //             'data' => [
@@ -102,8 +102,69 @@ class NewsUpdateController extends Controller
     //         ], 500);
     //     }
     // }
-    
-    
+
+
+    public function getNew(Request $request)
+    {
+        try {
+            $studentId = $request->header('student_id');
+            $limit = (int) $request->header('limit', 10); // Default limit = 10
+            $page = (int) $request->header('page', 1);     // Default page = 1
+
+            if (!$studentId) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'student_id is required in headers'
+                ], 422);
+            }
+
+            // Get IDs of news the student has read
+            $readIds = NewsRead::where('student_id', $studentId)
+                ->pluck('news_update_id')
+                ->toArray();
+
+            // Base query for all active news
+            $query = NewsUpdate::where('status', 1)->orderBy('created_at', 'desc');
+
+            // Total counts before pagination
+            $totalCount = $query->count();
+            $readCount = NewsUpdate::whereIn('id', $readIds)->where('status', 1)->count();
+            $unreadCount = $totalCount - $readCount;
+
+            // Apply pagination
+            $newsPaginated = $query->skip(($page - 1) * $limit)->take($limit)->get();
+
+            // Mark read status
+            $newsWithReadStatus = $newsPaginated->map(function ($news) use ($readIds) {
+                $news->read = in_array($news->id, $readIds);
+                return $news;
+            });
+
+            return response()->json([
+                'status' => 'success',
+                'data' => [
+                    'content' => $newsWithReadStatus,
+                    'count' => [
+                        'total' => $totalCount,
+                        'read' => $readCount,
+                        'unread' => $unreadCount
+                    ],
+                    'pagination' => [
+                        'current_page' => $page,
+                        'per_page' => $limit,
+                        'total_pages' => ceil($totalCount / $limit)
+                    ]
+                ]
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong! ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+
 
 
     /**
@@ -293,7 +354,7 @@ class NewsUpdateController extends Controller
     {
         try {
             $data = NewsUpdate::findOrFail($id);
-            if ($data) { 
+            if ($data) {
                 NewsUpdate::find($id)->delete();
                 return response()->json([
                     'status' => 'success',

@@ -146,7 +146,8 @@ class StudentProgressController extends Controller
             }
 
             // Fetch course using Eloquent
-            $course = StudentCourse::find($validatedData['course_id']);
+            $course = Course::find($validatedData['course_id']);
+            // dd($course);
             if (!$course) {
                 return response()->json([
                     'status' => 'error',
