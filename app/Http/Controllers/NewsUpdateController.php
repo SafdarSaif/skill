@@ -19,25 +19,25 @@ class NewsUpdateController extends Controller
      */
 
 
-    public function getNew()
-    {
-        try {
-            // $news = NewsUpdate::where('status', 1)->get()->toArray();
-            $news = NewsUpdate::where('status', 1)
-                ->orderBy('created_at', 'desc')
-                ->get()
-                ->toArray();
-            return response()->json([
-                'status' => 'success',
-                'data' => $news
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Something went wrong! ' . $e->getMessage()
-            ], 500);
-        }
-    }
+    // public function getNew()
+    // {
+    //     try {
+    //         // $news = NewsUpdate::where('status', 1)->get()->toArray();
+    //         $news = NewsUpdate::where('status', 1)
+    //             ->orderBy('created_at', 'desc')
+    //             ->get()
+    //             ->toArray();
+    //         return response()->json([
+    //             'status' => 'success',
+    //             'data' => $news
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Something went wrong! ' . $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
 
    // API with  pagination and limit
     // public function getNew(Request $request)
@@ -62,46 +62,46 @@ class NewsUpdateController extends Controller
     // }
 
 
-    // public function getNew(Request $request)
-    // {
-    //     try {
-    //         $studentId = $request->header('student_id');
+    public function getNew(Request $request)
+    {
+        try {
+            $studentId = $request->header('student_id');
     
-    //         if (!$studentId) {
-    //             return response()->json([
-    //                 'status' => 'error',
-    //                 'message' => 'student_id is required in headers'
-    //             ], 422);
-    //         }
+            if (!$studentId) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'student_id is required in headers'
+                ], 422);
+            }
     
-    //         $readIds = NewsRead::where('student_id', $studentId)
-    //             ->pluck('news_update_id')
-    //             ->toArray();
+            $readIds = NewsRead::where('student_id', $studentId)
+                ->pluck('news_update_id')
+                ->toArray();
     
-    //         $readNews = NewsUpdate::whereIn('id', $readIds)
-    //             ->where('status', 1)
-    //             ->orderBy('created_at', 'desc')
-    //             ->get();
+            $readNews = NewsUpdate::whereIn('id', $readIds)
+                ->where('status', 1)
+                ->orderBy('created_at', 'desc')
+                ->get();
     
-    //         $unreadNews = NewsUpdate::whereNotIn('id', $readIds)
-    //             ->where('status', 1)
-    //             ->orderBy('created_at', 'desc')
-    //             ->get();
+            $unreadNews = NewsUpdate::whereNotIn('id', $readIds)
+                ->where('status', 1)
+                ->orderBy('created_at', 'desc')
+                ->get();
     
-    //         return response()->json([
-    //             'status' => 'success',
-    //             'data' => [
-    //                 'read' => $readNews,
-    //                 'unread' => $unreadNews
-    //             ]
-    //         ], 200);
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'status' => 'error',
-    //             'message' => 'Something went wrong! ' . $e->getMessage()
-    //         ], 500);
-    //     }
-    // }
+            return response()->json([
+                'status' => 'success',
+                'data' => [
+                    'read' => $readNews,
+                    'unread' => $unreadNews
+                ]
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong! ' . $e->getMessage()
+            ], 500);
+        }
+    }
     
     
 
