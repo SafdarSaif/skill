@@ -15,6 +15,7 @@ use App\Http\Controllers\TermsConditionController;
 use App\Http\Controllers\StudentProgressController;
 use App\Http\Controllers\StudentQueryController;
 // use App\Http\Controllers\EasebuzzController;
+use App\Http\Controllers\NewsReadController;
 
 use App\Models\Students;
 use Illuminate\Http\Request;
@@ -44,6 +45,9 @@ Route::post('/student-update', [StudentsController::class, 'updateStudents']);
 // API for Content
 Route::get('/all-faq', [FaqController::class, 'getFaqs'])->name('all-faq');
 Route::get('/all-news', [NewsUpdateController::class, 'getNew'])->name('all-news');
+Route::post('/news-read', [NewsReadController::class, 'markAsRead'])->name('news-read');
+
+
 Route::get('/subect-wise-content/{subject_id}/{student_id}', [SubjectController::class, 'getVideoNotesBySubject']);
 Route::get('/get-privacy', [PrivacyPolicyController::class, 'getPrivacy'])->name('get-privacy');
 Route::get('/get-terms', [TermsConditionController::class, 'getTerms'])->name('get-terms');
