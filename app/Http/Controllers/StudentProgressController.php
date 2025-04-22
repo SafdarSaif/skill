@@ -320,6 +320,7 @@ class StudentProgressController extends Controller
             })
             ->addColumn('course_name', function ($data) {
                 return optional($data->course)->name ?? 'N/A';
+                // dd($data->course)->name;
             })
             ->addColumn('subject_name', function ($data) {
                 return optional($data->subject)->name ?? 'N/A';

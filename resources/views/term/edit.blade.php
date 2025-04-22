@@ -24,21 +24,27 @@
 
 <script>
     $(document).ready(function () {
+        // Initialize CKEditor on edit textarea
+        CKEDITOR.replace('edit-content');
+
         $("#edit-terms-form").validate({
+            ignore: [], // validate hidden fields (like CKEditor)
             rules: {
                 content: {
-                    required: true,
-                    minlength: 20
+                    required: function () {
+                        CKEDITOR.instances['edit-content'].updateElement();
+                        return CKEDITOR.instances['edit-content'].getData().trim() === '';
+                    }
                 }
             },
             messages: {
                 content: {
-                    required: "Please enter the Terms & Conditions content",
-                    minlength: "Content must be at least 20 characters long"
+                    required: "Please enter the Terms & Conditions content"
                 }
             },
             submitHandler: function (form) {
                 $(':input[type="submit"]').prop('disabled', true);
+                CKEDITOR.instances['edit-content'].updateElement(); 
 
                 var formData = new FormData(form);
 
@@ -68,4 +74,3 @@
         });
     });
 </script>
-

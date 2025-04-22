@@ -12,7 +12,7 @@ class PrivacyPolicyController extends Controller
 {
 
 
-      /**
+    /**
      * Get all Privacy for API request
      */
     public function getPrivacy()
@@ -35,6 +35,21 @@ class PrivacyPolicyController extends Controller
     /**
      * Display a listing of the resource.
      */
+    // public function index(Request $request)
+    // {
+    //     if ($request->ajax()) {
+    //         $data = PrivacyPolicy::orderBy('id', 'desc')->get();
+
+    //         return DataTables::of($data)
+    //             ->addIndexColumn()
+    //             ->editColumn('created_at', function ($data) {
+    //                 return Carbon::createFromFormat('Y-m-d H:i:s', $data->created_at)->format('d-m-Y h:i A');
+    //             })
+    //             ->make(true);
+    //     }
+    //     return view('privacy.index');
+    // }
+
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -42,13 +57,24 @@ class PrivacyPolicyController extends Controller
 
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->editColumn('created_at', function ($data) {
-                    return Carbon::createFromFormat('Y-m-d H:i:s', $data->created_at)->format('d-m-Y h:i A');
+
+                ->editColumn('content', function ($data) {
+                    // Strip tags to count words only from readable text
+                    $plainText = strip_tags($data->content);
+                    $words = explode(' ', $plainText);
+                    $shortText = implode(' ', array_slice($words, 0, 100));
+
+                    return '<div>' . $shortText . (count($words) > 100 ? '...' : '') . '</div>';
                 })
+
+                ->rawColumns(['content']) // allow rendering HTML
                 ->make(true);
         }
+
         return view('privacy.index');
     }
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -176,7 +202,7 @@ class PrivacyPolicyController extends Controller
     {
         try {
             $data = PrivacyPolicy::findOrFail($id);
-            if ($data) { 
+            if ($data) {
                 PrivacyPolicy::find($id)->delete();
                 return response()->json([
                     'status' => 'success',

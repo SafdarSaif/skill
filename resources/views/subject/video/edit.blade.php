@@ -43,13 +43,22 @@
         </div> --}}
 
         <!-- Duration -->
-        <div class="col-md-6">
+        {{-- <div class="col-md-6">
             <label for="duration" class="form-label">Duration (HH:MM:SS)</label>
             <input type="text" name="duration" id="duration" class="form-control"
                 value="{{ old('duration', gmdate('H:i:s', $video->duration)) }}"
                 pattern="^([0-9]{1,2}):([0-5][0-9]):([0-5][0-9])$" placeholder="HH:MM:SS"
                 title="Enter duration in HH:MM:SS format">
+        </div> --}}
+
+        <!-- Duration -->
+        <div class="col-md-6">
+            <label for="duration" class="form-label">Duration (HH:MM:SS)</label>
+            <input type="text" name="duration" id="duration" class="form-control"
+                value="{{ old('duration', gmdate('H:i:s', $video->duration)) }}"
+                pattern="^([0-9]{1,2}):([0-5][0-9]):([0-5][0-9])$" placeholder="HH:MM:SS" readonly>
         </div>
+
 
 
         <!-- Uploader -->
@@ -128,20 +137,7 @@
 <!-- jQuery Script for Dynamic Field Display -->
 <script>
     $(document).ready(function() {
-        // function toggleFields() {
-        //     let uploadType = $('#upload_type').val();
-        //     if (uploadType === 'youtube') {
-        //         $('#youtube_field').show();
-        //         $('#video_url').prop('required', true);
-        //         $('#local_field').hide();
-        //         $('#video_file').prop('required', false);
-        //     } else {
-        //         $('#local_field').show();
-        //         $('#video_file').prop('required', true);
-        //         $('#youtube_field').hide();
-        //         $('#video_url').prop('required', false);
-        //     }
-        // }
+
         function toggleFields() {
             let uploadType = $('#upload_type').val();
             if (uploadType === 'youtube') {
@@ -165,70 +161,32 @@
             toggleFields();
         });
 
-        // Form Validation & Submission via AJAX
-        // $("#subject-video-form").validate({
-        //     rules: {
-        //         subject_id: {
-        //             required: true
-        //         },
-        //         name: {
-        //             required: true,
-        //             minlength: 3
-        //         },
-        //         user_id: {
-        //             required: true
-        //         },
-        //         upload_type: {
-        //             required: true
-        //         },
-        //         video_url: {
-        //             required: function() {
-        //                 return $("#upload_type").val() === "youtube";
-        //             },
-        //             url: true
-        //         }
-        //     },
-        //     messages: {
-        //         subject_id: {
-        //             required: "Please select a subject"
-        //         },
-        //         name: {
-        //             required: "Please enter a video name",
-        //             minlength: "Video name must be at least 3 characters long"
-        //         },
-        //         user_id: {
-        //             required: "Please select an uploader"
-        //         },
-        //         upload_type: {
-        //             required: "Please select an upload type"
-        //         },
-        //         video_url: {
-        //             required: "Please enter a YouTube video URL",
-        //             url: "Please enter a valid URL"
-        //         }
-        //     },
-        //     submitHandler: function(form) {
-        //         $(':input[type="submit"]').prop('disabled', true);
-        //         var formData = new FormData(form);
-        //         formData.append("_token", "{{ csrf_token() }}");
+        // Add it right HERE ↓
+        $('#video_file').on('change', function(event) {
+            const file = event.target.files[0];
 
-        //         $.ajax({
-        //             url: $(form).attr('action'),
-        //             type: $(form).attr('method'),
-        //             data: formData,
-        //             processData: false,
-        //             contentType: false,
-        //             success: function(response) {
-        //                 toastr.success(response.message);
-        //                 $(".modal").modal('hide');
-        //                 $('#subjects-video-table').DataTable().ajax.reload();
-        //             },
-        //             error: function(response) {
-        //                 toastr.error(response.responseJSON.message);
-        //             }
-        //         });
-        //     }
-        // });
+            if (file && file.type.startsWith('video/')) {
+                const video = document.createElement('video');
+                video.preload = 'metadata';
+
+                video.onloadedmetadata = function() {
+                    window.URL.revokeObjectURL(video.src);
+
+                    const duration = video.duration; // in seconds
+
+                    const hours = Math.floor(duration / 3600).toString().padStart(2, '0');
+                    const minutes = Math.floor((duration % 3600) / 60).toString().padStart(2, '0');
+                    const seconds = Math.floor(duration % 60).toString().padStart(2, '0');
+
+                    const formatted = `${hours}:${minutes}:${seconds}`;
+                    $('#duration').val(formatted);
+                };
+
+                video.src = URL.createObjectURL(file);
+            }
+        });
+
+        // Form Submission via AJAX
         $("#subject-video-form").validate({
             rules: {
                 subject_id: {
