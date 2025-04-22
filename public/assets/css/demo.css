@@ -128,8 +128,25 @@
   margin-top: 1rem;
 }
 
-/* #cke_notifications_area_editor{display: none !important;}
+#cke_notifications_area_editor{display: none !important;}
 .cke_notification .cke_notification_warning{
   display:none !important;
 }
-#cke_notifications_area_testimonial{display: none !important;} */
+#cke_notifications_area_testimonial{display: none !important;}
+
+.cke_notification_message{
+  display:none !important;
+}
+
+.cke_notification cke_notification_warning{
+  display:none !important;
+}
+.cke_notification_message{
+  display:none !important;
+} 
+.cke_screen_reader_only .cke_copyformatting_notification{
+  display:none !important;
+}
+.cke_notifications_area{
+  display:none !important;
+}
