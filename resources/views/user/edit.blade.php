@@ -37,6 +37,7 @@
                 <label class="form-label" for="mobile">Mobile</label>
                 <input type="tel" id="mobile" name="mobile" class="form-control" value="{{ $user->mobile }}">
             </div>
+
             <div class="col-md-6">
                 <label class="form-label" for="role_id">Role</label>
                 <select class="form-select" id="role_id" name="role_id">
@@ -47,6 +48,7 @@
                     @endforeach
                 </select>
             </div>
+            
             <div class="col-md-6 form-password-toggle">
                 <label class="form-label" for="password">New Password</label>
                 <div class="input-group input-group-merge">
@@ -99,6 +101,8 @@
                 }
             }
         });
+
+        
 
         $("#role_id").select2({
             placeholder: 'Choose',
