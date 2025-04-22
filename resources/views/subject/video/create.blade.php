@@ -36,8 +36,9 @@
             <label for="duration" class="form-label">Duration (HH:MM:SS)</label>
             <input type="text" name="duration" id="duration" class="form-control"
                 pattern="^([0-9]{1,2}):([0-5][0-9]):([0-5][0-9])$" placeholder="HH:MM:SS"
-                title="Enter duration in HH:MM:SS format">
+                title="Enter duration in HH:MM:SS format" readonly>
         </div>
+
 
 
         <!-- Uploader -->
@@ -124,6 +125,31 @@
             }
         });
 
+        // Add it right HERE ↓
+        $('#video_file').on('change', function(event) {
+            const file = event.target.files[0];
+
+            if (file && file.type.startsWith('video/')) {
+                const video = document.createElement('video');
+                video.preload = 'metadata';
+
+                video.onloadedmetadata = function() {
+                    window.URL.revokeObjectURL(video.src);
+
+                    const duration = video.duration; // in seconds
+
+                    const hours = Math.floor(duration / 3600).toString().padStart(2, '0');
+                    const minutes = Math.floor((duration % 3600) / 60).toString().padStart(2, '0');
+                    const seconds = Math.floor(duration % 60).toString().padStart(2, '0');
+
+                    const formatted = `${hours}:${minutes}:${seconds}`;
+                    $('#duration').val(formatted);
+                };
+
+                video.src = URL.createObjectURL(file);
+            }
+        });
+
         // Form Submission via AJAX
         $("#subject-video-form").validate({
             rules: {
@@ -183,7 +209,7 @@
                         if (response.status === 'success') {
                             toastr.success(response.message);
                             $(".modal").modal('hide');
-                            $('#subjects-video-table').DataTable().ajax.reload();
+                            $('#videos-table').DataTable().ajax.reload();
                         } else {
                             toastr.error(response.message);
                         }

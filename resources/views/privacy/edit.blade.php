@@ -22,7 +22,7 @@
 </div>
 
 
-<script>
+{{-- <script>
     $(document).ready(function () {
         $("#edit-privacy-form").validate({
             rules: {
@@ -39,6 +39,66 @@
             },
             submitHandler: function (form) {
                 $(':input[type="submit"]').prop('disabled', true);
+
+                var formData = new FormData(form);
+
+                $.ajax({
+                    url: $(form).attr('action'),
+                    type: $(form).attr('method'),
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    dataType: 'json',
+                    success: function (response) {
+                        $(':input[type="submit"]').prop('disabled', false);
+                        if (response.status === 'success') {
+                            toastr.success(response.message);
+                            $(".modal").modal('hide');
+                            $('#privacy-table').DataTable().ajax.reload();
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    },
+                    error: function (xhr) {
+                        $(':input[type="submit"]').prop('disabled', false);
+                        toastr.error(xhr.responseJSON?.message || "An error occurred");
+                    }
+                });
+            }
+        });
+    });
+</script> --}}
+
+<script>
+    $(document).ready(function () {
+        // Initialize CKEditor
+        CKEDITOR.replace('edit-content');
+
+        // jQuery Validation with CKEditor content sync
+        $("#edit-privacy-form").validate({
+            ignore: [],
+            rules: {
+                content: {
+                    required: function (textarea) {
+                        CKEDITOR.instances['edit-content'].updateElement(); // Sync content
+                        return true;
+                    },
+                    minlength: 20
+                }
+            },
+            messages: {
+                content: {
+                    required: "Please enter the Privacy Policy content",
+                    minlength: "Content must be at least 20 characters long"
+                }
+            },
+            submitHandler: function (form) {
+                $(':input[type="submit"]').prop('disabled', true);
+
+                // Sync CKEditor content before submitting
+                for (instance in CKEDITOR.instances) {
+                    CKEDITOR.instances[instance].updateElement();
+                }
 
                 var formData = new FormData(form);
 
