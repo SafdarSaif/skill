@@ -64,9 +64,10 @@ class DashboardController extends Controller
     // }
     public function index()
     {
-        $studentCount = Students::count();
-        $courseCount = Course::count();
-        $userCount = User::count();
+        $studentCount = Students::where('status', 1)->count();
+        $courseCount = Course::where('status', 1)->count();
+        $userCount   = User::where('status', 1)->count();
+        
 
         $totalRevenue = StudentPayment::where('payment_status', 'completed')->sum('amount');
 

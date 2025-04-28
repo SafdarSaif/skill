@@ -9,6 +9,9 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Subject;
 use App\Models\User;
+use App\Models\Course;
+use App\Models\CourseType as Type;
+use App\Models\Category;
 use Illuminate\Support\Facades\Log;
 
 
@@ -78,10 +81,13 @@ class SubjectNoteController extends Controller
      */
     public function create()
     {
+        $types = Type::pluck('name', 'id');
+        $categories = Category::pluck('name', 'id');
+        $courses = Course::pluck('name', 'id');
         $subjects = Subject::pluck('name', 'id');
         $users = User::pluck('name', 'id');
 
-        return view('subject.notes.create', compact('subjects', 'users'));
+        return view('subject.notes.create', compact('subjects', 'users', 'courses', 'types', 'categories'));
     }
 
     /**
@@ -90,6 +96,9 @@ class SubjectNoteController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'type_id'     => 'required|exists:course_types,id',
+            'category_id' => 'required|exists:categories,id',
+            'course_id'   => 'required|exists:courses,id',
             'subject_id' => 'required|exists:subjects,id',
             'name' => 'required|string|min:3|max:255',
             'description' => 'nullable|string|max:1000',
@@ -118,6 +127,9 @@ class SubjectNoteController extends Controller
             }
 
             $subjectNote = SubjectNote::create([
+                'type_id'      => $request->type_id,
+                'category_id'  => $request->category_id,
+                'course_id'    => $request->course_id,
                 'subject_id' => $request->subject_id,
                 'name' => $request->name,
                 'description' => $request->description,
@@ -160,9 +172,12 @@ class SubjectNoteController extends Controller
     public function edit($noteId)
     {
         $note = SubjectNote::findOrFail($noteId);
+        $types = Type::pluck('name', 'id');
+        $categories = Category::pluck('name', 'id');
+        $courses = Course::pluck('name', 'id');
         $subjects = Subject::pluck('name', 'id');
         $users = User::pluck('name', 'id');
-        return view('subject.notes.edit', compact('note', 'subjects', 'users'));
+        return view('subject.notes.edit', compact('note', 'subjects', 'users', 'courses', 'types', 'categories'));
     }
 
     /**
@@ -171,6 +186,9 @@ class SubjectNoteController extends Controller
     public function update(Request $request, $noteId)
     {
         $validator = Validator::make($request->all(), [
+            'type_id'     => 'required|exists:course_types,id',
+            'category_id' => 'required|exists:categories,id',
+            'course_id'   => 'required|exists:courses,id',
             'subject_id' => 'required|exists:subjects,id',
             'name' => 'required|string|min:3|max:255',
             'description' => 'nullable|string|max:1000',
@@ -207,6 +225,9 @@ class SubjectNoteController extends Controller
             }
 
             $subjectNote->update([
+                'type_id'      => $request->type_id,
+                'category_id'  => $request->category_id,
+                'course_id'    => $request->course_id,
                 'subject_id' => $request->subject_id,
                 'name' => $request->name,
                 'description' => $request->description,

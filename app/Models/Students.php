@@ -31,6 +31,9 @@ class Students extends Model
         'image',
         'signature',
         'added_by',
+        'device_token',
+        'mobile_id',
+        'session_id',
     ];
 
 

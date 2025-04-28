@@ -8,24 +8,72 @@
         enctype="multipart/form-data" class="row g-3">
         @csrf
 
-        <!-- Subject Selection -->
+         <!-- Type -->
+         <div class="col-md-4">
+            <label for="type_id" class="form-label">Type</label>
+            <select name="type_id" id="type_id" class="form-select">
+                <option value="">Select Type</option>
+                @foreach ($types as $id => $name)
+                    <option value="{{ $id }}" {{ old('type_id', $video->type_id) == $id ? 'selected' : '' }}>{{ $name }}</option>
+                @endforeach
+            </select>
+            
+        </div>
+
+        <!-- Category -->
+        <div class="col-md-4">
+            <label for="category_id" class="form-label">Category</label>
+            <select name="category_id" id="category_id" class="form-select">
+                <option value="">Select Category</option>
+                @foreach ($categories as $id => $name)
+                    <option value="{{ $id }}" {{ old('category_id', $video->category_id) == $id ? 'selected' : '' }}>{{ $name }}</option>
+                @endforeach
+            </select>            
+        </div>
+
+        <!-- Course -->
+        <div class="col-md-4">
+            <label for="course_id" class="form-label">Course</label>
+            <select name="course_id" id="course_id" class="form-select">
+                <option value="">Select Course</option>
+                @foreach ($courses as $id => $name)
+                    <option value="{{ $id }}" {{ old('course_id', $video->course_id) == $id ? 'selected' : '' }}>{{ $name }}</option>
+                @endforeach
+            </select>
+            
+        </div>
+
+        <!-- Subject -->
         <div class="col-md-6">
             <label for="subject_id" class="form-label">Subject <span class="text-danger">*</span></label>
             <select name="subject_id" id="subject_id" class="form-select" required>
                 <option value="">Select Subject</option>
                 @foreach ($subjects as $id => $name)
-                    <option value="{{ $id }}"
-                        {{ old('subject_id', $video->subject_id) == $id ? 'selected' : '' }}>{{ $name }}
+                    <option value="{{ $id }}" {{ old('subject_id', $video->subject_id) == $id ? 'selected' : '' }}>
+                        {{ $name }}
                     </option>
                 @endforeach
             </select>
+            
         </div>
+
+        <!-- Subject Selection -->
+        {{-- <div class="col-md-6">
+            <label for="subject_id" class="form-label">Subject <span class="text-danger">*</span></label>
+            <select name="subject_id" id="subject_id" class="form-select" required>
+                <option value="">Select Subject</option>
+                @foreach ($subjects as $id => $name)
+                    <option value="{{ $id }}" {{ old('subject_id', $video->subject_id) == $id ? 'selected' : '' }}>
+                        {{ $name }}</option>
+                @endforeach
+            </select>
+        </div> --}}
 
         <!-- Video Name -->
         <div class="col-md-6">
             <label for="name" class="form-label">Video Name <span class="text-danger">*</span></label>
-            <input type="text" name="name" id="name" class="form-control"
-                value="{{ old('name', $video->name) }}" required>
+            <input type="text" name="name" id="name" class="form-control" value="{{ old('name', $video->name) }}"
+                required>
         </div>
 
         <!-- Description -->
@@ -34,32 +82,13 @@
             <textarea name="description" id="description" class="form-control" rows="3">{{ old('description', $video->description) }}</textarea>
         </div>
 
-        <!-- Duration -->
-        {{-- <div class="col-md-6">
-            <label for="duration" class="form-label">Duration (HH:MM:SS)</label>
-            <input type="text" name="duration" id="duration" class="form-control"
-                value="{{ old('duration', $video->duration) }}" pattern="^([0-9]{1,2}):([0-5][0-9]):([0-5][0-9])$"
-                placeholder="HH:MM:SS" title="Enter duration in HH:MM:SS format">
-        </div> --}}
-
-        <!-- Duration -->
-        {{-- <div class="col-md-6">
-            <label for="duration" class="form-label">Duration (HH:MM:SS)</label>
-            <input type="text" name="duration" id="duration" class="form-control"
-                value="{{ old('duration', gmdate('H:i:s', $video->duration)) }}"
-                pattern="^([0-9]{1,2}):([0-5][0-9]):([0-5][0-9])$" placeholder="HH:MM:SS"
-                title="Enter duration in HH:MM:SS format">
-        </div> --}}
-
-        <!-- Duration -->
+        <!-- Duration (readonly) -->
         <div class="col-md-6">
             <label for="duration" class="form-label">Duration (HH:MM:SS)</label>
             <input type="text" name="duration" id="duration" class="form-control"
                 value="{{ old('duration', gmdate('H:i:s', $video->duration)) }}"
                 pattern="^([0-9]{1,2}):([0-5][0-9]):([0-5][0-9])$" placeholder="HH:MM:SS" readonly>
         </div>
-
-
 
         <!-- Uploader -->
         <div class="col-md-6">
@@ -77,10 +106,9 @@
         <div class="col-md-6">
             <label for="position" class="form-label">Position</label>
             <select name="position" id="position" class="form-select">
-                <option value="0" {{ old('position', $video->position) == 0 ? 'selected' : '' }}>General Videos
-                    (0)</option>
-                <option value="1" {{ old('position', $video->position) == 1 ? 'selected' : '' }}>Last Videos (1)
+                <option value="0" {{ old('position', $video->position) == 0 ? 'selected' : '' }}>General Videos (0)
                 </option>
+                <option value="1" {{ old('position', $video->position) == 1 ? 'selected' : '' }}>Last Videos (1)</option>
             </select>
         </div>
 
@@ -88,35 +116,27 @@
         <div class="col-md-6">
             <label for="upload_type" class="form-label">Upload Type <span class="text-danger">*</span></label>
             <select name="upload_type" id="upload_type" class="form-select" required>
-                <option value="youtube" {{ old('upload_type', $video->upload_type) == 'youtube' ? 'selected' : '' }}>
-                    YouTube</option>
-                <option value="local" {{ old('upload_type', $video->upload_type) == 'local' ? 'selected' : '' }}>Local
-                </option>
+                <option value="youtube" {{ old('upload_type', $video->upload_type) == 'youtube' ? 'selected' : '' }}>YouTube</option>
+                <option value="local" {{ old('upload_type', $video->upload_type) == 'local' ? 'selected' : '' }}>Local</option>
             </select>
         </div>
 
         <!-- YouTube Video URL -->
-        <div class="col-md-12" id="youtube_field"
-            style="{{ old('upload_type', $video->upload_type) == 'youtube' ? '' : 'display: none;' }}">
+        <div class="col-md-12" id="youtube_field" style="{{ old('upload_type', $video->upload_type) == 'youtube' ? '' : 'display: none;' }}">
             <label for="video_url" class="form-label">YouTube Video URL <span class="text-danger">*</span></label>
             <input type="url" name="video_url" id="video_url" class="form-control"
-                placeholder="Enter YouTube embedded URL" value="">
-            <small class="text-muted">⚠ Only YouTube embedded URLs are allowed (e.g.,
-                <code>https://www.youtube.com/embed/VIDEO_ID</code>).</small>
+                value="{{ $video->upload_type == 'youtube' ? $video->video_url : '' }}"
+                placeholder="Enter YouTube embedded URL">
+            <small class="text-muted">⚠ Only YouTube embedded URLs are allowed (e.g., <code>https://www.youtube.com/embed/VIDEO_ID</code>).</small>
         </div>
 
         <!-- Local File Upload -->
-        <div class="col-md-12" id="local_field"
-            style="{{ old('upload_type', $video->upload_type) == 'local' ? '' : 'display: none;' }}">
+        <div class="col-md-12" id="local_field" style="{{ old('upload_type', $video->upload_type) == 'local' ? '' : 'display: none;' }}">
             <label for="video_file" class="form-label">Upload Video File <span class="text-danger">*</span></label>
             <input type="file" name="video_file" id="video_file" class="form-control" accept="video/*">
 
-
             @if ($video->upload_type == 'local' && $video->video_url)
-                <!-- Display existing video file name -->
                 <p class="mt-2"><strong>Current File:</strong> {{ basename($video->video_url) }}</p>
-
-                <!-- Video Player Preview -->
                 <video width="100%" height="auto" controls class="mt-2">
                     <source src="{{ asset('storage/' . $video->video_url) }}" type="video/mp4">
                     Your browser does not support the video tag.
@@ -125,7 +145,12 @@
         </div>
 
 
-
+         <!-- YouTube Video Preview and Duration Display -->
+         <div class="col-md-12 mt-3" id="youtube-preview" style="display: none;">
+            {{-- <label class="form-label">YouTube Preview:</label> --}}
+            <div id="player" style="width:100%; max-width:640px; height:360px;"></div>
+            {{-- <p class="mt-2" id="duration-display" class="text-muted">Video Duration: --:--</p> --}}
+        </div>
         <!-- Submit Buttons -->
         <div class="col-12 text-center mt-3">
             <button type="submit" class="btn btn-primary">Update Video</button>
@@ -134,112 +159,218 @@
     </form>
 </div>
 
-<!-- jQuery Script for Dynamic Field Display -->
+
+
 <script>
     $(document).ready(function() {
+        // When Type changes
+        $('#type_id').change(function() {
+            var type_id = $(this).val();
+            $('#category_id').html('<option value="">Loading...</option>');
+            $('#course_id').html('<option value="">Select Course</option>');
+            $('#subject_id').html('<option value="">Select Subject</option>');
 
-        function toggleFields() {
-            let uploadType = $('#upload_type').val();
-            if (uploadType === 'youtube') {
-                $('#youtube_field').show();
-                $('#video_url').prop('required', true);
-                $('#local_field').hide();
-                $('#video_file').prop('required', false); // Ensure it's not required
-            } else {
-                $('#local_field').show();
-                $('#video_file').prop('required', false); // Remove required here
-                $('#youtube_field').hide();
-                $('#video_url').prop('required', false);
-            }
-        }
-
-
-        // Initialize on page load
-        toggleFields();
-
-        $('#upload_type').change(function() {
-            toggleFields();
-        });
-
-        // Add it right HERE ↓
-        $('#video_file').on('change', function(event) {
-            const file = event.target.files[0];
-
-            if (file && file.type.startsWith('video/')) {
-                const video = document.createElement('video');
-                video.preload = 'metadata';
-
-                video.onloadedmetadata = function() {
-                    window.URL.revokeObjectURL(video.src);
-
-                    const duration = video.duration; // in seconds
-
-                    const hours = Math.floor(duration / 3600).toString().padStart(2, '0');
-                    const minutes = Math.floor((duration % 3600) / 60).toString().padStart(2, '0');
-                    const seconds = Math.floor(duration % 60).toString().padStart(2, '0');
-
-                    const formatted = `${hours}:${minutes}:${seconds}`;
-                    $('#duration').val(formatted);
-                };
-
-                video.src = URL.createObjectURL(file);
-            }
-        });
-
-        // Form Submission via AJAX
-        $("#subject-video-form").validate({
-            rules: {
-                subject_id: {
-                    required: true
-                },
-                name: {
-                    required: true,
-                    minlength: 3
-                },
-                user_id: {
-                    required: true
-                },
-                upload_type: {
-                    required: true
-                }
-            },
-            messages: {
-                subject_id: {
-                    required: "Please select a subject"
-                },
-                name: {
-                    required: "Please enter a video name",
-                    minlength: "Video name must be at least 3 characters long"
-                },
-                user_id: {
-                    required: "Please select an uploader"
-                },
-                upload_type: {
-                    required: "Please select an upload type"
-                }
-            },
-            submitHandler: function(form) {
-                $(':input[type="submit"]').prop('disabled', true);
-                var formData = new FormData(form);
-                formData.append("_token", "{{ csrf_token() }}");
-
+            if (type_id) {
                 $.ajax({
-                    url: $(form).attr('action'),
-                    type: $(form).attr('method'),
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        toastr.success(response.message);
-                        $(".modal").modal('hide');
-                        $('#subjects-video-table').DataTable().ajax.reload();
+                    url: '{{ route('getCategories') }}',
+                    type: 'GET',
+                    data: {
+                        type_id: type_id
                     },
-                    error: function(response) {
-                        toastr.error(response.responseJSON.message);
+                    success: function(response) {
+                        $('#category_id').html('<option value="">Select Category</option>');
+                        $.each(response, function(id, name) {
+                            $('#category_id').append('<option value="' + id + '">' +
+                                name + '</option>');
+                        });
                     }
                 });
             }
         });
 
+        // When Category changes
+        $('#category_id').change(function() {
+            var type_id = $('#type_id').val();
+            var category_id = $(this).val();
+            $('#course_id').html('<option value="">Loading...</option>');
+            $('#subject_id').html('<option value="">Select Subject</option>');
+
+            if (type_id && category_id) {
+                $.ajax({
+                    url: '{{ route('getCourses') }}', // Route to get courses by type+category
+                    type: 'GET',
+                    data: {
+                        type_id: type_id,
+                        category_id: category_id
+                    },
+                    success: function(response) {
+                        $('#course_id').html('<option value="">Select Course</option>');
+                        $.each(response, function(id, name) {
+                            $('#course_id').append('<option value="' + id + '">' +
+                                name + '</option>');
+                        });
+                    }
+                });
+            }
+        });
+
+        // When Course changes
+        $('#course_id').change(function() {
+            var course_id = $(this).val();
+            $('#subject_id').html('<option value="">Loading...</option>');
+
+            if (course_id) {
+                $.ajax({
+                    url: '{{ route('getSubjects') }}', 
+                    type: 'GET',
+                    data: {
+                        course_id: course_id
+                    },
+                    success: function(response) {
+                        $('#subject_id').html('<option value="">Select Subject</option>');
+                        $.each(response, function(id, name) {
+                            $('#subject_id').append('<option value="' + id + '">' +
+                                name + '</option>');
+                        });
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+<!-- jQuery Script -->
+<script>
+    $(document).ready(function () {
+
+        function toggleFields() {
+            const uploadType = $('#upload_type').val();
+            if (uploadType === 'youtube') {
+                $('#youtube_field').show();
+                $('#video_url').prop('required', true);
+                $('#local_field').hide();
+                $('#video_file').prop('required', false);
+            } else {
+                $('#local_field').show();
+                $('#video_file').prop('required', false);
+                $('#youtube_field').hide();
+                $('#video_url').prop('required', false);
+            }
+        }
+
+        toggleFields();
+        $('#upload_type').change(toggleFields);
+
+        $('#video_file').on('change', function (event) {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('video/')) {
+                const video = document.createElement('video');
+                video.preload = 'metadata';
+                video.onloadedmetadata = function () {
+                    window.URL.revokeObjectURL(video.src);
+                    const duration = video.duration;
+                    const hours = Math.floor(duration / 3600).toString().padStart(2, '0');
+                    const minutes = Math.floor((duration % 3600) / 60).toString().padStart(2, '0');
+                    const seconds = Math.floor(duration % 60).toString().padStart(2, '0');
+                    $('#duration').val(`${hours}:${minutes}:${seconds}`);
+                };
+                video.src = URL.createObjectURL(file);
+            }
+        });
+
+        // Validate and AJAX Submit
+        $('#subject-video-form').validate({
+            rules: {
+                subject_id: { required: true },
+                name: { required: true, minlength: 3 },
+                user_id: { required: true },
+                upload_type: { required: true }
+            },
+            messages: {
+                subject_id: { required: "Please select a subject" },
+                name: { required: "Enter a video name", minlength: "At least 3 characters" },
+                user_id: { required: "Please select an uploader" },
+                upload_type: { required: "Please select an upload type" }
+            },
+            submitHandler: function (form) {
+                const formData = new FormData(form);
+                formData.append('_token', "{{ csrf_token() }}");
+
+                $.ajax({
+                    url: $(form).attr('action'),
+                    method: $(form).attr('method'),
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    beforeSend: () => {
+                        $(':input[type="submit"]').prop('disabled', true);
+                    },
+                    success: function (response) {
+                        toastr.success(response.message);
+                        $(".modal").modal('hide');
+                        $('#subjects-video-table').DataTable().ajax.reload();
+                    },
+                    error: function (response) {
+                        toastr.error(response.responseJSON.message || 'Something went wrong.');
+                    },
+                    complete: () => {
+                        $(':input[type="submit"]').prop('disabled', false);
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+
+<!-- Load YouTube IFrame API -->
+<script src="https://www.youtube.com/iframe_api"></script>
+
+<script>
+    let player;
+
+    function onYouTubeIframeAPIReady() {
+        // This function is triggered once the API script loads
+    }
+
+    function loadYouTubeVideo(videoId) {
+        if (player) {
+            player.loadVideoById(videoId);
+        } else {
+            player = new YT.Player('player', {
+                height: '360',
+                width: '640',
+                videoId: videoId,
+                events: {
+                    'onReady': onPlayerReady
+                }
+            });
+        }
+    }
+
+    function onPlayerReady(event) {
+        setTimeout(() => {
+            const durationInSeconds = player.getDuration();
+            const minutes = Math.floor(durationInSeconds / 60).toString().padStart(2, '0');
+            const seconds = Math.floor(durationInSeconds % 60).toString().padStart(2, '0');
+            const formatted = `00:${minutes}:${seconds}`;
+            $('#duration-display').text(`Video Duration: ${minutes} min ${seconds} sec`);
+            $('#duration').val(formatted);
+        }, 1000);
+    }
+
+    // Watch YouTube URL input
+    $('#video_url').on('input', function() {
+        const url = $(this).val();
+        const match = url.match(/\/embed\/([a-zA-Z0-9_-]{11})/);
+        if (match && match[1]) {
+            const videoId = match[1];
+            $('#youtube-preview').show();
+            loadYouTubeVideo(videoId);
+        } else {
+            $('#youtube-preview').hide();
+            $('#duration-display').text('Video Duration: --:--');
+            $('#duration').val('');
+        }
     });
 </script>

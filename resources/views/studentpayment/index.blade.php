@@ -32,6 +32,14 @@
                                 return `<span style="cursor:pointer; color:blue;" onclick="generateReceipt('${data}')">${data}</span>`;
                             }
                         },
+                        {
+                            data: 'amount',
+                            title: 'Amount',
+                            render: function(data, type, full, meta) {
+                                if (!data) return 'Rs 0';
+                                return 'Rs ' + parseFloat(data).toLocaleString('en-IN');
+                            }
+                        },
 
 
                         {
@@ -48,7 +56,7 @@
                         // },
                     ],
                     columnDefs: [{
-                            targets: 4,
+                            targets: 5,
                             render: function(data, type, full, meta) {
                                 let statusLabel = '';
                                 let badgeClass = '';
@@ -75,7 +83,7 @@
                             }
                         },
                         {
-                            targets: 5,
+                            targets: 6,
                             render: function(data, type, full, meta) {
                                 return data ? moment(data).format('DD-MM-YYYY HH:mm A') : 'N/A';
                             }
@@ -150,30 +158,6 @@
     </script>
 
     <script type="text/javascript">
-        // window.generateReceipt = function(transactionId) {
-        //     // alert(transactionId);
-        //     $.ajax({
-        //         url: "{{ route('generate.fee.receipt') }}",
-        //         method: "POST",
-        //         data: {
-        //             txnid: transactionId,
-        //             _token: "{{ csrf_token() }}"
-        //         },
-        //         success: function(response) {
-        //             console.log(response);return false;
-
-        //             if (response.status === 'success') {
-        //                 window.open(response.pdf_url, '_blank');
-        //             } else {
-        //                 alert(response.message);
-        //             }
-        //         },
-        //         error: function(xhr) {
-        //             alert('Error generating receipt. Please try again.');
-        //             console.error(xhr.responseText);
-        //         }
-        //     });
-        // };
         window.generateReceipt = function(transactionId) {
             $.ajax({
                 url: "{{ route('generate.fee.receipt') }}",
@@ -186,7 +170,7 @@
                     console.log(response);
 
                     if (response.status === 'success') {
-                        window.open(response.pdf_url, '_blank'); // Open PDF in new tab
+                        window.open(response.pdf_url, '_blank');
                     } else {
                         alert(response.message);
                     }
@@ -209,6 +193,7 @@
                         <th>No.</th>
                         <th>Student Name</th>
                         <th>Course Name</th>
+                        <th>Amount</th>
                         <th>Transaction ID</th>
                         <th>Payment Status</th>
                         <th>Confirmation Date</th>

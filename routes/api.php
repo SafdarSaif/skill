@@ -28,6 +28,9 @@ Route::get('/user', function (Request $request) {
 Route::get('/get-otp/{mobile_no}', [OTPController::class, 'getOtp'])->name('get-otp');
 Route::get('/verify-otp/{otp}/{mobile_no}', [OTPController::class, 'verifyOtp']);
 Route::get('/resend-otp/{mobile_no}', [OTPController::class, 'reSendOtp']);
+Route::get('/applogout', [OTPController::class, 'logout'])->name('applogout');
+// Route::middleware(['auth:student'])->get('/student/validate-session', [StudentController::class, 'checkSession']);
+
 // API modification for Students Progress
 Route::get('/students-details/{mobile_no}', [StudentsController::class, 'getStudentDetails']);
 Route::post('/students-registration', [StudentsController::class, 'registerStudent']);

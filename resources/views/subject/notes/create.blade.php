@@ -8,7 +8,51 @@
         class="row g-3">
         @csrf
 
-        <!-- Subject Selection -->
+
+        <!-- Type -->
+        <div class="col-md-4">
+            <label for="type_id" class="form-label">Type</label>
+            <select name="type_id" id="type_id" class="form-select">
+                <option value="">Select Type</option>
+                @foreach ($types as $id => $name)
+                    <option value="{{ $id }}">{{ $name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <!-- Category -->
+        <div class="col-md-4">
+            <label for="category_id" class="form-label">Category</label>
+            <select name="category_id" id="category_id" class="form-select">
+                <option value="">Select Category</option>
+                @foreach ($categories as $id => $name)
+                    <option value="{{ $id }}">{{ $name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <!-- Course -->
+        <div class="col-md-4">
+            <label for="course_id" class="form-label">Course</label>
+            <select name="course_id" id="course_id" class="form-select">
+                <option value="">Select Course</option>
+                @foreach ($courses as $id => $name)
+                    <option value="{{ $id }}">{{ $name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <!-- Subject -->
+        <div class="col-md-6">
+            <label for="subject_id" class="form-label">Subject <span class="text-danger">*</span></label>
+            <select name="subject_id" id="subject_id" class="form-select" required>
+                <option value="">Select Subject</option>
+                <!-- Will be populated dynamically -->
+            </select>
+        </div>
+
+
+        {{-- <!-- Subject Selection -->
         <div class="col-md-6">
             <label for="subject_id" class="form-label">Subject <span class="text-danger">*</span></label>
             <select name="subject_id" id="subject_id" class="form-select" required>
@@ -17,7 +61,7 @@
                     <option value="{{ $id }}">{{ $name }}</option>
                 @endforeach
             </select>
-        </div>
+        </div> --}}
 
         <!-- Note Name -->
         <div class="col-md-6">
@@ -72,6 +116,85 @@
         </div>
     </form>
 </div>
+
+
+<script>
+    $(document).ready(function() {
+        // When Type changes
+        $('#type_id').change(function() {
+            var type_id = $(this).val();
+            $('#category_id').html('<option value="">Loading...</option>');
+            $('#course_id').html('<option value="">Select Course</option>');
+            $('#subject_id').html('<option value="">Select Subject</option>');
+
+            if (type_id) {
+                $.ajax({
+                    url: '{{ route('getCategories') }}',
+                    type: 'GET',
+                    data: {
+                        type_id: type_id
+                    },
+                    success: function(response) {
+                        $('#category_id').html('<option value="">Select Category</option>');
+                        $.each(response, function(id, name) {
+                            $('#category_id').append('<option value="' + id + '">' +
+                                name + '</option>');
+                        });
+                    }
+                });
+            }
+        });
+
+        // When Category changes
+        $('#category_id').change(function() {
+            var type_id = $('#type_id').val();
+            var category_id = $(this).val();
+            $('#course_id').html('<option value="">Loading...</option>');
+            $('#subject_id').html('<option value="">Select Subject</option>');
+
+            if (type_id && category_id) {
+                $.ajax({
+                    url: '{{ route('getCourses') }}', // Route to get courses by type+category
+                    type: 'GET',
+                    data: {
+                        type_id: type_id,
+                        category_id: category_id
+                    },
+                    success: function(response) {
+                        $('#course_id').html('<option value="">Select Course</option>');
+                        $.each(response, function(id, name) {
+                            $('#course_id').append('<option value="' + id + '">' +
+                                name + '</option>');
+                        });
+                    }
+                });
+            }
+        });
+
+        // When Course changes
+        $('#course_id').change(function() {
+            var course_id = $(this).val();
+            $('#subject_id').html('<option value="">Loading...</option>');
+
+            if (course_id) {
+                $.ajax({
+                    url: '{{ route('getSubjects') }}', // Route to get subjects by course
+                    type: 'GET',
+                    data: {
+                        course_id: course_id
+                    },
+                    success: function(response) {
+                        $('#subject_id').html('<option value="">Select Subject</option>');
+                        $.each(response, function(id, name) {
+                            $('#subject_id').append('<option value="' + id + '">' +
+                                name + '</option>');
+                        });
+                    }
+                });
+            }
+        });
+    });
+</script>
 
 <script>
     $(document).ready(function() {

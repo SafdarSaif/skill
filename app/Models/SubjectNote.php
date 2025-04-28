@@ -14,6 +14,9 @@ class SubjectNote extends Model
     protected $table = 'subject_notes'; 
 
     protected $fillable = [
+        'type_id',
+        'category_id',
+        'course_id',
         'subject_id',
         'name',
         'description',
