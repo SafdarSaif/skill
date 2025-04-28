@@ -120,9 +120,13 @@
             <!-- /Left Text -->
             <div class="d-none d-lg-flex col-lg-8 p-0">
                 <div class="auth-cover-bg auth-cover-bg-color d-flex justify-content-center align-items-center">
-                    <img src="/assets/img/illustrations/auth-login-illustration-light.png" alt="auth-login-cover"
+                    {{-- <img src="/assets/img/illustrations/auth-login-illustration-light.png" alt="auth-login-cover"
                         class="my-5 auth-illustration"
                         data-app-light-img="illustrations/auth-login-illustration-light.png"
+                        data-app-dark-img="illustrations/auth-login-illustration-dark.html"> --}}
+                        <img src="/assets/img/illustrations/boy-with-laptop-light.png" alt="auth-login-cover"
+                        class="my-5 auth-illustration"
+                        data-app-light-img="illustrations/boy-with-laptop-light.png"
                         data-app-dark-img="illustrations/auth-login-illustration-dark.html">
 
                     <img src="/assets/img/illustrations/bg-shape-image-light.png" alt="auth-login-cover"

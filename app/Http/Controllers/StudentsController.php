@@ -1031,4 +1031,24 @@ class StudentsController extends Controller
             ]);
         }
     }
+
+
+        public function checkSession(Request $request)
+        {
+            $student = auth('student')->user();
+            $mobileId = $request->header('Mobile-ID');
+            $sessionId = $request->header('Session-ID');
+            $expectedToken = hash('sha256', $request->userAgent() . $mobileId);
+    
+            if (
+                $student->device_token !== $expectedToken ||
+                $student->mobile_id !== $mobileId ||
+                $student->session_id !== $sessionId
+            ) {
+                return response()->json(['message' => 'Invalid session or device.'], 403);
+            }
+    
+            return response()->json(['message' => 'Session validated successfully']);
+        }
+
 }

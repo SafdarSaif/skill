@@ -10,6 +10,8 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use App\Models\CourseType as Type;
+use App\Models\Category;
 
 
 
@@ -82,10 +84,12 @@ class SubjectController extends Controller
      */
     public function create()
     {
+        $types = Type::pluck('name', 'id');
+        $categories = Category::pluck('name', 'id');
         $course = Course::pluck('name', 'id');
 
 
-        return view('subject.create', compact('course'));
+        return view('subject.create', compact('course', 'types', 'categories'));
     }
 
     /**
@@ -97,6 +101,8 @@ class SubjectController extends Controller
     {
         // Validate the request
         $validator = Validator::make($request->all(), [
+            'type_id'     => 'required|exists:course_types,id',
+            'category_id' => 'required|exists:categories,id',
             'course_id'   => 'required|exists:courses,id',
             'name'        => 'required|string|min:3|max:255|unique:subjects,name',
             'description' => 'nullable|string|max:500',
@@ -117,6 +123,8 @@ class SubjectController extends Controller
             }
 
             $subject = Subject::create([
+                'type_id'     => $request->type_id,
+                'category_id' => $request->category_id,
                 'course_id'   => $request->course_id,
                 'name'        => $request->name,
                 'description' => $request->description,
@@ -150,9 +158,11 @@ class SubjectController extends Controller
     public function edit($subjectId)
     {
         $subject = Subject::findOrFail($subjectId);
+        $types = Type::pluck('name', 'id');
+        $categories = Category::pluck('name', 'id');
         $course = Course::pluck('name', 'id');
 
-        return view('subject.edit', compact('subject', 'course'));
+        return view('subject.edit', compact('subject', 'course', 'types', 'categories'));
     }
 
     /**
@@ -161,6 +171,8 @@ class SubjectController extends Controller
     public function update(Request $request, $subjectId)
     {
         $validator = Validator::make($request->all(), [
+            'type_id'     => 'required|exists:course_types,id',
+            'category_id' => 'required|exists:categories,id',
             'course_id'   => 'required|exists:courses,id',
             'name'        => 'required|string|min:3|max:255|unique:subjects,name,' . $subjectId,
             'description' => 'nullable|string',
@@ -191,6 +203,8 @@ class SubjectController extends Controller
 
             // Update Subject
             $subject->update([
+                'type_id'     => $request->type_id,
+                'category_id' => $request->category_id,
                 'course_id'   => $request->course_id,
                 'name'        => $request->name,
                 'description' => $request->description,
