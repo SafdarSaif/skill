@@ -84,11 +84,10 @@ class SubjectController extends Controller
      */
     public function create()
     {
-        $types = Type::pluck('name', 'id');
-        $categories = Category::pluck('name', 'id');
-        $course = Course::pluck('name', 'id');
-
-
+        $types = Type::where('status', 1)->pluck('name', 'id');
+        $categories = Category::where('status', 1)->pluck('name', 'id');
+        $course = Course::where('status', 1)->pluck('name', 'id');
+        // $course = Course::where('added_by', Auth::user()->id)->pluck('name', 'id');
         return view('subject.create', compact('course', 'types', 'categories'));
     }
 
@@ -158,9 +157,9 @@ class SubjectController extends Controller
     public function edit($subjectId)
     {
         $subject = Subject::findOrFail($subjectId);
-        $types = Type::pluck('name', 'id');
-        $categories = Category::pluck('name', 'id');
-        $course = Course::pluck('name', 'id');
+        $types = Type::where('status', 1)->pluck('name', 'id');
+        $categories = Category::where('status', 1)->pluck('name', 'id');
+        $course = Course::where('status', 1)->pluck('name', 'id');
 
         return view('subject.edit', compact('subject', 'course', 'types', 'categories'));
     }

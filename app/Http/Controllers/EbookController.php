@@ -47,7 +47,7 @@ class EbookController extends Controller
 
     public function index(Request $request)
     {
-        $subjectId = $request->query('id'); // optional filtering by subject_id
+        $subjectId = $request->query('id'); 
 
         if ($request->ajax()) {
             $query = Ebook::with(['subject', 'user'])
@@ -82,11 +82,11 @@ class EbookController extends Controller
      */
     public function create()
     {
-        $types = Type::pluck('name', 'id');
-        $categories = Category::pluck('name', 'id');
-        $courses = Course::pluck('name', 'id');
-        $subjects = Subject::pluck('name', 'id');
-        $users = User::pluck('name', 'id');
+        $types = Type::where('status', 1)->pluck('name', 'id');
+        $categories = Category::where('status', 1)->pluck('name', 'id');
+        $courses = Course::where('status', 1)->pluck('name', 'id');
+        $subjects = Subject::where('status', 1)->pluck('name', 'id');
+        $users = User::where('status', 1)->pluck('name', 'id'); 
 
         return view('subject.ebook.create', compact('subjects', 'users', 'types', 'categories', 'courses'));
     }
@@ -94,63 +94,6 @@ class EbookController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    // public function store(Request $request)
-    // {
-    //     $validator = Validator::make($request->all(), [
-    //         'subject_id'  => 'required|exists:subjects,id',
-    //         'name'        => 'required|string|min:3|max:255',
-    //         'description' => 'nullable|string|max:1000',
-    //         'user_id'     => 'required|exists:users,id',
-    //         'upload_type' => 'required|in:url,pdf', 
-    //         'ebook_link'  => 'nullable|url|required_if:upload_type,url', 
-    //         'ebook_file'  => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx|max:51200|required_if:upload_type,pdf', 
-    //     ]);
-
-    //     if ($validator->fails()) {
-    //         return response()->json([
-    //             'status'  => 'error',
-    //             'message' => $validator->errors()->first(),
-    //             'errors'  => $validator->errors()
-    //         ], 422);
-    //     }
-
-    //     try {
-    //         $ebookUrl = null;
-    //         $filePath = null;
-
-    //         if ($request->upload_type === 'url') {
-    //             $ebookUrl = $request->ebook_link;
-    //         } elseif ($request->hasFile('ebook_file')) {
-    //             $filePath = uploadFile($request->file('ebook_file'), 'ebooks');
-    //         }
-
-    //         $ebook = Ebook::create([
-    //             'subject_id'  => $request->subject_id,
-    //             'name'        => $request->name,
-    //             'description' => $request->description,
-    //             'user_id'     => $request->user_id,
-    //             'upload_type' => $request->upload_type,
-    //             'url'         => $ebookUrl,
-    //             'file_path'   => $filePath, 
-    //         ]);
-
-    //         return response()->json([
-    //             'status'  => 'success',
-    //             'message' => 'Ebook added successfully!',
-    //             'data'    => $ebook
-    //         ], 201);
-    //     } catch (\Exception $e) {
-    //         Log::error('Error adding ebook: ' . $e->getMessage(), [
-    //             'request' => $request->all(),
-    //             'trace'   => $e->getTraceAsString()
-    //         ]);
-
-    //         return response()->json([
-    //             'status'  => 'error',
-    //             'message' => 'Something went wrong. Please try again later.',
-    //         ], 500);
-    //     }
-    // }
 
     public function store(Request $request)
     {
@@ -231,10 +174,11 @@ class EbookController extends Controller
     public function edit($ebookId)
     {
         $ebook = Ebook::findOrFail($ebookId);
-        $types = Type::pluck('name', 'id');
-        $categories = Category::pluck('name', 'id');
-        $courses = Course::pluck('name', 'id');
-        $subjects = Subject::pluck('name', 'id');
+        $types = Type::where('status', 1)->pluck('name', 'id');
+        $categories = Category::where('status', 1)->pluck('name', 'id');
+        $courses = Course::where('status', 1)->pluck('name', 'id');
+        $subjects = Subject::where('status', 1)->pluck('name', 'id');
+        $users = User::where('status', 1)->pluck('name', 'id'); 
 
         $users = User::pluck('name', 'id');
         return view('subject.ebook.edit', compact('ebook', 'subjects', 'users', 'types', 'categories', 'courses'));

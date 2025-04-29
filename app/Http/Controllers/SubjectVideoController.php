@@ -80,34 +80,6 @@ class SubjectVideoController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    // public function create()
-    // {
-
-    //     $subjects = Subject::pluck('name', 'id');
-    //     $users = User::pluck('name', 'id');
-
-    //     return view('subject.video.create', compact('subjects', 'users'));
-    // }
-
-
-    //     public function getSubjects(Request $request)
-    // {
-    //     $subjects = Subject::where('type_id', $request->type_id)
-    //                         ->where('category_id', $request->category_id)
-    //                         ->where('course_id', $request->course_id)
-    //                         ->pluck('name', 'id');
-
-    //     return response()->json(['subjects' => $subjects]);
-    // }
-
-    // public function getSubjects(Request $request)
-    // {
-    //     $subjects = Subject::where('course_id', $request->course_id)
-    //                         ->pluck('name', 'id');
-
-    //     return response()->json(['subjects' => $subjects]);
-    // }
-
 
     public function getCategories(Request $request)
     {
@@ -137,11 +109,11 @@ class SubjectVideoController extends Controller
 
     public function create()
     {
-        $types = Type::pluck('name', 'id');
-        $categories = Category::pluck('name', 'id');
-        $courses = Course::pluck('name', 'id');
-        $subjects = Subject::pluck('name', 'id');
-        $users = User::pluck('name', 'id');
+        $types = Type::where('status', 1)->pluck('name', 'id');
+        $categories = Category::where('status', 1)->pluck('name', 'id');
+        $courses = Course::where('status', 1)->pluck('name', 'id');
+        $subjects = Subject::where('status', 1)->pluck('name', 'id');
+        $users = User::where('status', 1)->pluck('name', 'id');        
 
         return view('subject.video.create', compact('types', 'categories', 'courses', 'subjects', 'users'));
     }
@@ -247,12 +219,12 @@ class SubjectVideoController extends Controller
      */
     public function edit($subjectvideoId)
     {
-        $types = Type::pluck('name', 'id');
-        $categories = Category::pluck('name', 'id');
-        $courses = Course::pluck('name', 'id');
         $video = SubjectVideo::findOrFail($subjectvideoId);
-        $subjects = Subject::pluck('name', 'id');
-        $users = User::pluck('name', 'id');
+        $types = Type::where('status', 1)->pluck('name', 'id');
+        $categories = Category::where('status', 1)->pluck('name', 'id');
+        $courses = Course::where('status', 1)->pluck('name', 'id');
+        $subjects = Subject::where('status', 1)->pluck('name', 'id');
+        $users = User::where('status', 1)->pluck('name', 'id'); 
         return view('subject.video.edit', compact('video', 'subjects', 'users', 'types', 'categories', 'courses'));
     }
 

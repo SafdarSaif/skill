@@ -20,30 +20,6 @@ class SubjectNoteController extends Controller
     /**
      * Display a listing of the resource.
      */
-    // public function index(Request $request)
-    // {
-    //     if ($request->ajax()) {
-    //         $data = SubjectNote::with(['subject', 'user'])
-    //             ->orderBy('id', 'desc')
-    //             ->get();
-
-    //         return DataTables::of($data)
-    //             ->addIndexColumn()
-    //             ->editColumn('created_at', function ($data) {
-    //                 return $data->created_at ? Carbon::parse($data->created_at)->format('d-m-Y h:i A') : 'N/A';
-    //             })
-
-    //             ->addColumn('subject_name', function ($data) {
-    //                 return $data->course ? $data->course->name : 'N/A';
-    //             })
-    //             ->addColumn('user_name', function ($data) {
-    //                 return $data->user ? $data->user->name : 'N/A';
-    //             })
-    //             ->make(true);
-    //     }
-
-    //     return view('subject.notes.index');
-    // }
 
     public function index(Request $request)
     {
@@ -81,11 +57,11 @@ class SubjectNoteController extends Controller
      */
     public function create()
     {
-        $types = Type::pluck('name', 'id');
-        $categories = Category::pluck('name', 'id');
-        $courses = Course::pluck('name', 'id');
-        $subjects = Subject::pluck('name', 'id');
-        $users = User::pluck('name', 'id');
+        $types = Type::where('status', 1)->pluck('name', 'id');
+        $categories = Category::where('status', 1)->pluck('name', 'id');
+        $courses = Course::where('status', 1)->pluck('name', 'id');
+        $subjects = Subject::where('status', 1)->pluck('name', 'id');
+        $users = User::where('status', 1)->pluck('name', 'id'); 
 
         return view('subject.notes.create', compact('subjects', 'users', 'courses', 'types', 'categories'));
     }
@@ -172,11 +148,11 @@ class SubjectNoteController extends Controller
     public function edit($noteId)
     {
         $note = SubjectNote::findOrFail($noteId);
-        $types = Type::pluck('name', 'id');
-        $categories = Category::pluck('name', 'id');
-        $courses = Course::pluck('name', 'id');
-        $subjects = Subject::pluck('name', 'id');
-        $users = User::pluck('name', 'id');
+        $types = Type::where('status', 1)->pluck('name', 'id');
+        $categories = Category::where('status', 1)->pluck('name', 'id');
+        $courses = Course::where('status', 1)->pluck('name', 'id');
+        $subjects = Subject::where('status', 1)->pluck('name', 'id');
+        $users = User::where('status', 1)->pluck('name', 'id'); 
         return view('subject.notes.edit', compact('note', 'subjects', 'users', 'courses', 'types', 'categories'));
     }
 
