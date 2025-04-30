@@ -389,6 +389,75 @@ class StudentsController extends Controller
     //     }
     // }
 
+
+
+
+    // PERFECT before 30/4/2025##
+    // public static function StudentAllDetaills($mobile)
+    // {
+    //     try {
+    //         $student = Students::where('mobile', $mobile)
+    //             ->where('status', 1)
+    //             ->with('progress', 'progress.course', 'progress.course.users')
+    //             ->first();
+
+    //         if (!$student) {
+    //             return response()->json(['status' => 'error', 'message' => 'No student found with this mobile number']);
+    //         }
+
+    //         $enrolledCourses = StudentCourse::where('student_id', $student->id)
+    //             ->with('course', 'course.users')
+    //             ->get();
+
+    //         $completedCourses = [];
+    //         $onGoingCourses = [];
+
+    //         foreach ($enrolledCourses as $enrolled) {
+    //             $courseId = $enrolled->course_id;
+
+    //             $subjectIds = Subject::where('course_id', $courseId)->pluck('id');
+
+    //             // Get total duration from subject_videos using subject IDs
+    //             $totalDuration = SubjectVideo::whereIn('subject_id', $subjectIds)->sum('duration');
+
+    //             // Get total watch time from StudentProgress
+    //             $totalWatchTime = StudentProgress::where('student_id', $student->id)
+    //                 ->whereIn('subject_id', $subjectIds)
+    //                 ->sum('watch_time');
+
+    //             // Calculate progress percentage
+    //             $progress = ($totalDuration > 0) ? round(($totalWatchTime / $totalDuration) * 100, 2) : 0;
+    //             $status = $progress >= 90 ? 'Completed' : 'Ongoing';
+
+    //             // Append progress details inside each enrolled course object
+    //             $enrolled->total_watch_time = $totalWatchTime;
+    //             $enrolled->total_duration = $totalDuration;
+    //             $enrolled->progress = $progress;
+    //             $enrolled->status = $status;
+
+    //             if ($status === 'Completed') {
+    //                 $completedCourses[] = $enrolled;
+    //             } else {
+    //                 $onGoingCourses[] = $enrolled;
+    //             }
+    //         }
+
+    //         return response()->json([
+    //             'status' => 'success',
+    //             'data' => [
+    //                 'student' => $student,
+    //                 // 'enrolled_courses' => $onGoingCourses,  
+    //                 'enrolled_courses' => $enrolledCourses,
+    //                 'on_going_courses' => $onGoingCourses,
+    //                 'completed_courses' => $completedCourses
+    //             ]
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    //     }
+    // }
+
+    //  Add progress summary for 30/04/2025
     public static function StudentAllDetaills($mobile)
     {
         try {
@@ -396,62 +465,80 @@ class StudentsController extends Controller
                 ->where('status', 1)
                 ->with('progress', 'progress.course', 'progress.course.users')
                 ->first();
-
+    
             if (!$student) {
                 return response()->json(['status' => 'error', 'message' => 'No student found with this mobile number']);
             }
-
+    
             $enrolledCourses = StudentCourse::where('student_id', $student->id)
                 ->with('course', 'course.users')
                 ->get();
-
+    
             $completedCourses = [];
             $onGoingCourses = [];
-
+    
             foreach ($enrolledCourses as $enrolled) {
                 $courseId = $enrolled->course_id;
-
+    
                 $subjectIds = Subject::where('course_id', $courseId)->pluck('id');
-
+    
                 // Get total duration from subject_videos using subject IDs
                 $totalDuration = SubjectVideo::whereIn('subject_id', $subjectIds)->sum('duration');
-
+    
                 // Get total watch time from StudentProgress
                 $totalWatchTime = StudentProgress::where('student_id', $student->id)
                     ->whereIn('subject_id', $subjectIds)
                     ->sum('watch_time');
-
+    
                 // Calculate progress percentage
                 $progress = ($totalDuration > 0) ? round(($totalWatchTime / $totalDuration) * 100, 2) : 0;
                 $status = $progress >= 90 ? 'Completed' : 'Ongoing';
-
+    
                 // Append progress details inside each enrolled course object
                 $enrolled->total_watch_time = $totalWatchTime;
                 $enrolled->total_duration = $totalDuration;
                 $enrolled->progress = $progress;
                 $enrolled->status = $status;
-
+    
                 if ($status === 'Completed') {
                     $completedCourses[] = $enrolled;
                 } else {
                     $onGoingCourses[] = $enrolled;
                 }
             }
-
+    
+            // Calculate average progress for each category
+            $enrolledProgressAvg = $enrolledCourses->count() > 0
+                ? round($enrolledCourses->pluck('progress')->sum() / $enrolledCourses->count(), 2)
+                : 0;
+    
+            $onGoingProgressAvg = count($onGoingCourses) > 0
+                ? round(collect($onGoingCourses)->pluck('progress')->sum() / count($onGoingCourses), 2)
+                : 0;
+    
+            $completedProgressAvg = count($completedCourses) > 0
+                ? round(collect($completedCourses)->pluck('progress')->sum() / count($completedCourses), 2)
+                : 0;
+    
             return response()->json([
                 'status' => 'success',
                 'data' => [
                     'student' => $student,
-                    // 'enrolled_courses' => $onGoingCourses,  
                     'enrolled_courses' => $enrolledCourses,
                     'on_going_courses' => $onGoingCourses,
-                    'completed_courses' => $completedCourses
+                    'completed_courses' => $completedCourses,
+                    'progress_summary' => [
+                        'enrolled_progress' => $enrolledProgressAvg,
+                        'ongoing_progress' => $onGoingProgressAvg,
+                        'completed_progress' => $completedProgressAvg
+                    ]
                 ]
             ]);
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
     }
+    
 
 
     // ****to show ongoing and completed courses separately.
