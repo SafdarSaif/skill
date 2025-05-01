@@ -13,27 +13,37 @@ use App\Models\CourseType as Type;
 use App\Models\Category;
 use App\Models\Course;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+
 
 class EbookController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+
+
     // public function index(Request $request)
     // {
+    //     $subjectId = $request->query('id'); 
+
     //     if ($request->ajax()) {
-    //         $data = Ebook::with(['subject', 'user'])
-    //             ->orderBy('id', 'desc')
-    //             ->get();
+    //         $query = Ebook::with(['subject', 'user'])
+    //             ->orderBy('id', 'desc');
+
+    //         if ($subjectId) {
+    //             $query->where('subject_id', $subjectId);
+    //         }
+
+    //         $data = $query->get();
 
     //         return DataTables::of($data)
     //             ->addIndexColumn()
     //             ->editColumn('created_at', function ($data) {
     //                 return $data->created_at ? Carbon::parse($data->created_at)->format('d-m-Y h:i A') : 'N/A';
     //             })
-
     //             ->addColumn('subject_name', function ($data) {
-    //                 return $data->course ? $data->course->name : 'N/A';
+    //                 return $data->subject ? $data->subject->name : 'N/A'; // fixed from 'course' to 'subject'
     //             })
     //             ->addColumn('user_name', function ($data) {
     //                 return $data->user ? $data->user->name : 'N/A';
@@ -43,32 +53,40 @@ class EbookController extends Controller
 
     //     return view('subject.ebook.index');
     // }
-
-
+    // Users based on their roles
     public function index(Request $request)
     {
-        $subjectId = $request->query('id'); 
+        $subjectId = $request->query('id');
 
         if ($request->ajax()) {
-            $query = Ebook::with(['subject', 'user'])
-                ->orderBy('id', 'desc');
-
-            if ($subjectId) {
-                $query->where('subject_id', $subjectId);
+            if (Auth::check() && Auth::user()->hasRole('Super Admin')) {
+                $query = Ebook::with(['subject', 'user'])
+                    ->when($subjectId, function ($q) use ($subjectId) {
+                        return $q->where('subject_id', $subjectId);
+                    })
+                    ->orderBy('id', 'desc');
+            } else {
+                $userId = Auth::id();
+                $query = Ebook::with(['subject', 'user'])
+                    ->where('user_id', $userId)
+                    ->when($subjectId, function ($q) use ($subjectId) {
+                        return $q->where('subject_id', $subjectId);
+                    })
+                    ->orderBy('id', 'desc');
             }
 
             $data = $query->get();
 
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->editColumn('created_at', function ($data) {
-                    return $data->created_at ? Carbon::parse($data->created_at)->format('d-m-Y h:i A') : 'N/A';
-                })
                 ->addColumn('subject_name', function ($data) {
-                    return $data->subject ? $data->subject->name : 'N/A'; // fixed from 'course' to 'subject'
+                    return $data->subject ? $data->subject->name : 'N/A';
                 })
                 ->addColumn('user_name', function ($data) {
                     return $data->user ? $data->user->name : 'N/A';
+                })
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? Carbon::parse($data->created_at)->format('d-m-Y h:i A') : 'N/A';
                 })
                 ->make(true);
         }
@@ -86,7 +104,7 @@ class EbookController extends Controller
         $categories = Category::where('status', 1)->pluck('name', 'id');
         $courses = Course::where('status', 1)->pluck('name', 'id');
         $subjects = Subject::where('status', 1)->pluck('name', 'id');
-        $users = User::where('status', 1)->pluck('name', 'id'); 
+        $users = User::where('status', 1)->pluck('name', 'id');
 
         return view('subject.ebook.create', compact('subjects', 'users', 'types', 'categories', 'courses'));
     }
@@ -104,7 +122,7 @@ class EbookController extends Controller
             'subject_id'  => 'required|exists:subjects,id',
             'name'        => 'required|string|min:3|max:255',
             'description' => 'nullable|string|max:1000',
-            'user_id'     => 'required|exists:users,id',
+            // 'user_id'     => 'required|exists:users,id',
             'upload_type' => 'required|in:url,pdf',
             'ebook_link'  => 'nullable|url|required_if:upload_type,url',
             'ebook_file'  => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx|max:51200|required_if:upload_type,pdf',
@@ -135,7 +153,8 @@ class EbookController extends Controller
                 'subject_id'   => $request->subject_id,
                 'name'         => $request->name,
                 'description'  => $request->description,
-                'user_id'      => $request->user_id,
+                // 'user_id'      => $request->user_id,
+                'user_id' => Auth::user()->id,
                 'upload_type'  => $request->upload_type,
                 'external_link' => $externalLink,
                 'file_location' => $fileLocation,
@@ -178,7 +197,7 @@ class EbookController extends Controller
         $categories = Category::where('status', 1)->pluck('name', 'id');
         $courses = Course::where('status', 1)->pluck('name', 'id');
         $subjects = Subject::where('status', 1)->pluck('name', 'id');
-        $users = User::where('status', 1)->pluck('name', 'id'); 
+        $users = User::where('status', 1)->pluck('name', 'id');
 
         $users = User::pluck('name', 'id');
         return view('subject.ebook.edit', compact('ebook', 'subjects', 'users', 'types', 'categories', 'courses'));
@@ -196,7 +215,7 @@ class EbookController extends Controller
             'subject_id'  => 'required|exists:subjects,id',
             'name'        => 'required|string|min:3|max:255',
             'description' => 'nullable|string|max:1000',
-            'user_id'     => 'required|exists:users,id',
+            // 'user_id'     => 'required|exists:users,id',
             'upload_type' => 'required|in:url,pdf',
             // 'ebook_link'  => 'nullable|url|required_if:upload_type,url',
             // 'ebook_file'  => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx|max:51200|required_if:upload_type,pdf',
@@ -237,7 +256,8 @@ class EbookController extends Controller
                 'subject_id'  => $request->subject_id,
                 'name'        => $request->name,
                 'description' => $request->description,
-                'user_id'     => $request->user_id,
+                // 'user_id'     => $request->user_id,
+                'user_id' => Auth::user()->id,
                 'upload_type' => $request->upload_type,
                 'external_link' => $ebookUrl,
                 'file_location' => $filePath,

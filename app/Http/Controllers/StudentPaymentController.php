@@ -11,6 +11,8 @@ use App\Models\Course;
 use App\Models\Students;
 use FFI\Exception;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Auth;
+
 
 class StudentPaymentController extends Controller
 {
@@ -19,16 +21,56 @@ class StudentPaymentController extends Controller
     /**
      * Display a listing of the resource.
      */
+    // public function index(Request $request)
+    // {
+    //     $students = Students::pluck('name', 'id');
+    //     $courses = Course::pluck('name', 'id');
+
+    //     if ($request->ajax()) {
+    //         $data = StudentPayment::with(['student', 'course'])
+    //             ->orderBy('id', 'desc')
+    //             ->get();
+
+    //         return DataTables::of($data)
+    //             ->addIndexColumn()
+    //             ->editColumn('student_id', function ($data) {
+    //                 return $data->student ? $data->student->name : 'N/A';
+    //             })
+    //             ->editColumn('course_id', function ($data) {
+    //                 return $data->course ? $data->course->name : 'N/A';
+    //             })
+    //             ->editColumn('created_at', function ($data) {
+    //                 return Carbon::parse($data->created_at)->format('d-m-Y h:i A');
+    //             })
+    //             ->make(true);
+    //     }
+
+    //     return view('studentpayment.index', compact('students', 'courses'));
+    // }
+
+
+    // user based segreation 
     public function index(Request $request)
     {
         $students = Students::pluck('name', 'id');
         $courses = Course::pluck('name', 'id');
-
+    
         if ($request->ajax()) {
-            $data = StudentPayment::with(['student', 'course'])
-                ->orderBy('id', 'desc')
-                ->get();
-
+            if (Auth::check() && Auth::user()->hasRole("Super Admin")) {
+                $data = StudentPayment::with(['student', 'course'])
+                    ->orderBy('id', 'desc')
+                    ->get();
+            } else {
+                $userId = Auth::id();
+    
+                $data = StudentPayment::with(['student', 'course'])
+                    ->whereHas('course', function ($query) use ($userId) {
+                        $query->where('added_by', $userId);
+                    })
+                    ->orderBy('id', 'desc')
+                    ->get();
+            }
+    
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->editColumn('student_id', function ($data) {
@@ -42,9 +84,10 @@ class StudentPaymentController extends Controller
                 })
                 ->make(true);
         }
-
+    
         return view('studentpayment.index', compact('students', 'courses'));
     }
+    
 
 
     // API by KP

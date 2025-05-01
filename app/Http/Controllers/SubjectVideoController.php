@@ -11,7 +11,7 @@ use App\Models\Subject;
 use App\Models\CourseType as Type;
 use App\Models\Category;
 use App\Models\Course;
-
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
 class SubjectVideoController extends Controller
@@ -19,21 +19,27 @@ class SubjectVideoController extends Controller
     /**
      * Display a listing of the resource.
      */
+
     // public function index(Request $request)
     // {
+    //     $id = $request->query('id');
+
     //     if ($request->ajax()) {
-    //         $data = SubjectVideo::with(['subject', 'user'])
-    //             ->orderBy('id', 'desc')
-    //             ->get();
+    //         $query = SubjectVideo::with(['subject', 'user'])->orderBy('id', 'desc');
+
+    //         if ($id) {
+    //             $query->where('subject_id', $id);
+    //         }
+
+    //         $data = $query->get();
 
     //         return DataTables::of($data)
     //             ->addIndexColumn()
     //             ->editColumn('created_at', function ($data) {
     //                 return $data->created_at ? Carbon::parse($data->created_at)->format('d-m-Y h:i A') : 'N/A';
     //             })
-
     //             ->addColumn('subject_name', function ($data) {
-    //                 return $data->course ? $data->course->name : 'N/A';
+    //                 return $data->subject ? $data->subject->name : 'N/A';
     //             })
     //             ->addColumn('user_name', function ($data) {
     //                 return $data->user ? $data->user->name : 'N/A';
@@ -44,31 +50,40 @@ class SubjectVideoController extends Controller
     //     return view('subject.video.index');
     // }
 
-
-
+// User based access control
     public function index(Request $request)
     {
         $id = $request->query('id');
 
         if ($request->ajax()) {
-            $query = SubjectVideo::with(['subject', 'user'])->orderBy('id', 'desc');
-
-            if ($id) {
-                $query->where('subject_id', $id);
+            if (Auth::check() && Auth::user()->hasRole('Super Admin')) {
+                $query = SubjectVideo::with(['subject', 'user'])
+                    ->when($id, function ($q) use ($id) {
+                        return $q->where('subject_id', $id);
+                    })
+                    ->orderBy('id', 'desc');
+            } else {
+                $userId = Auth::id();
+                $query = SubjectVideo::with(['subject', 'user'])
+                    ->where('user_id', $userId)
+                    ->when($id, function ($q) use ($id) {
+                        return $q->where('subject_id', $id);
+                    })
+                    ->orderBy('id', 'desc');
             }
 
             $data = $query->get();
 
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->editColumn('created_at', function ($data) {
-                    return $data->created_at ? Carbon::parse($data->created_at)->format('d-m-Y h:i A') : 'N/A';
-                })
                 ->addColumn('subject_name', function ($data) {
                     return $data->subject ? $data->subject->name : 'N/A';
                 })
                 ->addColumn('user_name', function ($data) {
                     return $data->user ? $data->user->name : 'N/A';
+                })
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? Carbon::parse($data->created_at)->format('d-m-Y h:i A') : 'N/A';
                 })
                 ->make(true);
         }
@@ -113,7 +128,7 @@ class SubjectVideoController extends Controller
         $categories = Category::where('status', 1)->pluck('name', 'id');
         $courses = Course::where('status', 1)->pluck('name', 'id');
         $subjects = Subject::where('status', 1)->pluck('name', 'id');
-        $users = User::where('status', 1)->pluck('name', 'id');        
+        $users = User::where('status', 1)->pluck('name', 'id');
 
         return view('subject.video.create', compact('types', 'categories', 'courses', 'subjects', 'users'));
     }
@@ -136,7 +151,7 @@ class SubjectVideoController extends Controller
             'name'        => 'required|string|min:3|max:255|unique:subject_videos,name',
             'description' => 'nullable|string|max:500',
             'duration'    => 'nullable|regex:/^([0-9]{2}):([0-9]{2}):([0-9]{2})$/',
-            'user_id'     => 'required|exists:users,id',
+            // 'user_id'     => 'required|exists:users,id',
             'position'    => 'required|integer|in:0,1',
             'upload_type' => 'required|in:youtube,local',
             // 'video_url'   => 'nullable|required_if:upload_type,youtube|url|regex:/^https?:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+$/',
@@ -181,7 +196,8 @@ class SubjectVideoController extends Controller
                 'description' => $request->description,
                 // 'duration'    => $request->duration,
                 'duration'    => $durationInSeconds, // Store in seconds
-                'user_id'     => $request->user_id,
+                // 'user_id'     => $request->user_id,
+                'user_id' => Auth::user()->id,
                 'position'    => $request->position,
                 'upload_type' => $request->upload_type,
                 'video_url'   => $videoUrl,
@@ -224,7 +240,7 @@ class SubjectVideoController extends Controller
         $categories = Category::where('status', 1)->pluck('name', 'id');
         $courses = Course::where('status', 1)->pluck('name', 'id');
         $subjects = Subject::where('status', 1)->pluck('name', 'id');
-        $users = User::where('status', 1)->pluck('name', 'id'); 
+        $users = User::where('status', 1)->pluck('name', 'id');
         return view('subject.video.edit', compact('video', 'subjects', 'users', 'types', 'categories', 'courses'));
     }
 

@@ -83,7 +83,7 @@
         </div>
 
         <!-- Uploader -->
-        <div class="col-md-6">
+        {{-- <div class="col-md-6">
             <label for="user_id" class="form-label">Uploader <span class="text-danger">*</span></label>
             <select name="user_id" id="user_id" class="form-select" required>
                 <option value="">Select Uploader</option>
@@ -91,7 +91,7 @@
                     <option value="{{ $id }}">{{ $name }}</option>
                 @endforeach
             </select>
-        </div>
+        </div> --}}
 
         <!-- Position -->
         <div class="col-md-6">
@@ -285,9 +285,6 @@
                     required: true,
                     minlength: 3
                 },
-                user_id: {
-                    required: true
-                },
                 upload_type: {
                     required: true
                 },
@@ -305,9 +302,6 @@
                 name: {
                     required: "Please enter a video name",
                     minlength: "Video name must be at least 3 characters long"
-                },
-                user_id: {
-                    required: "Please select an uploader"
                 },
                 upload_type: {
                     required: "Please select an upload type"

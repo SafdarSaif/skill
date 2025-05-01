@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\Course;
 use App\Models\CourseType as Type;
 use App\Models\Category;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 
@@ -21,29 +22,70 @@ class SubjectNoteController extends Controller
      * Display a listing of the resource.
      */
 
+    // public function index(Request $request)
+    // {
+    //     $id = $request->query('id');
+    //     // dd($id);
+    //     if ($request->ajax()) {
+    //         $data = SubjectNote::with(['subject', 'user'])
+    //             ->orderBy('id', 'desc');
+
+    //         // If you want to filter based on ID, you can do:
+    //         if ($id) {
+    //             $data->where('subject_id', $id);
+    //         }
+
+    //         return DataTables::of($data->get())
+    //             ->addIndexColumn()
+    //             ->editColumn('created_at', function ($data) {
+    //                 return $data->created_at ? Carbon::parse($data->created_at)->format('d-m-Y h:i A') : 'N/A';
+    //             })
+    //             ->addColumn('subject_name', function ($data) {
+    //                 return $data->subject ? $data->subject->name : 'N/A';
+    //             })
+    //             ->addColumn('user_name', function ($data) {
+    //                 return $data->user ? $data->user->name : 'N/A';
+    //             })
+    //             ->make(true);
+    //     }
+
+    //     return view('subject.notes.index');
+    // }
+
+// User based access control
     public function index(Request $request)
     {
         $id = $request->query('id');
-        // dd($id);
-        if ($request->ajax()) {
-            $data = SubjectNote::with(['subject', 'user'])
-                ->orderBy('id', 'desc');
 
-            // If you want to filter based on ID, you can do:
-            if ($id) {
-                $data->where('subject_id', $id);
+        if ($request->ajax()) {
+            if (Auth::check() && Auth::user()->hasRole('Super Admin')) {
+                $data = SubjectNote::with(['subject', 'user'])
+                    ->when($id, function ($query) use ($id) {
+                        return $query->where('subject_id', $id);
+                    })
+                    ->orderBy('id', 'desc')
+                    ->get();
+            } else {
+                $userId = Auth::id();
+                $data = SubjectNote::with(['subject', 'user'])
+                    ->where('user_id', $userId)
+                    ->when($id, function ($query) use ($id) {
+                        return $query->where('subject_id', $id);
+                    })
+                    ->orderBy('id', 'desc')
+                    ->get();
             }
 
-            return DataTables::of($data->get())
+            return DataTables::of($data)
                 ->addIndexColumn()
-                ->editColumn('created_at', function ($data) {
-                    return $data->created_at ? Carbon::parse($data->created_at)->format('d-m-Y h:i A') : 'N/A';
-                })
                 ->addColumn('subject_name', function ($data) {
                     return $data->subject ? $data->subject->name : 'N/A';
                 })
                 ->addColumn('user_name', function ($data) {
                     return $data->user ? $data->user->name : 'N/A';
+                })
+                ->editColumn('created_at', function ($data) {
+                    return $data->created_at ? Carbon::parse($data->created_at)->format('d-m-Y h:i A') : 'N/A';
                 })
                 ->make(true);
         }
@@ -61,7 +103,7 @@ class SubjectNoteController extends Controller
         $categories = Category::where('status', 1)->pluck('name', 'id');
         $courses = Course::where('status', 1)->pluck('name', 'id');
         $subjects = Subject::where('status', 1)->pluck('name', 'id');
-        $users = User::where('status', 1)->pluck('name', 'id'); 
+        $users = User::where('status', 1)->pluck('name', 'id');
 
         return view('subject.notes.create', compact('subjects', 'users', 'courses', 'types', 'categories'));
     }
@@ -152,7 +194,7 @@ class SubjectNoteController extends Controller
         $categories = Category::where('status', 1)->pluck('name', 'id');
         $courses = Course::where('status', 1)->pluck('name', 'id');
         $subjects = Subject::where('status', 1)->pluck('name', 'id');
-        $users = User::where('status', 1)->pluck('name', 'id'); 
+        $users = User::where('status', 1)->pluck('name', 'id');
         return view('subject.notes.edit', compact('note', 'subjects', 'users', 'courses', 'types', 'categories'));
     }
 
@@ -250,7 +292,7 @@ class SubjectNoteController extends Controller
     {
         try {
             $data = SubjectNote::findOrFail($noteId);
-            if ($data) { 
+            if ($data) {
                 SubjectNote::find($noteId)->delete();
                 return response()->json([
                     'status' => 'success',

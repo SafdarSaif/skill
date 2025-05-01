@@ -33,6 +33,13 @@ Route::get('/', function () {
 });
 
 
+Route::get('/logout', function () {
+    Auth::logout();
+    return redirect('/');
+})->name('logout');
+
+
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
