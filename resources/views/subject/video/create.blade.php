@@ -411,6 +411,7 @@
         }
     });
 
+    
     //for both youtube and normal video URLs and embeded YouTube URLs
     // $('#video_url').on('input', function() {
     //     const url = $(this).val();
