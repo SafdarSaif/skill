@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Models\NewsRead;
 use App\Models\Students;
+use Illuminate\Support\Str;
+
 
 class NewsUpdateController extends Controller
 {
@@ -196,6 +198,12 @@ class NewsUpdateController extends Controller
 
             return DataTables::of($data)
                 ->addIndexColumn()
+                ->editColumn('content', function ($data) {
+                    $plainText = strip_tags($data->content); 
+                    $shortText = Str::limit($plainText, 100); 
+                    return $shortText . (strlen($plainText) > 100 ? '...' : ''); 
+                })
+                
                 ->editColumn('created_at', function ($data) {
                     return Carbon::createFromFormat('Y-m-d H:i:s', $data->created_at)->format('d-m-Y h:i A');
                 })

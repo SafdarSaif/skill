@@ -195,8 +195,8 @@
                                         <i class="ti ti-dots-vertical"></i>
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-end">
-                                        <a class="dropdown-item" href="#">Manage Courses</a>
-                                        <a class="dropdown-item" href="#">View All</a>
+                                        <a class="dropdown-item" href="{{ route('studentcourse') }}">Manage Courses</a>
+                                        <a class="dropdown-item" href="{{ route('course') }}">View All</a>
                                     </div>
                                 </div>
                             </div>

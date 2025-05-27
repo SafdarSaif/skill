@@ -7,6 +7,27 @@
     <form id="subject-form" action="{{ route('subject.store') }}" method="POST" class="row g-3">
         @csrf
 
+        <!-- Type -->
+        <div class="col-md-6">
+            <label for="type_id" class="form-label">Type</label>
+            <select name="type_id" id="type_id" class="form-select">
+                <option value="">Select Type</option>
+                @foreach ($types as $id => $name)
+                    <option value="{{ $id }}">{{ $name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <!-- Category -->
+        <div class="col-md-6">
+            <label for="category_id" class="form-label">Category</label>
+            <select name="category_id" id="category_id" class="form-select">
+                <option value="">Select Category</option>
+                @foreach ($categories as $id => $name)
+                    <option value="{{ $id }}">{{ $name }}</option>
+                @endforeach
+            </select>
+        </div>
         <!-- Course ID -->
         <div class="col-md-6">
             <label for="course_id" class="form-label">Course <span class="text-danger">*</span></label>
@@ -45,6 +66,52 @@
 <!-- jQuery Validation -->
 <script>
     $(document).ready(function() {
+        $('#type_id').change(function() {
+            var type_id = $(this).val();
+            $('#category_id').html('<option value="">Loading...</option>');
+            $('#course_id').html('<option value="">Select Course</option>');
+
+            if (type_id) {
+                $.ajax({
+                    url: '{{ route('getCategories') }}',
+                    type: 'GET',
+                    data: {
+                        type_id: type_id
+                    },
+                    success: function(response) {
+                        $('#category_id').html('<option value="">Select Category</option>');
+                        $.each(response, function(id, name) {
+                            $('#category_id').append('<option value="' + id + '">' +
+                                name + '</option>');
+                        });
+                    }
+                });
+            }
+        });
+
+        $('#category_id').change(function() {
+            var type_id = $('#type_id').val();
+            var category_id = $(this).val();
+            $('#course_id').html('<option value="">Loading...</option>');
+
+            if (type_id && category_id) {
+                $.ajax({
+                    url: '{{ route('getCourses') }}',
+                    type: 'GET',
+                    data: {
+                        type_id: type_id,
+                        category_id: category_id
+                    },
+                    success: function(response) {
+                        $('#course_id').html('<option value="">Select Course</option>');
+                        $.each(response, function(id, name) {
+                            $('#course_id').append('<option value="' + id + '">' +
+                                name + '</option>');
+                        });
+                    }
+                });
+            }
+        });
         $("#subject-form").validate({
             rules: {
                 course_id: {

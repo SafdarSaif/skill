@@ -37,16 +37,25 @@ class TermsConditionController extends Controller
     {
         if ($request->ajax()) {
             $data = TermsCondition::orderBy('id', 'desc')->get();
-
+    
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->editColumn('created_at', function ($data) {
-                    return Carbon::createFromFormat('Y-m-d H:i:s', $data->created_at)->format('d-m-Y h:i A');
+                ->editColumn('content', function ($data) {
+                    $plainText = strip_tags($data->content);
+                    $words = preg_split('/\s+/', $plainText);
+                    $shortText = implode(' ', array_slice($words, 0, 100));
+                    return '<div>' . $shortText . (count($words) > 100 ? '...' : '') . '</div>';
                 })
+                ->editColumn('created_at', function ($data) {
+                    return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $data->created_at)->format('d-m-Y h:i A');
+                })
+                ->rawColumns(['content']) 
                 ->make(true);
         }
+    
         return view('term.index');
     }
+    
 
     /**
      * Show the form for creating a new resource.

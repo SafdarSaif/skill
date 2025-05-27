@@ -80,11 +80,11 @@
                             render: function(data, type, full, meta) {
                                 var enrolled = full['is_enrolled'] == 1 ?
                                     `<span class="badge bg-label-success rounded-pill d-inline-flex align-items-center px-3 py-1">
-                    <i class="ti ti-check me-1"></i> Enrolled
-               </span>` :
+                               <i class="ti ti-check me-1"></i> Enrolled
+                                  </span>` :
                                     `<span class="badge bg-label-secondary rounded-pill d-inline-flex align-items-center px-3 py-1">
-                    <i class="ti ti-minus me-1"></i> Not Enrolled
-               </span>`;
+                              <i class="ti ti-minus me-1"></i> Not Enrolled
+                                </span>`;
                                 return enrolled;
                             }
                         },
@@ -120,7 +120,8 @@
                                     '<button class="btn btn-sm btn-icon btn-info me-2" onclick="window.location.href=\'/student/' +
                                     full['id'] + '\'">' +
                                     '<i class="ti ti-eye"></i>' +
-                                    '</button>' +
+                                    '</button>' 
+                                    +
                                     '<button class="btn btn-sm btn-icon me-2" onclick="edit(\'/student/edit/' +
                                     full['id'] +
                                     '\' , \'modal-xl\')"><i class="ti ti-edit"></i></button>' +

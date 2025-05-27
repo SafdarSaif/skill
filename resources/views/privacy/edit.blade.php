@@ -71,7 +71,6 @@
 
 <script>
     $(document).ready(function () {
-        // Initialize CKEditor
         CKEDITOR.replace('edit-content');
 
         // jQuery Validation with CKEditor content sync
@@ -80,7 +79,7 @@
             rules: {
                 content: {
                     required: function (textarea) {
-                        CKEDITOR.instances['edit-content'].updateElement(); // Sync content
+                        CKEDITOR.instances['edit-content'].updateElement(); 
                         return true;
                     },
                     minlength: 20

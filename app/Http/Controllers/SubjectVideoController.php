@@ -8,6 +8,10 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Subject;
+use App\Models\CourseType as Type;
+use App\Models\Category;
+use App\Models\Course;
+
 use App\Models\User;
 
 class SubjectVideoController extends Controller
@@ -76,13 +80,44 @@ class SubjectVideoController extends Controller
     /**
      * Show the form for creating a new resource.
      */
+
+    public function getCategories(Request $request)
+    {
+        $categories = Category::whereHas('courses', function ($query) use ($request) {
+            $query->where('type_id', $request->type_id);
+        })->pluck('name', 'id');
+
+        return response()->json($categories);
+    }
+
+    public function getCourses(Request $request)
+    {
+        $courses = Course::where('type_id', $request->type_id)
+            ->where('category_id', $request->category_id)
+            ->pluck('name', 'id');
+
+        return response()->json($courses);
+    }
+
+    public function getSubjects(Request $request)
+    {
+        $subjects = Subject::where('course_id', $request->course_id)
+            ->pluck('name', 'id');
+
+        return response()->json($subjects);
+    }
+
     public function create()
     {
-        $subjects = Subject::pluck('name', 'id');
-        $users = User::pluck('name', 'id');
+        $types = Type::where('status', 1)->pluck('name', 'id');
+        $categories = Category::where('status', 1)->pluck('name', 'id');
+        $courses = Course::where('status', 1)->pluck('name', 'id');
+        $subjects = Subject::where('status', 1)->pluck('name', 'id');
+        $users = User::where('status', 1)->pluck('name', 'id');        
 
-        return view('subject.video.create', compact('subjects', 'users'));
+        return view('subject.video.create', compact('types', 'categories', 'courses', 'subjects', 'users'));
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -93,7 +128,11 @@ class SubjectVideoController extends Controller
     {
         // Validate the request
         $validator = Validator::make($request->all(), [
+            'type_id'     => 'required|exists:course_types,id',
+            'category_id' => 'required|exists:categories,id',
+            'course_id'   => 'required|exists:courses,id',
             'subject_id'  => 'required|exists:subjects,id',
+            // 'subject_id'  => 'required|exists:subjects,id',
             'name'        => 'required|string|min:3|max:255|unique:subject_videos,name',
             'description' => 'nullable|string|max:500',
             'duration'    => 'nullable|regex:/^([0-9]{2}):([0-9]{2}):([0-9]{2})$/',
@@ -134,6 +173,9 @@ class SubjectVideoController extends Controller
                 }
             }
             $subjectVideo = SubjectVideo::create([
+                'type_id'      => $request->type_id,
+                'category_id'  => $request->category_id,
+                'course_id'    => $request->course_id,
                 'subject_id'  => $request->subject_id,
                 'name'        => $request->name,
                 'description' => $request->description,
@@ -178,9 +220,12 @@ class SubjectVideoController extends Controller
     public function edit($subjectvideoId)
     {
         $video = SubjectVideo::findOrFail($subjectvideoId);
-        $subjects = Subject::pluck('name', 'id');
-        $users = User::pluck('name', 'id');
-        return view('subject.video.edit', compact('video', 'subjects', 'users'));
+        $types = Type::where('status', 1)->pluck('name', 'id');
+        $categories = Category::where('status', 1)->pluck('name', 'id');
+        $courses = Course::where('status', 1)->pluck('name', 'id');
+        $subjects = Subject::where('status', 1)->pluck('name', 'id');
+        $users = User::where('status', 1)->pluck('name', 'id'); 
+        return view('subject.video.edit', compact('video', 'subjects', 'users', 'types', 'categories', 'courses'));
     }
 
     /**
@@ -191,6 +236,9 @@ class SubjectVideoController extends Controller
         $subjectVideo = SubjectVideo::findOrFail($subjectvideoId);
 
         $validator = Validator::make($request->all(), [
+            'type_id'     => 'required|exists:course_types,id',
+            'category_id' => 'required|exists:categories,id',
+            'course_id'   => 'required|exists:courses,id',
             'subject_id'  => 'required|exists:subjects,id',
             'name'        => 'required|string|min:3|max:255|unique:subject_videos,name,' . $subjectvideoId,
             'description' => 'nullable|string|max:500',
@@ -198,7 +246,8 @@ class SubjectVideoController extends Controller
             'user_id'     => 'required|exists:users,id',
             'position'    => 'required|integer|in:0,1',
             'upload_type' => 'required|in:youtube,local',
-            'video_url'   => 'nullable|required_if:upload_type,youtube|url|regex:/^https?:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+$/',
+            // 'video_url'   => 'nullable|required_if:upload_type,youtube|url|regex:/^https?:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+$/',
+            'video_url'   => 'nullable|required_if:upload_type,youtube',
             'video_file'  => 'nullable|mimes:mp4,avi,mkv,mov',
 
         ]);
@@ -237,6 +286,9 @@ class SubjectVideoController extends Controller
 
             // Update the subject video
             $subjectVideo->update([
+                'type_id'      => $request->type_id,
+                'category_id'  => $request->category_id,
+                'course_id'    => $request->course_id,
                 'subject_id'  => $request->subject_id,
                 'name'        => $request->name,
                 'description' => $request->description,
@@ -267,36 +319,35 @@ class SubjectVideoController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy($subjectvideoId)
-    { 
-        
-            // try {
-            //     $subjectVideo = SubjectVideo::destroy($subjectvideoId);
-            //     return ['status' => 'success', 'message' => 'Subject Video deleted successfully!'];
-            // } catch (\Throwable $e) {
-            //     return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
-            // }
+    {
 
-            try {
-                $data = SubjectVideo::findOrFail($subjectvideoId);
-                if ($data) {
-                    SubjectVideo::find($subjectvideoId)->delete();
-                    return response()->json([
-                        'status' => 'success',
-                        'message' => $data->name . ' Deleted successfully!',
-                    ]);
-                } else {
-                    return response()->json([
-                        'status' => 'error',
-                        'message' => 'Data not found',
-                    ]);
-                }
-            } catch (\Exception $e) {
+        // try {
+        //     $subjectVideo = SubjectVideo::destroy($subjectvideoId);
+        //     return ['status' => 'success', 'message' => 'Subject Video deleted successfully!'];
+        // } catch (\Throwable $e) {
+        //     return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+        // }
+
+        try {
+            $data = SubjectVideo::findOrFail($subjectvideoId);
+            if ($data) {
+                SubjectVideo::find($subjectvideoId)->delete();
+                return response()->json([
+                    'status' => 'success',
+                    'message' => $data->name . ' Deleted successfully!',
+                ]);
+            } else {
                 return response()->json([
                     'status' => 'error',
-                    'message' => $e->getMessage(),
+                    'message' => 'Data not found',
                 ]);
             }
-        
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
     public function status($id)
     {

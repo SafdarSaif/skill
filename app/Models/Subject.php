@@ -14,6 +14,8 @@ class Subject extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'type_id',
+        'category_id',
         'course_id',
         'name',
         'description',

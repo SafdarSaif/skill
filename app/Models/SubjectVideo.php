@@ -13,6 +13,7 @@ class SubjectVideo extends Model {
     
 
     protected $fillable = [
+        'type_id', 'category_id', 'course_id',
         'subject_id', 'name', 'description', 'duration',
         'user_id', 'position', 'upload_type', 'video_url'
     ];

@@ -12,6 +12,9 @@ class Ebook extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'type_id',
+        'category_id',
+        'course_id',
         'subject_id', 
         'name', 
         'description', 
