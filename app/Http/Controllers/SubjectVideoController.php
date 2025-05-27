@@ -50,7 +50,7 @@ class SubjectVideoController extends Controller
     //     return view('subject.video.index');
     // }
 
-// User based access control
+    // User based access control
     public function index(Request $request)
     {
         $id = $request->query('id');
@@ -157,6 +157,8 @@ class SubjectVideoController extends Controller
             // 'video_url'   => 'nullable|required_if:upload_type,youtube|url|regex:/^https?:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+$/',
             'video_url'   => 'nullable|required_if:upload_type,youtube|url',
             'video_file'  => 'nullable|required_if:upload_type,local',
+            // 'video_file' => 'nullable|required_if:upload_type,local|max:1048576',
+
         ]);
 
         if ($validator->fails()) {
