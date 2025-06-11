@@ -11,26 +11,89 @@ use Illuminate\Support\Str;
 
 class OTPController extends Controller
 {
+    // public static function getOtp($mobileNo)
+    // {
+    //     try {
+    //         // $checkStudent = Students::where('mobile',$mobileNo)->first();
+    //         $checkStudent = Students::where('mobile', $mobileNo)
+    //             ->where('status', 1)
+    //             ->first();
+
+
+    //         if ($checkStudent !== null && $checkStudent->count()) {
+
+    //             $otp = self::generateOtp($checkStudent);
+
+    //             $isOtpSend = self::sendOtpToUser($otp, $mobileNo);
+
+
+    //             if ($isOtpSend) {
+    //                 return response()->json([
+    //                     'status' => 'success',
+    //                     'message' => "Otp has been send to $mobileNo"
+    //                 ]);
+    //             } else {
+    //                 return response()->json([
+    //                     'status' => 'error',
+    //                     'message' => 'Failed to send OTP',
+    //                 ]);
+    //             }
+    //         } else {
+    //             return response()->json([
+    //                 'status' => 'error',
+    //                 'message' => 'Please enter valid mobile number',
+    //             ]);
+    //         }
+    //     } catch (\Exception $e) {
+    //         return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    //     }
+    // }
+
+
     public static function getOtp($mobileNo)
     {
         try {
-            // $checkStudent = Students::where('mobile',$mobileNo)->first();
+            if ($mobileNo === '1234567890') {
+                $checkStudent = Students::where('mobile', $mobileNo)
+                    ->where('status', 1)
+                    ->first();
+
+                if ($checkStudent) {
+
+                    $otpData = [
+                        'otp' => '1234',
+                        'mobile_number' => $mobileNo,
+                        'expire_at' => Carbon::now()->addYears(10),
+                        'students_id' => $checkStudent->id,
+                    ];
+
+                    OTP::create($otpData);
+
+                    return response()->json([
+                        'status' => 'success',
+                        'message' => 'Static OTP has been sent to dummy student',
+                        'otp' => '1234',
+                    ]);
+                } else {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Dummy student not found in database.',
+                    ]);
+                }
+            }
+
             $checkStudent = Students::where('mobile', $mobileNo)
                 ->where('status', 1)
                 ->first();
 
-
-            if ($checkStudent !== null && $checkStudent->count()) {
-
+            if ($checkStudent) {
                 $otp = self::generateOtp($checkStudent);
-
                 $isOtpSend = self::sendOtpToUser($otp, $mobileNo);
-
 
                 if ($isOtpSend) {
                     return response()->json([
                         'status' => 'success',
-                        'message' => "Otp has been send to $mobileNo"
+                        'message' => "Otp has been sent to $mobileNo"
                     ]);
                 } else {
                     return response()->json([
@@ -48,6 +111,8 @@ class OTPController extends Controller
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
     }
+
+
 
 
     public static function generateOtp($studentData)
@@ -79,19 +144,19 @@ class OTPController extends Controller
         return false;
     }
 
-    public function verifyOtp($otp,$mobileNo)
+    public function verifyOtp($otp, $mobileNo)
     {
-        $checkOtp = OTP::where(['otp'=>$otp,'mobile_number'=>$mobileNo])->where('is_used',false)->where('expire_at','>',Carbon::now())->count();
-        if($checkOtp)
-        {
-            OTP::where(['otp'=>$otp,'mobile_number'=>$mobileNo])->update(['is_used'=>true]);
+        $checkOtp = OTP::where(['otp' => $otp, 'mobile_number' => $mobileNo])->where('is_used', false)->where('expire_at', '>', Carbon::now())->count();
+        if ($checkOtp) {
+            OTP::where(['otp' => $otp, 'mobile_number' => $mobileNo])->update(['is_used' => true]);
             $stu_data = StudentsController::StudentAllDetaills($mobileNo);
-            return response()->json(['status' =>'success','message'=>'Welcome!',
-            'data' => json_decode($stu_data->content(),true)['data']]);
-        }
-        else
-        {
-            return response()->json(['status'=>'error','message'=>'Invalid OTP']);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Welcome!',
+                'data' => json_decode($stu_data->content(), true)['data']
+            ]);
+        } else {
+            return response()->json(['status' => 'error', 'message' => 'Invalid OTP']);
         }
     }
 
@@ -183,7 +248,7 @@ class OTPController extends Controller
             ->where('session_id', $sessionId)
             ->where('device_token', $deviceToken)
             ->first();
-            // dd($student);
+        // dd($student);
 
         if (!$student) {
             return response()->json(['status' => false, 'message' => 'Invalid session or device'], 403);

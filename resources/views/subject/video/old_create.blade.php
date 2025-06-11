@@ -83,7 +83,7 @@
         </div>
 
         <!-- Uploader -->
-        <div class="col-md-6">
+        {{-- <div class="col-md-6">
             <label for="user_id" class="form-label">Uploader <span class="text-danger">*</span></label>
             <select name="user_id" id="user_id" class="form-select" required>
                 <option value="">Select Uploader</option>
@@ -91,7 +91,7 @@
                     <option value="{{ $id }}">{{ $name }}</option>
                 @endforeach
             </select>
-        </div>
+        </div> --}}
 
         <!-- Position -->
         <div class="col-md-6">
@@ -108,8 +108,6 @@
             <select name="upload_type" id="upload_type" class="form-select" required>
                 <option value="youtube">YouTube</option>
                 <option value="local">Local</option>
-                <option value="drive_link">Google Drive Link</option>
-
             </select>
         </div>
 
@@ -117,26 +115,15 @@
         <div class="col-md-12" id="youtube_field">
             <label for="video_url" class="form-label">YouTube Video URL <span class="text-danger">*</span></label>
             <input type="url" name="video_url" id="video_url" class="form-control"
-                placeholder="Enter YouTube URL">
-            <!--<small class="text-muted">⚠ Only YouTube embedded URLs are allowed (e.g.,-->
-            <!--    <code>https://www.youtube.com/embed/VIDEO_ID</code>).</small>-->
+                placeholder="Enter YouTube embedded URL">
+            <small class="text-muted">⚠ Only YouTube embedded URLs are allowed (e.g.,
+                <code>https://www.youtube.com/embed/VIDEO_ID</code>).</small>
         </div>
 
         <!-- Local File Upload -->
         <div class="col-md-12" id="local_field" style="display: none;">
             <label for="video_file" class="form-label">Upload Video File <span class="text-danger">*</span></label>
             <input type="file" name="video_file" id="video_file" class="form-control" accept="video/*">
-            <progress id="uploadProgressBar" value="0" max="100"
-                style="width: 100%; display: none;"></progress>
-        </div>
-
-        <!-- Google Drive Video URL -->
-        <div class="col-md-12" id="drive_field">
-            <label for="drive_link" class="form-label">Google Drive URL <span class="text-danger">*</span></label>
-            <input type="url" name="drive_link" id="drive_link" class="form-control"
-                placeholder="Enter YouTube URL">
-            <!--<small class="text-muted">⚠ Only YouTube embedded URLs are allowed (e.g.,-->
-            <!--    <code>https://www.youtube.com/embed/VIDEO_ID</code>).</small>-->
         </div>
 
 
@@ -256,22 +243,11 @@
                 $('#video_url').prop('required', true);
                 $('#local_field').hide();
                 $('#video_file').prop('required', false);
-                $('#drive_field').hide();
-                $('#drive_link').prop('required', false);
-            } else if ($('#upload_type').val() == 'drive_link') {
-                $('#drive_field').show();
-                $('#drive_link').prop('required', true);
-                $('#local_field').hide();
-                $('#video_file').prop('required', false);
-                $('#youtube_field').hide();
-                $('#video_url').prop('required', false);
             } else {
                 $('#local_field').show();
                 $('#video_file').prop('required', true);
                 $('#youtube_field').hide();
                 $('#video_url').prop('required', false);
-                $('#drive_field').hide();
-                $('#drive_link').prop('required', false);
             }
         }
 
@@ -309,9 +285,6 @@
                     required: true,
                     minlength: 3
                 },
-                user_id: {
-                    required: true
-                },
                 upload_type: {
                     required: true
                 },
@@ -330,9 +303,6 @@
                     required: "Please enter a video name",
                     minlength: "Video name must be at least 3 characters long"
                 },
-                user_id: {
-                    required: "Please select an uploader"
-                },
                 upload_type: {
                     required: "Please select an upload type"
                 },
@@ -346,9 +316,6 @@
                 var formData = new FormData(form);
                 formData.append("_token", "{{ csrf_token() }}");
 
-                // Reset and show progress bar
-                $("#uploadProgressBar").val(0).show();
-
                 $.ajax({
                     url: $(form).attr('action'),
                     type: $(form).attr('method'),
@@ -356,23 +323,8 @@
                     processData: false,
                     contentType: false,
                     dataType: 'json',
-
-                    // Progress Bar Setup
-                    xhr: function() {
-                        var xhr = new window.XMLHttpRequest();
-                        xhr.upload.addEventListener("progress", function(evt) {
-                            if (evt.lengthComputable) {
-                                var percentComplete = Math.round((evt.loaded /
-                                    evt.total) * 100);
-                                $("#uploadProgressBar").val(percentComplete);
-                            }
-                        }, false);
-                        return xhr;
-                    },
-
                     success: function(response) {
                         $(':input[type="submit"]').prop('disabled', false);
-                        $("#uploadProgressBar").hide(); // hide progress bar
                         if (response.status === 'success') {
                             toastr.success(response.message);
                             $(".modal").modal('hide');
@@ -383,8 +335,7 @@
                     },
                     error: function(response) {
                         $(':input[type="submit"]').prop('disabled', false);
-                        $("#uploadProgressBar").hide(); // hide progress bar
-                        toastr.error(response.responseJSON?.message || "Upload failed");
+                        toastr.error(response.responseJSON.message);
                     }
                 });
             }
@@ -418,16 +369,32 @@
         }
     }
 
+    // function onPlayerReady(event) {
+    //     setTimeout(() => {
+    //         const durationInSeconds = player.getDuration();
+    //         const minutes = Math.floor(durationInSeconds / 60).toString().padStart(2, '0');
+    //         const seconds = Math.floor(durationInSeconds % 60).toString().padStart(2, '0');
+    //         const formatted = `00:${minutes}:${seconds}`;
+    //         $('#duration-display').text(`Video Duration: ${minutes} min ${seconds} sec`);
+    //         $('#duration').val(formatted);
+    //     }, 1000);
+    // }
+
     function onPlayerReady(event) {
         setTimeout(() => {
             const durationInSeconds = player.getDuration();
-            const minutes = Math.floor(durationInSeconds / 60).toString().padStart(2, '0');
+
+            const hours = Math.floor(durationInSeconds / 3600).toString().padStart(2, '0');
+            const minutes = Math.floor((durationInSeconds % 3600) / 60).toString().padStart(2, '0');
             const seconds = Math.floor(durationInSeconds % 60).toString().padStart(2, '0');
-            const formatted = `00:${minutes}:${seconds}`;
-            $('#duration-display').text(`Video Duration: ${minutes} min ${seconds} sec`);
+
+            const formatted = `${hours}:${minutes}:${seconds}`;
+            $('#duration-display').text(`Video Duration: ${hours} hr ${minutes} min ${seconds} sec`);
             $('#duration').val(formatted);
         }, 1000);
     }
+
+
 
     // Watch YouTube URL input
     $('#video_url').on('input', function() {
@@ -443,4 +410,23 @@
             $('#duration').val('');
         }
     });
+
+    
+    //for both youtube and normal video URLs and embeded YouTube URLs
+    // $('#video_url').on('input', function() {
+    //     const url = $(this).val();
+
+    //     // Match various YouTube URL formats
+    //     const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+
+    //     if (match && match[1]) {
+    //         const videoId = match[1];
+    //         $('#youtube-preview').show();
+    //         loadYouTubeVideo(videoId); // Your custom function to load the video
+    //     } else {
+    //         $('#youtube-preview').hide();
+    //         $('#duration-display').text('Video Duration: --:--');
+    //         $('#duration').val('');
+    //     }
+    // });
 </script>

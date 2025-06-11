@@ -139,6 +139,86 @@ class SubjectVideoController extends Controller
      */
 
 
+    // public function store(Request $request)
+    // {
+    //     // Validate the request
+    //     $validator = Validator::make($request->all(), [
+    //         'type_id'     => 'required|exists:course_types,id',
+    //         'category_id' => 'required|exists:categories,id',
+    //         'course_id'   => 'required|exists:courses,id',
+    //         'subject_id'  => 'required|exists:subjects,id',
+    //         // 'subject_id'  => 'required|exists:subjects,id',
+    //         'name'        => 'required|string|min:3|max:255|unique:subject_videos,name',
+    //         'description' => 'nullable|string|max:500',
+    //         'duration'    => 'nullable|regex:/^([0-9]{2}):([0-9]{2}):([0-9]{2})$/',
+    //         // 'user_id'     => 'required|exists:users,id',
+    //         'position'    => 'required|integer|in:0,1',
+    //         'upload_type' => 'required|in:youtube,local',
+    //         // 'video_url'   => 'nullable|required_if:upload_type,youtube|url|regex:/^https?:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+$/',
+    //         'video_url'   => 'nullable|required_if:upload_type,youtube|url',
+    //         'video_file'  => 'nullable|required_if:upload_type,local',
+    //         // 'video_file' => 'nullable|required_if:upload_type,local|max:1048576',
+
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return response()->json([
+    //             'status'  => 'error',
+    //             'message' => $validator->errors()->first()
+    //         ], 422);
+    //     }
+
+    //     try {
+    //         $videoUrl = null;
+
+    //         if ($request->upload_type === 'youtube') {
+    //             $videoUrl = $request->video_url;
+    //         } elseif ($request->hasFile('video_file')) {
+    //             $videoUrl = uploadFile($request->file('video_file'), 'subject_videos');
+    //         }
+
+    //         // Convert HH:MM:SS to seconds
+    //         $durationInSeconds = null;
+    //         if ($request->filled('duration')) {
+    //             preg_match('/^(\d{2}):(\d{2}):(\d{2})$/', $request->duration, $matches);
+    //             if ($matches) {
+    //                 $hours   = (int) $matches[1];
+    //                 $minutes = (int) $matches[2];
+    //                 $seconds = (int) $matches[3];
+
+    //                 $durationInSeconds = ($hours * 3600) + ($minutes * 60) + $seconds;
+    //             }
+    //         }
+    //         $subjectVideo = SubjectVideo::create([
+    //             'type_id'      => $request->type_id,
+    //             'category_id'  => $request->category_id,
+    //             'course_id'    => $request->course_id,
+    //             'subject_id'  => $request->subject_id,
+    //             'name'        => $request->name,
+    //             'description' => $request->description,
+    //             // 'duration'    => $request->duration,
+    //             'duration'    => $durationInSeconds, // Store in seconds
+    //             // 'user_id'     => $request->user_id,
+    //             'user_id' => Auth::user()->id,
+    //             'position'    => $request->position,
+    //             'upload_type' => $request->upload_type,
+    //             'video_url'   => $videoUrl,
+    //         ]);
+
+    //         return response()->json([
+    //             'status'  => 'success',
+    //             'message' => 'Subject video added successfully!',
+    //             'data'    => $subjectVideo
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status'  => 'error',
+    //             'message' => 'Something went wrong: ' . $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
+
+    // Video Upload with google drive link
     public function store(Request $request)
     {
         // Validate the request
@@ -151,14 +231,12 @@ class SubjectVideoController extends Controller
             'name'        => 'required|string|min:3|max:255|unique:subject_videos,name',
             'description' => 'nullable|string|max:500',
             'duration'    => 'nullable|regex:/^([0-9]{2}):([0-9]{2}):([0-9]{2})$/',
-            // 'user_id'     => 'required|exists:users,id',
+            'user_id'     => 'required|exists:users,id',
             'position'    => 'required|integer|in:0,1',
-            'upload_type' => 'required|in:youtube,local',
+            'upload_type' => 'required|in:youtube,local,drive_link',
             // 'video_url'   => 'nullable|required_if:upload_type,youtube|url|regex:/^https?:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+$/',
             'video_url'   => 'nullable|required_if:upload_type,youtube|url',
             'video_file'  => 'nullable|required_if:upload_type,local',
-            // 'video_file' => 'nullable|required_if:upload_type,local|max:1048576',
-
         ]);
 
         if ($validator->fails()) {
@@ -175,8 +253,21 @@ class SubjectVideoController extends Controller
                 $videoUrl = $request->video_url;
             } elseif ($request->hasFile('video_file')) {
                 $videoUrl = uploadFile($request->file('video_file'), 'subject_videos');
-            }
+            } elseif ($request->upload_type === 'drive_link') {
+                $videoUrl = $request->drive_link;
+                preg_match('/\/d\/(.*?)\//', $videoUrl, $matches);
+                if (!isset($matches[1])) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Invalid Google Drive URL.'
+                    ], 400);
+                }
+                $fileId = $matches[1];
 
+                // Create streamable link
+                $videoUrl = "https://drive.google.com/uc?export=download&id={$fileId}";
+            }
+            // dd($videoUrl);
             // Convert HH:MM:SS to seconds
             $durationInSeconds = null;
             if ($request->filled('duration')) {
@@ -198,8 +289,7 @@ class SubjectVideoController extends Controller
                 'description' => $request->description,
                 // 'duration'    => $request->duration,
                 'duration'    => $durationInSeconds, // Store in seconds
-                // 'user_id'     => $request->user_id,
-                'user_id' => Auth::user()->id,
+                'user_id'     => $request->user_id,
                 'position'    => $request->position,
                 'upload_type' => $request->upload_type,
                 'video_url'   => $videoUrl,
@@ -217,7 +307,6 @@ class SubjectVideoController extends Controller
             ], 500);
         }
     }
-
 
     /**
      * Display the specified resource.
@@ -249,6 +338,90 @@ class SubjectVideoController extends Controller
     /**
      * Update the specified resource in storage.
      */
+    // public function update(Request $request, $subjectvideoId)
+    // {
+    //     $subjectVideo = SubjectVideo::findOrFail($subjectvideoId);
+
+    //     $validator = Validator::make($request->all(), [
+    //         'type_id'     => 'required|exists:course_types,id',
+    //         'category_id' => 'required|exists:categories,id',
+    //         'course_id'   => 'required|exists:courses,id',
+    //         'subject_id'  => 'required|exists:subjects,id',
+    //         'name'        => 'required|string|min:3|max:255|unique:subject_videos,name,' . $subjectvideoId,
+    //         'description' => 'nullable|string|max:500',
+    //         'duration'    => 'nullable|regex:/^([0-9]{2}):([0-9]{2}):([0-9]{2})$/',
+    //         'user_id'     => 'required|exists:users,id',
+    //         'position'    => 'required|integer|in:0,1',
+    //         'upload_type' => 'required|in:youtube,local',
+    //         // 'video_url'   => 'nullable|required_if:upload_type,youtube|url|regex:/^https?:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+$/',
+    //         'video_url'   => 'nullable|required_if:upload_type,youtube',
+    //         'video_file'  => 'nullable|mimes:mp4,avi,mkv,mov',
+
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return response()->json([
+    //             'status'  => 'error',
+    //             'message' => $validator->errors()->first()
+    //         ], 422);
+    //     }
+
+    //     try {
+    //         $videoUrl = $subjectVideo->video_url;
+
+    //         if ($request->upload_type === 'youtube') {
+    //             $videoUrl = $request->video_url;
+    //         } elseif ($request->hasFile('video_file')) {
+    //             if ($subjectVideo->upload_type === 'local' && $subjectVideo->video_url) {
+    //                 deleteFile($subjectVideo->video_url);
+    //             }
+    //             $videoUrl = uploadFile($request->file('video_file'), 'subject_videos');
+    //         }
+
+    //         // Convert HH:MM:SS to seconds
+    //         $durationInSeconds = null;
+    //         if ($request->filled('duration')) {
+    //             preg_match('/^(\d{2}):(\d{2}):(\d{2})$/', $request->duration, $matches);
+    //             if ($matches) {
+    //                 $hours   = (int) $matches[1];
+    //                 $minutes = (int) $matches[2];
+    //                 $seconds = (int) $matches[3];
+
+    //                 $durationInSeconds = ($hours * 3600) + ($minutes * 60) + $seconds;
+    //             }
+    //         }
+
+    //         // Update the subject video
+    //         $subjectVideo->update([
+    //             'type_id'      => $request->type_id,
+    //             'category_id'  => $request->category_id,
+    //             'course_id'    => $request->course_id,
+    //             'subject_id'  => $request->subject_id,
+    //             'name'        => $request->name,
+    //             'description' => $request->description,
+    //             // 'duration'    => $request->duration,
+    //             'duration'    => $durationInSeconds, // Store in seconds
+    //             'user_id'     => $request->user_id,
+    //             'position'    => $request->position,
+    //             'upload_type' => $request->upload_type,
+    //             'video_url'   => $videoUrl,
+    //         ]);
+
+    //         return response()->json([
+    //             'status'  => 'success',
+    //             'message' => 'Subject video updated successfully!',
+    //             'data'    => $subjectVideo
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status'  => 'error',
+    //             'message' => 'Something went wrong: ' . $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
+
+
+    // Video Upload with google drive link
     public function update(Request $request, $subjectvideoId)
     {
         $subjectVideo = SubjectVideo::findOrFail($subjectvideoId);
@@ -263,7 +436,7 @@ class SubjectVideoController extends Controller
             'duration'    => 'nullable|regex:/^([0-9]{2}):([0-9]{2}):([0-9]{2})$/',
             'user_id'     => 'required|exists:users,id',
             'position'    => 'required|integer|in:0,1',
-            'upload_type' => 'required|in:youtube,local',
+            'upload_type' => 'required|in:youtube,local,drive_link',
             // 'video_url'   => 'nullable|required_if:upload_type,youtube|url|regex:/^https?:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+$/',
             'video_url'   => 'nullable|required_if:upload_type,youtube',
             'video_file'  => 'nullable|mimes:mp4,avi,mkv,mov',
@@ -287,6 +460,19 @@ class SubjectVideoController extends Controller
                     deleteFile($subjectVideo->video_url);
                 }
                 $videoUrl = uploadFile($request->file('video_file'), 'subject_videos');
+            } elseif ($request->upload_type === 'drive_link') {
+                $videoUrl = $request->drive_link;
+                preg_match('/\/d\/(.*?)\//', $videoUrl, $matches);
+                if (!isset($matches[1])) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Invalid Google Drive URL.'
+                    ], 400);
+                }
+                $fileId = $matches[1];
+
+                // Create streamable link
+                $videoUrl = "https://drive.google.com/uc?export=download&id={$fileId}";
             }
 
             // Convert HH:MM:SS to seconds
@@ -330,7 +516,6 @@ class SubjectVideoController extends Controller
             ], 500);
         }
     }
-
 
 
     /**

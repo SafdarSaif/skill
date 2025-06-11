@@ -1,13 +1,12 @@
 <div class="modal-body">
     <div class="text-center mb-3">
-        <h3 class="mb-2 text-primary">Add Subject Video</h3>
-        <p class="text-muted">Fill in the subject video details below</p>
+        <h3 class="mb-2 text-primary">Edit Subject Video</h3>
+        <p class="text-muted">Update the subject video details below</p>
     </div>
 
-    <form id="subject-video-form" action="{{ route('subjectvideo.store') }}" method="POST" enctype="multipart/form-data"
-        class="row g-3">
+    <form id="subject-video-form" action="{{ route('subjectvideo.update', $video->id) }}" method="POST"
+        enctype="multipart/form-data" class="row g-3">
         @csrf
-
 
         <!-- Type -->
         <div class="col-md-4">
@@ -15,9 +14,11 @@
             <select name="type_id" id="type_id" class="form-select">
                 <option value="">Select Type</option>
                 @foreach ($types as $id => $name)
-                    <option value="{{ $id }}">{{ $name }}</option>
+                    <option value="{{ $id }}" {{ old('type_id', $video->type_id) == $id ? 'selected' : '' }}>
+                        {{ $name }}</option>
                 @endforeach
             </select>
+
         </div>
 
         <!-- Category -->
@@ -26,7 +27,9 @@
             <select name="category_id" id="category_id" class="form-select">
                 <option value="">Select Category</option>
                 @foreach ($categories as $id => $name)
-                    <option value="{{ $id }}">{{ $name }}</option>
+                    <option value="{{ $id }}"
+                        {{ old('category_id', $video->category_id) == $id ? 'selected' : '' }}>{{ $name }}
+                    </option>
                 @endforeach
             </select>
         </div>
@@ -37,9 +40,11 @@
             <select name="course_id" id="course_id" class="form-select">
                 <option value="">Select Course</option>
                 @foreach ($courses as $id => $name)
-                    <option value="{{ $id }}">{{ $name }}</option>
+                    <option value="{{ $id }}"
+                        {{ old('course_id', $video->course_id) == $id ? 'selected' : '' }}>{{ $name }}</option>
                 @endforeach
             </select>
+
         </div>
 
         <!-- Subject -->
@@ -47,17 +52,24 @@
             <label for="subject_id" class="form-label">Subject <span class="text-danger">*</span></label>
             <select name="subject_id" id="subject_id" class="form-select" required>
                 <option value="">Select Subject</option>
-                <!-- Will be populated dynamically -->
+                @foreach ($subjects as $id => $name)
+                    <option value="{{ $id }}"
+                        {{ old('subject_id', $video->subject_id) == $id ? 'selected' : '' }}>
+                        {{ $name }}
+                    </option>
+                @endforeach
             </select>
+
         </div>
 
-        {{-- <!-- Subject Selection -->
-        <div class="col-md-6">
+        <!-- Subject Selection -->
+        {{-- <div class="col-md-6">
             <label for="subject_id" class="form-label">Subject <span class="text-danger">*</span></label>
             <select name="subject_id" id="subject_id" class="form-select" required>
                 <option value="">Select Subject</option>
                 @foreach ($subjects as $id => $name)
-                    <option value="{{ $id }}">{{ $name }}</option>
+                    <option value="{{ $id }}" {{ old('subject_id', $video->subject_id) == $id ? 'selected' : '' }}>
+                        {{ $name }}</option>
                 @endforeach
             </select>
         </div> --}}
@@ -65,21 +77,22 @@
         <!-- Video Name -->
         <div class="col-md-6">
             <label for="name" class="form-label">Video Name <span class="text-danger">*</span></label>
-            <input type="text" name="name" id="name" class="form-control" required>
+            <input type="text" name="name" id="name" class="form-control"
+                value="{{ old('name', $video->name) }}" required>
         </div>
 
         <!-- Description -->
         <div class="col-md-12">
             <label for="description" class="form-label">Description</label>
-            <textarea name="description" id="description" class="form-control" rows="3"></textarea>
+            <textarea name="description" id="description" class="form-control" rows="3">{{ old('description', $video->description) }}</textarea>
         </div>
 
-        <!-- Duration -->
+        <!-- Duration (readonly) -->
         <div class="col-md-6">
             <label for="duration" class="form-label">Duration (HH:MM:SS)</label>
             <input type="text" name="duration" id="duration" class="form-control"
-                pattern="^([0-9]{1,2}):([0-5][0-9]):([0-5][0-9])$" placeholder="HH:MM:SS"
-                title="Enter duration in HH:MM:SS format" readonly>
+                value="{{ old('duration', gmdate('H:i:s', $video->duration)) }}"
+                pattern="^([0-9]{1,2}):([0-5][0-9]):([0-5][0-9])$" placeholder="HH:MM:SS" readonly>
         </div>
 
         <!-- Uploader -->
@@ -88,7 +101,9 @@
             <select name="user_id" id="user_id" class="form-select" required>
                 <option value="">Select Uploader</option>
                 @foreach ($users as $id => $name)
-                    <option value="{{ $id }}">{{ $name }}</option>
+                    <option value="{{ $id }}"
+                        {{ old('user_id', $video->user_id) == $id ? 'selected' : '' }}>
+                        {{ $name }}</option>
                 @endforeach
             </select>
         </div>
@@ -97,8 +112,11 @@
         <div class="col-md-6">
             <label for="position" class="form-label">Position</label>
             <select name="position" id="position" class="form-select">
-                <option value="0" selected>General Videos (0)</option>
-                <option value="1">Last Videos (1)</option>
+                <option value="0" {{ old('position', $video->position) == 0 ? 'selected' : '' }}>General Videos
+                    (0)
+                </option>
+                <option value="1" {{ old('position', $video->position) == 1 ? 'selected' : '' }}>Last Videos (1)
+                </option>
             </select>
         </div>
 
@@ -106,37 +124,37 @@
         <div class="col-md-6">
             <label for="upload_type" class="form-label">Upload Type <span class="text-danger">*</span></label>
             <select name="upload_type" id="upload_type" class="form-select" required>
-                <option value="youtube">YouTube</option>
-                <option value="local">Local</option>
-                <option value="drive_link">Google Drive Link</option>
-
+                <option value="youtube" {{ old('upload_type', $video->upload_type) == 'youtube' ? 'selected' : '' }}>
+                    YouTube</option>
+                <option value="local" {{ old('upload_type', $video->upload_type) == 'local' ? 'selected' : '' }}>Local
+                </option>
             </select>
         </div>
 
         <!-- YouTube Video URL -->
-        <div class="col-md-12" id="youtube_field">
+        <div class="col-md-12" id="youtube_field"
+            style="{{ old('upload_type', $video->upload_type) == 'youtube' ? '' : 'display: none;' }}">
             <label for="video_url" class="form-label">YouTube Video URL <span class="text-danger">*</span></label>
             <input type="url" name="video_url" id="video_url" class="form-control"
-                placeholder="Enter YouTube URL">
-            <!--<small class="text-muted">⚠ Only YouTube embedded URLs are allowed (e.g.,-->
-            <!--    <code>https://www.youtube.com/embed/VIDEO_ID</code>).</small>-->
+                value="{{ $video->upload_type == 'youtube' ? $video->video_url : '' }}"
+                placeholder="Enter YouTube embedded URL">
+            <small class="text-muted">⚠ Only YouTube embedded URLs are allowed (e.g.,
+                <code>https://www.youtube.com/embed/VIDEO_ID</code>).</small>
         </div>
 
         <!-- Local File Upload -->
-        <div class="col-md-12" id="local_field" style="display: none;">
+        <div class="col-md-12" id="local_field"
+            style="{{ old('upload_type', $video->upload_type) == 'local' ? '' : 'display: none;' }}">
             <label for="video_file" class="form-label">Upload Video File <span class="text-danger">*</span></label>
             <input type="file" name="video_file" id="video_file" class="form-control" accept="video/*">
-            <progress id="uploadProgressBar" value="0" max="100"
-                style="width: 100%; display: none;"></progress>
-        </div>
 
-        <!-- Google Drive Video URL -->
-        <div class="col-md-12" id="drive_field">
-            <label for="drive_link" class="form-label">Google Drive URL <span class="text-danger">*</span></label>
-            <input type="url" name="drive_link" id="drive_link" class="form-control"
-                placeholder="Enter YouTube URL">
-            <!--<small class="text-muted">⚠ Only YouTube embedded URLs are allowed (e.g.,-->
-            <!--    <code>https://www.youtube.com/embed/VIDEO_ID</code>).</small>-->
+            @if ($video->upload_type == 'local' && $video->video_url)
+                <p class="mt-2"><strong>Current File:</strong> {{ basename($video->video_url) }}</p>
+                <video width="100%" height="auto" controls class="mt-2">
+                    <source src="{{ asset($video->video_url) }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            @endif
         </div>
 
 
@@ -146,18 +164,13 @@
             <div id="player" style="width:100%; max-width:640px; height:360px;"></div>
             {{-- <p class="mt-2" id="duration-display" class="text-muted">Video Duration: --:--</p> --}}
         </div>
-
-
         <!-- Submit Buttons -->
         <div class="col-12 text-center mt-3">
-            <button type="submit" class="btn btn-primary">Save Video</button>
+            <button type="submit" class="btn btn-primary">Update Video</button>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
         </div>
     </form>
 </div>
-
-
-
 
 
 
@@ -221,7 +234,7 @@
 
             if (course_id) {
                 $.ajax({
-                    url: '{{ route('getSubjects') }}', // Route to get subjects by course
+                    url: '{{ route('getSubjects') }}',
                     type: 'GET',
                     data: {
                         course_id: course_id
@@ -238,69 +251,48 @@
         });
     });
 </script>
-<!-- jQuery Script for Dynamic Field Display -->
 
+<!-- jQuery Script -->
 <script>
     $(document).ready(function() {
-        // Initially hide YouTube and Local video fields
-        toggleUploadFields();
 
-        // Change event for Upload Type
-        $('#upload_type').change(function() {
-            toggleUploadFields();
-        });
-
-        function toggleUploadFields() {
-            if ($('#upload_type').val() === 'youtube') {
+        function toggleFields() {
+            const uploadType = $('#upload_type').val();
+            if (uploadType === 'youtube') {
                 $('#youtube_field').show();
                 $('#video_url').prop('required', true);
                 $('#local_field').hide();
                 $('#video_file').prop('required', false);
-                $('#drive_field').hide();
-                $('#drive_link').prop('required', false);
-            } else if ($('#upload_type').val() == 'drive_link') {
-                $('#drive_field').show();
-                $('#drive_link').prop('required', true);
-                $('#local_field').hide();
+            } else {
+                $('#local_field').show();
                 $('#video_file').prop('required', false);
                 $('#youtube_field').hide();
                 $('#video_url').prop('required', false);
-            } else {
-                $('#local_field').show();
-                $('#video_file').prop('required', true);
-                $('#youtube_field').hide();
-                $('#video_url').prop('required', false);
-                $('#drive_field').hide();
-                $('#drive_link').prop('required', false);
             }
         }
 
-        // File input event for duration calculation
+        toggleFields();
+        $('#upload_type').change(toggleFields);
+
         $('#video_file').on('change', function(event) {
             const file = event.target.files[0];
-
             if (file && file.type.startsWith('video/')) {
                 const video = document.createElement('video');
                 video.preload = 'metadata';
-
                 video.onloadedmetadata = function() {
                     window.URL.revokeObjectURL(video.src);
-
-                    const duration = video.duration; // in seconds
+                    const duration = video.duration;
                     const hours = Math.floor(duration / 3600).toString().padStart(2, '0');
                     const minutes = Math.floor((duration % 3600) / 60).toString().padStart(2, '0');
                     const seconds = Math.floor(duration % 60).toString().padStart(2, '0');
-
-                    const formatted = `${hours}:${minutes}:${seconds}`;
-                    $('#duration').val(formatted);
+                    $('#duration').val(`${hours}:${minutes}:${seconds}`);
                 };
-
                 video.src = URL.createObjectURL(file);
             }
         });
 
-        // Form validation and AJAX submission
-        $("#subject-video-form").validate({
+        // Validate and AJAX Submit
+        $('#subject-video-form').validate({
             rules: {
                 subject_id: {
                     required: true
@@ -314,12 +306,6 @@
                 },
                 upload_type: {
                     required: true
-                },
-                video_url: {
-                    required: function() {
-                        return $("#upload_type").val() === "youtube";
-                    },
-                    url: /^https:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+(\?[^#]+)?$/
                 }
             },
             messages: {
@@ -327,64 +313,40 @@
                     required: "Please select a subject"
                 },
                 name: {
-                    required: "Please enter a video name",
-                    minlength: "Video name must be at least 3 characters long"
+                    required: "Enter a video name",
+                    minlength: "At least 3 characters"
                 },
                 user_id: {
                     required: "Please select an uploader"
                 },
                 upload_type: {
                     required: "Please select an upload type"
-                },
-                video_url: {
-                    required: "Please enter a YouTube video URL",
-                    url: "Please enter a valid YouTube URL"
                 }
             },
             submitHandler: function(form) {
-                $(':input[type="submit"]').prop('disabled', true);
-                var formData = new FormData(form);
-                formData.append("_token", "{{ csrf_token() }}");
-
-                // Reset and show progress bar
-                $("#uploadProgressBar").val(0).show();
+                const formData = new FormData(form);
+                formData.append('_token', "{{ csrf_token() }}");
 
                 $.ajax({
                     url: $(form).attr('action'),
-                    type: $(form).attr('method'),
+                    method: $(form).attr('method'),
                     data: formData,
-                    processData: false,
                     contentType: false,
-                    dataType: 'json',
-
-                    // Progress Bar Setup
-                    xhr: function() {
-                        var xhr = new window.XMLHttpRequest();
-                        xhr.upload.addEventListener("progress", function(evt) {
-                            if (evt.lengthComputable) {
-                                var percentComplete = Math.round((evt.loaded /
-                                    evt.total) * 100);
-                                $("#uploadProgressBar").val(percentComplete);
-                            }
-                        }, false);
-                        return xhr;
+                    processData: false,
+                    beforeSend: () => {
+                        $(':input[type="submit"]').prop('disabled', true);
                     },
-
                     success: function(response) {
-                        $(':input[type="submit"]').prop('disabled', false);
-                        $("#uploadProgressBar").hide(); // hide progress bar
-                        if (response.status === 'success') {
-                            toastr.success(response.message);
-                            $(".modal").modal('hide');
-                            $('#videos-table').DataTable().ajax.reload();
-                        } else {
-                            toastr.error(response.message);
-                        }
+                        toastr.success(response.message);
+                        $(".modal").modal('hide');
+                        $('#subjects-video-table').DataTable().ajax.reload();
                     },
                     error: function(response) {
+                        toastr.error(response.responseJSON.message ||
+                            'Something went wrong.');
+                    },
+                    complete: () => {
                         $(':input[type="submit"]').prop('disabled', false);
-                        $("#uploadProgressBar").hide(); // hide progress bar
-                        toastr.error(response.responseJSON?.message || "Upload failed");
                     }
                 });
             }
@@ -418,13 +380,26 @@
         }
     }
 
+    // function onPlayerReady(event) {
+    //     setTimeout(() => {
+    //         const durationInSeconds = player.getDuration();
+    //         const minutes = Math.floor(durationInSeconds / 60).toString().padStart(2, '0');
+    //         const seconds = Math.floor(durationInSeconds % 60).toString().padStart(2, '0');
+    //         const formatted = `00:${minutes}:${seconds}`;
+    //         $('#duration-display').text(`Video Duration: ${minutes} min ${seconds} sec`);
+    //         $('#duration').val(formatted);
+    //     }, 1000);
+    // }
+
+    // Function to handle player ready event
     function onPlayerReady(event) {
         setTimeout(() => {
             const durationInSeconds = player.getDuration();
-            const minutes = Math.floor(durationInSeconds / 60).toString().padStart(2, '0');
+            const hours = Math.floor(durationInSeconds / 3600).toString().padStart(2, '0');
+            const minutes = Math.floor((durationInSeconds % 3600) / 60).toString().padStart(2, '0');
             const seconds = Math.floor(durationInSeconds % 60).toString().padStart(2, '0');
-            const formatted = `00:${minutes}:${seconds}`;
-            $('#duration-display').text(`Video Duration: ${minutes} min ${seconds} sec`);
+            const formatted = `${hours}:${minutes}:${seconds}`;
+            $('#duration-display').text(`Video Duration: ${hours} hr ${minutes} min ${seconds} sec`);
             $('#duration').val(formatted);
         }, 1000);
     }
@@ -443,4 +418,24 @@
             $('#duration').val('');
         }
     });
+
+
+
+    //for both youtube and normal video URLs and embeded YouTube URLs
+    // $('#video_url').on('input', function() {
+    //     const url = $(this).val();
+
+    //     // Match various YouTube URL formats
+    //     const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+
+    //     if (match && match[1]) {
+    //         const videoId = match[1];
+    //         $('#youtube-preview').show();
+    //         loadYouTubeVideo(videoId); // Your custom function to load the video
+    //     } else {
+    //         $('#youtube-preview').hide();
+    //         $('#duration-display').text('Video Duration: --:--');
+    //         $('#duration').val('');
+    //     }
+    // });
 </script>
