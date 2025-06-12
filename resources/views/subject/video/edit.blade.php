@@ -8,13 +8,14 @@
         enctype="multipart/form-data" class="row g-3">
         @csrf
 
-         <!-- Type -->
-         <div class="col-md-4">
+        <!-- Type -->
+        <div class="col-md-4">
             <label for="type_id" class="form-label">Type</label>
             <select name="type_id" id="type_id" class="form-select">
                 <option value="">Select Type</option>
                 @foreach ($types as $id => $name)
-                    <option value="{{ $id }}" {{ old('type_id', $video->type_id) == $id ? 'selected' : '' }}>{{ $name }}</option>
+                <option value="{{ $id }}" {{ old('type_id', $video->type_id) == $id ? 'selected' : '' }}>{{ $name }}
+                </option>
                 @endforeach
             </select>
 
@@ -26,7 +27,8 @@
             <select name="category_id" id="category_id" class="form-select">
                 <option value="">Select Category</option>
                 @foreach ($categories as $id => $name)
-                    <option value="{{ $id }}" {{ old('category_id', $video->category_id) == $id ? 'selected' : '' }}>{{ $name }}</option>
+                <option value="{{ $id }}" {{ old('category_id', $video->category_id) == $id ? 'selected' : '' }}>{{
+                    $name }}</option>
                 @endforeach
             </select>
         </div>
@@ -37,7 +39,8 @@
             <select name="course_id" id="course_id" class="form-select">
                 <option value="">Select Course</option>
                 @foreach ($courses as $id => $name)
-                    <option value="{{ $id }}" {{ old('course_id', $video->course_id) == $id ? 'selected' : '' }}>{{ $name }}</option>
+                <option value="{{ $id }}" {{ old('course_id', $video->course_id) == $id ? 'selected' : '' }}>{{ $name }}
+                </option>
                 @endforeach
             </select>
 
@@ -49,9 +52,9 @@
             <select name="subject_id" id="subject_id" class="form-select" required>
                 <option value="">Select Subject</option>
                 @foreach ($subjects as $id => $name)
-                    <option value="{{ $id }}" {{ old('subject_id', $video->subject_id) == $id ? 'selected' : '' }}>
-                        {{ $name }}
-                    </option>
+                <option value="{{ $id }}" {{ old('subject_id', $video->subject_id) == $id ? 'selected' : '' }}>
+                    {{ $name }}
+                </option>
                 @endforeach
             </select>
 
@@ -63,8 +66,8 @@
             <select name="subject_id" id="subject_id" class="form-select" required>
                 <option value="">Select Subject</option>
                 @foreach ($subjects as $id => $name)
-                    <option value="{{ $id }}" {{ old('subject_id', $video->subject_id) == $id ? 'selected' : '' }}>
-                        {{ $name }}</option>
+                <option value="{{ $id }}" {{ old('subject_id', $video->subject_id) == $id ? 'selected' : '' }}>
+                    {{ $name }}</option>
                 @endforeach
             </select>
         </div> --}}
@@ -79,7 +82,8 @@
         <!-- Description -->
         <div class="col-md-12">
             <label for="description" class="form-label">Description</label>
-            <textarea name="description" id="description" class="form-control" rows="3">{{ old('description', $video->description) }}</textarea>
+            <textarea name="description" id="description" class="form-control"
+                rows="3">{{ old('description', $video->description) }}</textarea>
         </div>
 
         <!-- Duration (readonly) -->
@@ -96,8 +100,8 @@
             <select name="user_id" id="user_id" class="form-select" required>
                 <option value="">Select Uploader</option>
                 @foreach ($users as $id => $name)
-                    <option value="{{ $id }}" {{ old('user_id', $video->user_id) == $id ? 'selected' : '' }}>
-                        {{ $name }}</option>
+                <option value="{{ $id }}" {{ old('user_id', $video->user_id) == $id ? 'selected' : '' }}>
+                    {{ $name }}</option>
                 @endforeach
             </select>
         </div>
@@ -108,7 +112,8 @@
             <select name="position" id="position" class="form-select">
                 <option value="0" {{ old('position', $video->position) == 0 ? 'selected' : '' }}>General Videos (0)
                 </option>
-                <option value="1" {{ old('position', $video->position) == 1 ? 'selected' : '' }}>Last Videos (1)</option>
+                <option value="1" {{ old('position', $video->position) == 1 ? 'selected' : '' }}>Last Videos (1)
+                </option>
             </select>
         </div>
 
@@ -116,47 +121,51 @@
         <div class="col-md-6">
             <label for="upload_type" class="form-label">Upload Type <span class="text-danger">*</span></label>
             <select name="upload_type" id="upload_type" class="form-select" required>
-                <option value="youtube" {{ old('upload_type', $video->upload_type) == 'youtube' ? 'selected' : '' }}>YouTube</option>
-                <option value="local" {{ old('upload_type', $video->upload_type) == 'local' ? 'selected' : '' }}>Local</option>
-                 <option value="drive_link" {{ old('upload_type', $video->upload_type) == 'drive_link' ? 'selected' : '' }}>Google Drive Link</option>
+                <option value="youtube" {{ old('upload_type', $video->upload_type) == 'youtube' ? 'selected' : ''
+                    }}>YouTube</option>
+                <option value="local" {{ old('upload_type', $video->upload_type) == 'local' ? 'selected' : '' }}>Local
+                </option>
+                <option value="drive_link" {{ old('upload_type', $video->upload_type) == 'drive_link' ? 'selected' : ''
+                    }}>Google Drive Link</option>
             </select>
         </div>
 
         <!-- YouTube Video URL -->
-        <div class="col-md-12" id="youtube_field" style="{{ old('upload_type', $video->upload_type) == 'youtube' ? '' : 'display: none;' }}">
+        <div class="col-md-12" id="youtube_field"
+            style="{{ old('upload_type', $video->upload_type) == 'youtube' ? '' : 'display: none;' }}">
             <label for="video_url" class="form-label">YouTube Video URL <span class="text-danger">*</span></label>
             <input type="url" name="video_url" id="video_url" class="form-control"
-                value="{{ $video->upload_type == 'youtube' ? $video->video_url : '' }}"
-                placeholder="Enter YouTube URL">
+                value="{{ $video->upload_type == 'youtube' ? $video->video_url : '' }}" placeholder="Enter YouTube URL">
             <!--<small class="text-muted">⚠ Only YouTube embedded URLs are allowed (e.g., <code>https://www.youtube.com/embed/VIDEO_ID</code>).</small>-->
         </div>
 
         <!-- Local File Upload -->
-        <div class="col-md-12" id="local_field" style="{{ old('upload_type', $video->upload_type) == 'local' ? '' : 'display: none;' }}">
+        <div class="col-md-12" id="local_field"
+            style="{{ old('upload_type', $video->upload_type) == 'local' ? '' : 'display: none;' }}">
             <label for="video_file" class="form-label">Upload Video File <span class="text-danger">*</span></label>
             <input type="file" name="video_file" id="video_file" class="form-control" accept="video/*">
             <progress id="uploadProgressBar" value="0" max="100" style="width: 100%; display: none;"></progress>
 
             @if ($video->upload_type == 'local' && $video->video_url)
-                <p class="mt-2"><strong>Current File:</strong> {{ basename($video->video_url) }}</p>
-                <video width="100%" height="auto" controls class="mt-2">
-                    <source src="{{ asset($video->video_url) }}" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
+            <p class="mt-2"><strong>Current File:</strong> {{ basename($video->video_url) }}</p>
+            <video width="100%" height="auto" controls class="mt-2">
+                <source src="{{ asset($video->video_url) }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
             @endif
         </div>
 
         <!-- Google Drive Video URL -->
-            <div class="col-md-12" id="drive_field">
-                <label for="drive_link" class="form-label">Google Drive URL <span class="text-danger">*</span></label>
-                <input type="url" name="drive_link" id="drive_link" class="form-control"
-                 value="{{ $video->upload_type == 'drive_link' ? $video->video_url : '' }}"
-                    placeholder="Enter Google Drive URL">
-                <!--<small class="text-muted">⚠ Only YouTube embedded URLs are allowed (e.g.,-->
-                <!--    <code>https://www.youtube.com/embed/VIDEO_ID</code>).</small>-->
-            </div>
-         <!-- YouTube Video Preview and Duration Display -->
-         <div class="col-md-12 mt-3" id="youtube-preview" style="display: none;">
+        <div class="col-md-12" id="drive_field">
+            <label for="drive_link" class="form-label">Google Drive URL <span class="text-danger">*</span></label>
+            <input type="url" name="drive_link" id="drive_link" class="form-control"
+                value="{{ $video->upload_type == 'drive_link' ? $video->video_url : '' }}"
+                placeholder="Enter Google Drive URL">
+            <!--<small class="text-muted">⚠ Only YouTube embedded URLs are allowed (e.g.,-->
+            <!--    <code>https://www.youtube.com/embed/VIDEO_ID</code>).</small>-->
+        </div>
+        <!-- YouTube Video Preview and Duration Display -->
+        <div class="col-md-12 mt-3" id="youtube-preview" style="display: none;">
             {{-- <label class="form-label">YouTube Preview:</label> --}}
             <div id="player" style="width:100%; max-width:640px; height:360px;"></div>
             {{-- <p class="mt-2" id="duration-display" class="text-muted">Video Duration: --:--</p> --}}
@@ -335,83 +344,154 @@
         });
 
         // Validate and AJAX Submit
-        $('#subject-video-form').validate({
-            rules: {
-                subject_id: { required: true },
-                name: { required: true, minlength: 3 },
-                user_id: { required: true },
-                upload_type: { required: true },
-                  duration: {
-                    required: function() {
-                        return $("#upload_type").val() === "drive_link";
-                    },
-                    pattern: {
-                        param: /^([0-9]{1,2}):([0-5][0-9]):([0-5][0-9])$/,
-                        depends: function() {
-                            // Only validate pattern if value is not empty (to avoid failing when optional)
-                            return $("#upload_type").val() === "drive_link" || $("#duration").val()
-                                .trim() !== "";
-                        }
-                    }
-                }
+        // $('#subject-video-form').validate({
+        //     rules: {
+        //         subject_id: { required: true },
+        //         name: { required: true, minlength: 3 },
+        //         user_id: { required: true },
+        //         upload_type: { required: true },
+        //           duration: {
+        //             required: function() {
+        //                 return $("#upload_type").val() === "drive_link";
+        //             },
+        //             pattern: {
+        //                 param: /^([0-9]{1,2}):([0-5][0-9]):([0-5][0-9])$/,
+        //                 depends: function() {
+        //                     // Only validate pattern if value is not empty (to avoid failing when optional)
+        //                     return $("#upload_type").val() === "drive_link" || $("#duration").val()
+        //                         .trim() !== "";
+        //                 }
+        //             }
+        //         }
+        //     },
+        //     messages: {
+        //         subject_id: { required: "Please select a subject" },
+        //         name: { required: "Enter a video name", minlength: "At least 3 characters" },
+        //         user_id: { required: "Please select an uploader" },
+        //         upload_type: { required: "Please select an upload type" },
+        //          duration: {
+        //             required: "Please enter video duration for Google Drive videos",
+        //             pattern: "Duration must be in HH:MM:SS format"
+        //         }
+        //     },
+        //     submitHandler: function (form) {
+        //         const formData = new FormData(form);
+        //         formData.append('_token', "{{ csrf_token() }}");
+
+        //         // Reset and show progress bar
+        //         $("#uploadProgressBar").val(0).show();
+
+        //         $.ajax({
+        //             url: $(form).attr('action'),
+        //             method: $(form).attr('method'),
+        //             data: formData,
+        //             contentType: false,
+        //             processData: false,
+
+        //             // ✅ Upload progress tracking
+        //             xhr: function () {
+        //                 let xhr = new XMLHttpRequest();
+        //                 xhr.upload.addEventListener("progress", function (e) {
+        //                     if (e.lengthComputable) {
+        //                         let percent = Math.round((e.loaded / e.total) * 100);
+        //                         $("#uploadProgressBar").val(percent);
+        //                     }
+        //                 }, false);
+        //                 return xhr;
+        //             },
+
+        //             beforeSend: () => {
+        //                 $(':input[type="submit"]').prop('disabled', true);
+        //             },
+
+        //             success: function (response) {
+        //                 toastr.success(response.message);
+        //                 $(".modal").modal('hide');
+        //                 $('#subjects-video-table').DataTable().ajax.reload();
+        //             },
+
+        //             error: function (response) {
+        //                 toastr.error(response.responseJSON?.message || 'Something went wrong.');
+        //             },
+
+        //             complete: () => {
+        //                 $(':input[type="submit"]').prop('disabled', false);
+        //                 $("#uploadProgressBar").hide(); // ✅ Hide progress bar after complete
+        //             }
+        //         });
+        //     }
+        // });
+
+        // Custom HH:MM:SS duration format validation method
+$.validator.addMethod("hhmmss", function(value, element) {
+    return this.optional(element) || /^([0-9]{1,2}):([0-5][0-9]):([0-5][0-9])$/.test(value);
+}, "Duration must be in HH:MM:SS format");
+
+$('#subject-video-form').validate({
+    rules: {
+        subject_id: { required: true },
+        name: { required: true, minlength: 3 },
+        user_id: { required: true },
+        upload_type: { required: true },
+        duration: {
+            required: function() {
+                return $("#upload_type").val() === "drive_link";
             },
-            messages: {
-                subject_id: { required: "Please select a subject" },
-                name: { required: "Enter a video name", minlength: "At least 3 characters" },
-                user_id: { required: "Please select an uploader" },
-                upload_type: { required: "Please select an upload type" },
-                 duration: {
-                    required: "Please enter video duration for Google Drive videos",
-                    pattern: "Duration must be in HH:MM:SS format"
-                }
-            },
-            submitHandler: function (form) {
-                const formData = new FormData(form);
-                formData.append('_token', "{{ csrf_token() }}");
+            hhmmss: true
+        }
+    },
+    messages: {
+        subject_id: { required: "Please select a subject" },
+        name: { required: "Enter a video name", minlength: "At least 3 characters" },
+        user_id: { required: "Please select an uploader" },
+        upload_type: { required: "Please select an upload type" },
+        duration: {
+            required: "Please enter video duration for Google Drive videos"
+        }
+    },
+    submitHandler: function (form) {
+        const formData = new FormData(form);
+        formData.append('_token', "{{ csrf_token() }}");
 
-                // Reset and show progress bar
-                $("#uploadProgressBar").val(0).show();
+        $("#uploadProgressBar").val(0).show();
 
-                $.ajax({
-                    url: $(form).attr('action'),
-                    method: $(form).attr('method'),
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-
-                    // ✅ Upload progress tracking
-                    xhr: function () {
-                        let xhr = new XMLHttpRequest();
-                        xhr.upload.addEventListener("progress", function (e) {
-                            if (e.lengthComputable) {
-                                let percent = Math.round((e.loaded / e.total) * 100);
-                                $("#uploadProgressBar").val(percent);
-                            }
-                        }, false);
-                        return xhr;
-                    },
-
-                    beforeSend: () => {
-                        $(':input[type="submit"]').prop('disabled', true);
-                    },
-
-                    success: function (response) {
-                        toastr.success(response.message);
-                        $(".modal").modal('hide');
-                        $('#subjects-video-table').DataTable().ajax.reload();
-                    },
-
-                    error: function (response) {
-                        toastr.error(response.responseJSON?.message || 'Something went wrong.');
-                    },
-
-                    complete: () => {
-                        $(':input[type="submit"]').prop('disabled', false);
-                        $("#uploadProgressBar").hide(); // ✅ Hide progress bar after complete
+        $.ajax({
+            url: $(form).attr('action'),
+            method: $(form).attr('method'),
+            data: formData,
+            contentType: false,
+            processData: false,
+            xhr: function () {
+                let xhr = new XMLHttpRequest();
+                xhr.upload.addEventListener("progress", function (e) {
+                    if (e.lengthComputable) {
+                        let percent = Math.round((e.loaded / e.total) * 100);
+                        $("#uploadProgressBar").val(percent);
                     }
-                });
+                }, false);
+                return xhr;
+            },
+            beforeSend: () => {
+                $(':input[type="submit"]').prop('disabled', true);
+            },
+            success: function (response) {
+                toastr.success(response.message);
+                $(".modal").modal('hide');
+                $('#subjects-video-table').DataTable().ajax.reload();
+            },
+            error: function (response) {
+                toastr.error(response.responseJSON?.message || 'Something went wrong.');
+            },
+            complete: () => {
+                $(':input[type="submit"]').prop('disabled', false);
+                $("#uploadProgressBar").hide();
             }
         });
+
+        return false; // ❗ Prevent default form submission
+    }
+});
+
     });
 </script>
 
