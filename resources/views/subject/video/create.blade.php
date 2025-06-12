@@ -489,7 +489,6 @@
     });
 </script>
 
-
 <script>
     $('#drive_link').on('input', function() {
         const url = $(this).val();
