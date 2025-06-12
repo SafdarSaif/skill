@@ -439,7 +439,6 @@
 
 <!-- Load YouTube IFrame API -->
 <script src="https://www.youtube.com/iframe_api"></script>
-
 <script>
     let player;
 
