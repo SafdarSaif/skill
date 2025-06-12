@@ -137,7 +137,7 @@
             }
         });
     </script>
-    <script>
+    {{-- <script>
         function showVideo(videoUrl, uploadType) {
             let videoContent = '';
 
@@ -151,7 +151,7 @@
             $('#videoContainer').html(videoContent);
             $('#videoModal').modal('show');
         }
-    </script>
+    </script> --}}
 
 
     {{-- for both youtube and normal video URLs and embeded YouTube URLs --}}
@@ -180,6 +180,46 @@
             $('#videoModal').modal('show');
         }
     </script> --}}
+
+   <script>
+    function showVideo(videoUrl, uploadType) {
+        let videoContent = '';
+
+        if (uploadType === 'youtube') {
+            // Handle YouTube URLs
+            if (videoUrl.includes('watch?v=')) {
+                const videoId = videoUrl.split('watch?v=')[1].split('&')[0];
+                videoUrl = `https://www.youtube.com/embed/${videoId}`;
+            } else if (videoUrl.includes('youtu.be/')) {
+                const videoId = videoUrl.split('youtu.be/')[1].split('?')[0];
+                videoUrl = `https://www.youtube.com/embed/${videoId}`;
+            }
+            videoContent = `<iframe width="100%" height="400" src="${videoUrl}" frameborder="0" allowfullscreen></iframe>`;
+        } else if (uploadType === 'drive_link') {
+            // Support both preview and download links
+            let fileIdMatch = videoUrl.match(/id=([a-zA-Z0-9_-]+)/); // for uc?export=download
+            if (!fileIdMatch) {
+                fileIdMatch = videoUrl.match(/\/d\/([a-zA-Z0-9_-]+)/); // for /file/d/ID/view
+            }
+
+            if (fileIdMatch && fileIdMatch[1]) {
+                const fileId = fileIdMatch[1];
+                const embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+                videoContent = `<iframe width="100%" height="400" src="${embedUrl}" frameborder="0" allowfullscreen></iframe>`;
+            } else {
+                videoContent = `<p class="text-danger">Invalid Google Drive URL</p>`;
+            }
+        } else {
+            // Local video file
+            videoContent = `<video width="100%" controls><source src="${videoUrl}" type="video/mp4">Your browser does not support the video tag.</video>`;
+        }
+
+        $('#videoContainer').html(videoContent);
+        $('#videoModal').modal('show');
+    }
+</script>
+
+
 
 
     <h4 class="mb-4">Subject Videos</h4>

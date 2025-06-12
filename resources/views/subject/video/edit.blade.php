@@ -423,6 +423,12 @@
         // });
 
         // Custom HH:MM:SS duration format validation method
+$.validator.addMethod("driveLink", function(value, element) {
+    const drivePattern1 = /^https:\/\/drive\.google\.com\/file\/d\/[a-zA-Z0-9_-]{10,}\/view(\?.*)?$/;
+    const drivePattern2 = /^https:\/\/drive\.google\.com\/uc\?export=download&id=[a-zA-Z0-9_-]{10,}$/;
+    return this.optional(element) || drivePattern1.test(value) || drivePattern2.test(value);
+}, "Please enter a valid Google Drive link.");
+
 $.validator.addMethod("hhmmss", function(value, element) {
     return this.optional(element) || /^([0-9]{1,2}):([0-5][0-9]):([0-5][0-9])$/.test(value);
 }, "Duration must be in HH:MM:SS format");
