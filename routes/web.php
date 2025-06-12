@@ -220,6 +220,9 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/subjectvideo/{id}', [SubjectVideoController::class, 'show'])->name('subjectvideo.show');
 
+    Route::post('/get-video-duration', [SubjectVideoController::class, 'getDriveVideoDuration'])->name('get-video-duration');
+
+
 
 
     Route::get('/subjectnote', [SubjectNoteController::class, 'index'])->name('subjectnote');

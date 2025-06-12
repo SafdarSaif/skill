@@ -253,33 +253,66 @@
 <script>
     $(document).ready(function () {
 
+        // function toggleFields() {
+        //     const uploadType = $('#upload_type').val();
+        //     if ($('#upload_type').val() === 'youtube') {
+        //         $('#youtube_field').show();
+        //         $('#video_url').prop('required', true);
+        //         $('#local_field').hide();
+        //         $('#video_file').prop('required', false);
+        //         $('#drive_field').hide();
+        //         $('#drive_link').prop('required', false);
+        //     }
+        //     else if($('#upload_type').val() == 'drive_link'){
+        //         $('#drive_field').show();
+        //         $('#drive_link').prop('required', true);
+        //         $('#local_field').hide();
+        //         $('#video_file').prop('required', false);
+        //         $('#youtube_field').hide();
+        //         $('#video_url').prop('required', false);
+        //     }
+        //     else {
+        //         $('#local_field').show();
+        //         $('#video_file').prop('required', true);
+        //         $('#youtube_field').hide();
+        //         $('#video_url').prop('required', false);
+        //         $('#drive_field').hide();
+        //         $('#drive_link').prop('required', false);
+        //     }
+        // }
+
         function toggleFields() {
-            const uploadType = $('#upload_type').val();
-            if ($('#upload_type').val() === 'youtube') {
-                $('#youtube_field').show();
-                $('#video_url').prop('required', true);
-                $('#local_field').hide();
-                $('#video_file').prop('required', false);
-                $('#drive_field').hide();
-                $('#drive_link').prop('required', false);
-            }
-            else if($('#upload_type').val() == 'drive_link'){
-                $('#drive_field').show();
-                $('#drive_link').prop('required', true);
-                $('#local_field').hide();
-                $('#video_file').prop('required', false);
-                $('#youtube_field').hide();
-                $('#video_url').prop('required', false);
-            }
-            else {
-                $('#local_field').show();
-                $('#video_file').prop('required', true);
-                $('#youtube_field').hide();
-                $('#video_url').prop('required', false);
-                $('#drive_field').hide();
-                $('#drive_link').prop('required', false);
-            }
-        }
+    const uploadType = $('#upload_type').val();
+
+    if (uploadType === 'youtube') {
+        $('#youtube_field').show();
+        $('#video_url').prop('required', true);
+        $('#local_field').hide();
+        $('#video_file').prop('required', false);
+        $('#drive_field').hide();
+        $('#drive_link').prop('required', false);
+        $('#duration_field').hide(); // Hide duration for YouTube
+        $('#duration').prop('readonly', true);
+    } else if (uploadType === 'drive_link') {
+        $('#drive_field').show();
+        $('#drive_link').prop('required', true);
+        $('#local_field').hide();
+        $('#video_file').prop('required', false);
+        $('#youtube_field').hide();
+        $('#video_url').prop('required', false);
+        $('#duration_field').show(); // Show duration for Drive
+        $('#duration').prop('readonly', false); // Allow manual entry
+    } else {
+        $('#local_field').show();
+        $('#video_file').prop('required', true);
+        $('#youtube_field').hide();
+        $('#video_url').prop('required', false);
+        $('#drive_field').hide();
+        $('#drive_link').prop('required', false);
+        $('#duration_field').hide(); // Hide duration for local
+        $('#duration').prop('readonly', true);
+    }
+}
 
         toggleFields();
         $('#upload_type').change(toggleFields);
@@ -307,13 +340,30 @@
                 subject_id: { required: true },
                 name: { required: true, minlength: 3 },
                 user_id: { required: true },
-                upload_type: { required: true }
+                upload_type: { required: true },
+                  duration: {
+                    required: function() {
+                        return $("#upload_type").val() === "drive_link";
+                    },
+                    pattern: {
+                        param: /^([0-9]{1,2}):([0-5][0-9]):([0-5][0-9])$/,
+                        depends: function() {
+                            // Only validate pattern if value is not empty (to avoid failing when optional)
+                            return $("#upload_type").val() === "drive_link" || $("#duration").val()
+                                .trim() !== "";
+                        }
+                    }
+                }
             },
             messages: {
                 subject_id: { required: "Please select a subject" },
                 name: { required: "Enter a video name", minlength: "At least 3 characters" },
                 user_id: { required: "Please select an uploader" },
-                upload_type: { required: "Please select an upload type" }
+                upload_type: { required: "Please select an upload type" },
+                 duration: {
+                    required: "Please enter video duration for Google Drive videos",
+                    pattern: "Duration must be in HH:MM:SS format"
+                }
             },
             submitHandler: function (form) {
                 const formData = new FormData(form);
@@ -414,6 +464,24 @@
             $('#youtube-preview').hide();
             $('#duration-display').text('Video Duration: --:--');
             $('#duration').val('');
+        }
+    });
+</script>
+
+
+<script>
+    $('#drive_link').on('input', function() {
+        const url = $(this).val();
+        const match = url.match(/\/d\/([a-zA-Z0-9_-]{10,})/);
+
+        if (match && match[1]) {
+            const fileId = match[1];
+            const previewUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+            $('#drive-preview-iframe').attr('src', previewUrl);
+            $('#drive-preview').show();
+        } else {
+            $('#drive-preview').hide();
+            $('#drive-preview-iframe').attr('src', '');
         }
     });
 </script>

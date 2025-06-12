@@ -51,17 +51,6 @@
             </select>
         </div>
 
-        {{-- <!-- Subject Selection -->
-        <div class="col-md-6">
-            <label for="subject_id" class="form-label">Subject <span class="text-danger">*</span></label>
-            <select name="subject_id" id="subject_id" class="form-select" required>
-                <option value="">Select Subject</option>
-                @foreach ($subjects as $id => $name)
-                    <option value="{{ $id }}">{{ $name }}</option>
-                @endforeach
-            </select>
-        </div> --}}
-
         <!-- Video Name -->
         <div class="col-md-6">
             <label for="name" class="form-label">Video Name <span class="text-danger">*</span></label>
@@ -138,6 +127,14 @@
             <!--<small class="text-muted">⚠ Only YouTube embedded URLs are allowed (e.g.,-->
             <!--    <code>https://www.youtube.com/embed/VIDEO_ID</code>).</small>-->
         </div>
+
+        <!-- Google Drive Preview -->
+        <div class="col-md-12 mt-3" id="drive-preview" style="display: none;">
+            <iframe id="drive-preview-iframe" width="100%" height="360" frameborder="0"
+                allowfullscreen></iframe>
+        </div>
+
+
 
 
         <!-- YouTube Video Preview and Duration Display -->
@@ -250,30 +247,59 @@
             toggleUploadFields();
         });
 
+        // function toggleUploadFields() {
+        //     if ($('#upload_type').val() === 'youtube') {
+        //         $('#youtube_field').show();
+        //         $('#video_url').prop('required', true);
+        //         $('#local_field').hide();
+        //         $('#video_file').prop('required', false);
+        //         $('#drive_field').hide();
+        //         $('#drive_link').prop('required', false);
+        //     } else if ($('#upload_type').val() == 'drive_link') {
+        //         $('#drive_field').show();
+        //         $('#drive_link').prop('required', true);
+        //         $('#local_field').hide();
+        //         $('#video_file').prop('required', false);
+        //         $('#youtube_field').hide();
+        //         $('#video_url').prop('required', false);
+        //     } else {
+        //         $('#local_field').show();
+        //         $('#video_file').prop('required', true);
+        //         $('#youtube_field').hide();
+        //         $('#video_url').prop('required', false);
+        //         $('#drive_field').hide();
+        //         $('#drive_link').prop('required', false);
+        //     }
+        // }
+
         function toggleUploadFields() {
-            if ($('#upload_type').val() === 'youtube') {
+            const uploadType = $('#upload_type').val();
+
+            if (uploadType === 'youtube') {
                 $('#youtube_field').show();
                 $('#video_url').prop('required', true);
-                $('#local_field').hide();
-                $('#video_file').prop('required', false);
-                $('#drive_field').hide();
-                $('#drive_link').prop('required', false);
-            } else if ($('#upload_type').val() == 'drive_link') {
-                $('#drive_field').show();
+                $('#youtube-preview').show();
+
+                $('#local_field, #drive_field, #drive-preview').hide();
+                $('#video_file, #drive_link').prop('required', false);
+                $('#duration').prop('readonly', true).val('');
+            } else if (uploadType === 'drive_link') {
+                $('#drive_field, #drive-preview').show();
                 $('#drive_link').prop('required', true);
-                $('#local_field').hide();
-                $('#video_file').prop('required', false);
-                $('#youtube_field').hide();
-                $('#video_url').prop('required', false);
+
+                $('#youtube_field, #local_field, #youtube-preview').hide();
+                $('#video_url, #video_file').prop('required', false);
+                $('#duration').prop('readonly', false); // Allow manual entry
             } else {
                 $('#local_field').show();
                 $('#video_file').prop('required', true);
-                $('#youtube_field').hide();
-                $('#video_url').prop('required', false);
-                $('#drive_field').hide();
-                $('#drive_link').prop('required', false);
+
+                $('#youtube_field, #drive_field, #drive-preview, #youtube-preview').hide();
+                $('#video_url, #drive_link').prop('required', false);
+                $('#duration').prop('readonly', true).val('');
             }
         }
+
 
         // File input event for duration calculation
         $('#video_file').on('change', function(event) {
@@ -320,7 +346,21 @@
                         return $("#upload_type").val() === "youtube";
                     },
                     url: /^https:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+(\?[^#]+)?$/
+                },
+                duration: {
+                    required: function() {
+                        return $("#upload_type").val() === "drive_link";
+                    },
+                    pattern: {
+                        param: /^([0-9]{1,2}):([0-5][0-9]):([0-5][0-9])$/,
+                        depends: function() {
+                            // Only validate pattern if value is not empty (to avoid failing when optional)
+                            return $("#upload_type").val() === "drive_link" || $("#duration").val()
+                                .trim() !== "";
+                        }
+                    }
                 }
+
             },
             messages: {
                 subject_id: {
@@ -339,6 +379,10 @@
                 video_url: {
                     required: "Please enter a YouTube video URL",
                     url: "Please enter a valid YouTube URL"
+                },
+                duration: {
+                    required: "Please enter video duration for Google Drive videos",
+                    pattern: "Duration must be in HH:MM:SS format"
                 }
             },
             submitHandler: function(form) {
@@ -444,3 +488,275 @@
         }
     });
 </script>
+
+
+<script>
+    $('#drive_link').on('input', function() {
+        const url = $(this).val();
+        const match = url.match(/\/d\/([a-zA-Z0-9_-]{10,})/);
+
+        if (match && match[1]) {
+            const fileId = match[1];
+            const previewUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+            $('#drive-preview-iframe').attr('src', previewUrl);
+            $('#drive-preview').show();
+        } else {
+            $('#drive-preview').hide();
+            $('#drive-preview-iframe').attr('src', '');
+        }
+    });
+</script>
+
+
+{{-- with controller --}}
+{{-- <script>
+    $('#drive_link').on('input', function() {
+        let url = $(this).val();
+
+        if (url.includes('drive.google.com')) {
+            $.ajax({
+                url: '{{ route('get-video-duration') }}',
+                method: 'POST',
+                data: {
+                    drive_url: url,
+                    _token: '{{ csrf_token() }}'
+                },
+                beforeSend: function() {
+                    $('#duration').val('');
+                    $('#video_duration').text('⏳ Checking video duration...');
+                },
+                success: function(response) {
+                    if (response.duration) {
+                        $('#duration').val(response.duration); // set duration in form input
+                        $('#video_duration').html('⏱️ Duration: ' + response.duration);
+                    } else {
+                        $('#video_duration').text('❌ Could not fetch duration.');
+                    }
+                },
+                error: function(xhr) {
+                    const err = xhr.responseJSON?.error || 'An error occurred';
+                    $('#video_duration').html('❌ ' + err);
+                    $('#duration').val('');
+                }
+            });
+        } else {
+            $('#video_duration').text('');
+            $('#duration').val('');
+        }
+    });
+</script> --}}
+
+
+
+{{-- 2nd --}}
+{{-- <script>
+    $('#drive_link').on('input', function () {
+        const driveUrl = $(this).val();
+        const fileIdMatch = driveUrl.match(/(?:\/d\/|id=)([a-zA-Z0-9_-]{10,})/);
+
+        if (fileIdMatch && fileIdMatch[1]) {
+            const fileId = fileIdMatch[1];
+
+            // ✅ Set Google Drive preview iframe
+            const previewUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+            $('#drive-preview').show();
+            $('#drive-preview-iframe').attr('src', previewUrl);
+
+            // ✅ Try fetching video metadata to get duration
+            const directUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+            fetch(directUrl)
+                .then(response => response.blob())
+                .then(blob => {
+                    const video = document.createElement('video');
+                    video.preload = 'metadata';
+
+                    video.onloadedmetadata = function () {
+                        window.URL.revokeObjectURL(video.src);
+
+                        const duration = video.duration;
+                        const hours = Math.floor(duration / 3600).toString().padStart(2, '0');
+                        const minutes = Math.floor((duration % 3600) / 60).toString().padStart(2, '0');
+                        const seconds = Math.floor(duration % 60).toString().padStart(2, '0');
+
+                        const formatted = `${hours}:${minutes}:${seconds}`;
+                        $('#duration').val(formatted);
+
+                        // ✅ Log duration to console
+                        console.log("Video Duration:", formatted);
+                        console.log("Duration in seconds:", duration);
+                    };
+
+                    video.onerror = function () {
+                        console.warn("Could not load video metadata.");
+                        $('#duration').val('');
+                    };
+
+                    video.src = URL.createObjectURL(blob);
+                })
+                .catch(err => {
+                    console.error("Fetch error: ", err);
+                    $('#duration').val('');
+                });
+
+        } else {
+            $('#drive-preview').hide();
+            $('#drive-preview-iframe').attr('src', '');
+            $('#duration').val('');
+        }
+    });
+</script> --}}
+{{-- 1st --}}
+{{-- <script>
+    $('#drive_link').on('input', function () {
+        const driveUrl = $(this).val();
+        const fileIdMatch = driveUrl.match(/(?:\/d\/|id=)([a-zA-Z0-9_-]{10,})/);
+
+        if (fileIdMatch && fileIdMatch[1]) {
+            const fileId = fileIdMatch[1];
+
+            // ✅ Set Google Drive preview iframe
+            const previewUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+            $('#drive-preview').show();
+            $('#drive-preview-iframe').attr('src', previewUrl);
+
+            // ✅ Try fetching video metadata to get duration
+            const directUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+            fetch(directUrl)
+                .then(response => response.blob())
+                .then(blob => {
+                    const video = document.createElement('video');
+                    video.preload = 'metadata';
+
+                    video.onloadedmetadata = function () {
+                        window.URL.revokeObjectURL(video.src);
+
+                        const duration = video.duration;
+                        const hours = Math.floor(duration / 3600).toString().padStart(2, '0');
+                        const minutes = Math.floor((duration % 3600) / 60).toString().padStart(2, '0');
+                        const seconds = Math.floor(duration % 60).toString().padStart(2, '0');
+
+                        const formatted = `${hours}:${minutes}:${seconds}`;
+                        $('#duration').val(formatted);
+                    };
+
+                    video.onerror = function () {
+                        console.warn("Could not load video metadata.");
+                        $('#duration').val('');
+                    };
+
+                    video.src = URL.createObjectURL(blob);
+                })
+                .catch(err => {
+                    console.error("Fetch error: ", err);
+                    $('#duration').val('');
+                });
+
+        } else {
+            $('#drive-preview').hide();
+            $('#drive-preview-iframe').attr('src', '');
+            $('#duration').val('');
+        }
+    });
+</script> --}}
+
+{{-- <script>
+    $('#drive_link').on('input', function () {
+        const driveUrl = $(this).val();
+        const fileIdMatch = driveUrl.match(/(?:\/d\/|id=)([a-zA-Z0-9_-]{10,})/);
+
+        if (fileIdMatch && fileIdMatch[1]) {
+            const fileId = fileIdMatch[1];
+
+            // ✅ Set Google Drive preview iframe
+            const previewUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+            $('#drive-preview').show();
+            $('#drive-preview-iframe').attr('src', previewUrl);
+
+            // ✅ Try fetching video metadata using CORS proxy
+            const directUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+            const proxiedUrl = `https://corsproxy.io/?${encodeURIComponent(directUrl)}`;
+
+            fetch(proxiedUrl)
+                .then(response => response.blob())
+                .then(blob => {
+                    const video = document.createElement('video');
+                    video.preload = 'metadata';
+
+                    video.onloadedmetadata = function () {
+                        window.URL.revokeObjectURL(video.src);
+
+                        const duration = video.duration;
+                        const hours = Math.floor(duration / 3600).toString().padStart(2, '0');
+                        const minutes = Math.floor((duration % 3600) / 60).toString().padStart(2, '0');
+                        const seconds = Math.floor(duration % 60).toString().padStart(2, '0');
+
+                        const formatted = `${hours}:${minutes}:${seconds}`;
+                        $('#duration').val(formatted);
+                    };
+
+                    video.onerror = function () {
+                        console.warn("Could not load video metadata.");
+                        $('#duration').val('');
+                    };
+
+                    video.src = URL.createObjectURL(blob);
+                })
+                .catch(err => {
+                    console.error("Fetch error: ", err);
+                    $('#duration').val('');
+                });
+
+        } else {
+            $('#drive-preview').hide();
+            $('#drive-preview-iframe').attr('src', '');
+            $('#duration').val('');
+        }
+    });
+</script> --}}
+
+
+
+{{-- <script>
+    $('#drive_link').on('input', function () {
+    const driveUrl = $(this).val();
+    const fileIdMatch = driveUrl.match(/(?:\/d\/|id=)([a-zA-Z0-9_-]{10,})/);
+
+    if (fileIdMatch && fileIdMatch[1]) {
+        const fileId = fileIdMatch[1];
+        const previewUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+        const fetchUrl = `https://corsproxy.io/?https://drive.google.com/uc?export=download&id=${fileId}`; // using CORS proxy
+
+        $('#drive-preview').show();
+        $('#drive-preview-iframe').attr('src', previewUrl);
+
+        fetch(fetchUrl)
+            .then(res => {
+                if (!res.ok) throw new Error("File fetch failed");
+                return res.blob();
+            })
+            .then(blob => {
+                const video = document.createElement('video');
+                video.preload = 'metadata';
+                video.onloadedmetadata = function () {
+                    const duration = video.duration;
+                    const h = Math.floor(duration / 3600).toString().padStart(2, '0');
+                    const m = Math.floor((duration % 3600) / 60).toString().padStart(2, '0');
+                    const s = Math.floor(duration % 60).toString().padStart(2, '0');
+                    $('#duration').val(`${h}:${m}:${s}`);
+                };
+                video.onerror = () => $('#duration').val('');
+                video.src = URL.createObjectURL(blob);
+            })
+            .catch(err => {
+                console.error("Drive duration fetch error:", err);
+                $('#duration').val('');
+            });
+
+    } else {
+        $('#drive-preview').hide();
+        $('#drive-preview-iframe').attr('src', '');
+        $('#duration').val('');
+    }
+});
+
+</script> --}}

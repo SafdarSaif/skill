@@ -13,6 +13,9 @@ use App\Models\Category;
 use App\Models\Course;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use FFMpeg\FFMpeg;
+use FFMpeg\FFProbe;
+
 
 class SubjectVideoController extends Controller
 {
@@ -131,6 +134,52 @@ class SubjectVideoController extends Controller
         $users = User::where('status', 1)->pluck('name', 'id');
 
         return view('subject.video.create', compact('types', 'categories', 'courses', 'subjects', 'users'));
+    }
+
+
+
+    public function getDuration(Request $request)
+    {
+        $url = $request->input('drive_url');
+
+        // Extract file ID from Google Drive URL
+        preg_match('/\/d\/(.*?)\//', $url, $matches);
+        $fileId = $matches[1] ?? null;
+
+        if (!$fileId) {
+            return response()->json(['error' => 'Invalid Google Drive URL'], 400);
+        }
+
+        // Download URL
+        $downloadUrl = "https://drive.google.com/uc?export=download&id={$fileId}";
+        $tempPath = storage_path('app/temp_video.mp4');
+
+        // Download video
+        $fp = fopen($tempPath, 'w+');
+        $ch = curl_init($downloadUrl);
+        curl_setopt($ch, CURLOPT_FILE, $fp);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0');
+        curl_exec($ch);
+        curl_close($ch);
+        fclose($fp);
+
+        // Load ffmpeg instance
+        $ffmpeg = FFMpeg::create();
+        $video = $ffmpeg->open($tempPath);
+
+        // Get duration in seconds
+        $format = $video->getFormat();
+        $duration = $format->get('duration'); // in seconds
+
+        // Clean up temp file
+        unlink($tempPath);
+
+        if ($duration) {
+            return response()->json(['duration' => gmdate("H:i:s", (int)$duration)]);
+        }
+
+        return response()->json(['error' => 'Unable to get video duration'], 500);
     }
 
 
