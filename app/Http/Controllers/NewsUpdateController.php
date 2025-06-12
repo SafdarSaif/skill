@@ -192,7 +192,7 @@ class NewsUpdateController extends Controller
 
     public function index(Request $request)
     {
-        // if (Auth::check() && Auth::user()->hasPermissionTo('view news')) {
+        if (Auth::check() && Auth::user()->hasPermissionTo('view news')) {
         if ($request->ajax()) {
             $data = NewsUpdate::orderBy('id', 'desc')->get();
 
@@ -210,25 +210,26 @@ class NewsUpdateController extends Controller
                 ->make(true);
         }
         return view('website.news.index');
-        // } else {
-        //     return response()->view('errors.403', [], 403);
-        // }
+        } else {
+            return response()->view('errors.403', [], 403);
+        }
     }
 
 
+    
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        // if (Auth::check() && Auth::user()->hasPermissionTo('create news')) 
+        if (Auth::check() && Auth::user()->hasPermissionTo('create news')) 
         {
 
             return view('website.news.create');
         }
-        //  else {
-        //     return response()->view('errors.403', [], 403);
-        // }
+         else {
+            return response()->view('errors.403', [], 403);
+        }
     }
 
     /**

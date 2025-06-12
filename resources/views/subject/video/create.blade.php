@@ -83,7 +83,7 @@
         </div>
 
         <!-- Uploader -->
-        <div class="col-md-6">
+        {{-- <div class="col-md-6">
             <label for="user_id" class="form-label">Uploader <span class="text-danger">*</span></label>
             <select name="user_id" id="user_id" class="form-select" required>
                 <option value="">Select Uploader</option>
@@ -91,7 +91,7 @@
                     <option value="{{ $id }}">{{ $name }}</option>
                 @endforeach
             </select>
-        </div>
+        </div> --}}
 
         <!-- Position -->
         <div class="col-md-6">
@@ -285,9 +285,6 @@
                     required: true,
                     minlength: 3
                 },
-                user_id: {
-                    required: true
-                },
                 upload_type: {
                     required: true
                 },
@@ -305,9 +302,6 @@
                 name: {
                     required: "Please enter a video name",
                     minlength: "Video name must be at least 3 characters long"
-                },
-                user_id: {
-                    required: "Please select an uploader"
                 },
                 upload_type: {
                     required: "Please select an upload type"
@@ -375,16 +369,32 @@
         }
     }
 
+    // function onPlayerReady(event) {
+    //     setTimeout(() => {
+    //         const durationInSeconds = player.getDuration();
+    //         const minutes = Math.floor(durationInSeconds / 60).toString().padStart(2, '0');
+    //         const seconds = Math.floor(durationInSeconds % 60).toString().padStart(2, '0');
+    //         const formatted = `00:${minutes}:${seconds}`;
+    //         $('#duration-display').text(`Video Duration: ${minutes} min ${seconds} sec`);
+    //         $('#duration').val(formatted);
+    //     }, 1000);
+    // }
+
     function onPlayerReady(event) {
         setTimeout(() => {
             const durationInSeconds = player.getDuration();
-            const minutes = Math.floor(durationInSeconds / 60).toString().padStart(2, '0');
+
+            const hours = Math.floor(durationInSeconds / 3600).toString().padStart(2, '0');
+            const minutes = Math.floor((durationInSeconds % 3600) / 60).toString().padStart(2, '0');
             const seconds = Math.floor(durationInSeconds % 60).toString().padStart(2, '0');
-            const formatted = `00:${minutes}:${seconds}`;
-            $('#duration-display').text(`Video Duration: ${minutes} min ${seconds} sec`);
+
+            const formatted = `${hours}:${minutes}:${seconds}`;
+            $('#duration-display').text(`Video Duration: ${hours} hr ${minutes} min ${seconds} sec`);
             $('#duration').val(formatted);
         }, 1000);
     }
+
+
 
     // Watch YouTube URL input
     $('#video_url').on('input', function() {
@@ -400,4 +410,23 @@
             $('#duration').val('');
         }
     });
+
+    
+    //for both youtube and normal video URLs and embeded YouTube URLs
+    // $('#video_url').on('input', function() {
+    //     const url = $(this).val();
+
+    //     // Match various YouTube URL formats
+    //     const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+
+    //     if (match && match[1]) {
+    //         const videoId = match[1];
+    //         $('#youtube-preview').show();
+    //         loadYouTubeVideo(videoId); // Your custom function to load the video
+    //     } else {
+    //         $('#youtube-preview').hide();
+    //         $('#duration-display').text('Video Duration: --:--');
+    //         $('#duration').val('');
+    //     }
+    // });
 </script>

@@ -130,7 +130,8 @@
         </li>
 
         <!-- Support System -->
-        <li class="menu-item {{ Route::is('news*', 'slider*', 'faq*', 'studentquery*' ,'term*','privacy*','contact*') ? 'active open' : '' }}">
+        <li
+            class="menu-item {{ Route::is('news*', 'slider*', 'faq*', 'studentquery*', 'term*', 'privacy*', 'contact*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons ti ti-headset"></i>
                 <div data-i18n="Support System">Support System</div>
@@ -181,13 +182,13 @@
             </ul>
         </li>
 
-        <!-- System Settings -->
+        {{-- <!-- System Settings -->
         <li class="menu-header small text-uppercase mt-4">
             <span class="menu-header-text">System Settings</span>
-        </li>
+        </li> --}}
 
         <!-- Permissions -->
-        <li class="menu-item {{ Route::is('users*') ? 'active open' : '' }}">
+        {{-- <li class="menu-item {{ Route::is('users*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons ti ti-shield-check"></i>
                 <div data-i18n="Permissions">Permissions</div>
@@ -212,7 +213,45 @@
                     </a>
                 </li>
             </ul>
-        </li>
+        </li> --}}
+
+        @php
+            $user = Auth::user();
+        @endphp
+
+        @if ($user && $user->hasRole('Super Admin'))
+            <!-- System Settings -->
+            <li class="menu-header small text-uppercase mt-4">
+                <span class="menu-header-text">System Settings</span>
+            </li>
+            <li class="menu-item {{ Route::is('users*') ? 'active open' : '' }}">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class="menu-icon tf-icons ti ti-shield-check"></i>
+                    <div data-i18n="Permissions">Permissions</div>
+                </a>
+                <ul class="menu-sub">
+                    <li class="menu-item {{ Route::is('users') ? 'active' : '' }}">
+                        <a href="{{ route('users') }}" class="menu-link">
+                            <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                            <div data-i18n="Users">Users</div>
+                        </a>
+                    </li>
+                    <li class="menu-item {{ Route::is('users.permissions') ? 'active' : '' }}">
+                        <a href="{{ route('users.permissions') }}" class="menu-link">
+                            <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                            <div data-i18n="User Permissions">User Permissions</div>
+                        </a>
+                    </li>
+                    <li class="menu-item {{ Route::is('users.roles') ? 'active' : '' }}">
+                        <a href="{{ route('users.roles') }}" class="menu-link">
+                            <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                            <div data-i18n="Role Permissions">Role Permissions</div>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        @endif
+
     </ul>
 </aside>
 

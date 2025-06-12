@@ -1,5 +1,14 @@
 @extends('layouts.main')
 
+
+@php
+    $canCreateNews = Auth::check() && Auth::user()->hasPermissionTo('create news');
+    $canEditNews = Auth::check() && Auth::user()->hasPermissionTo('edit news');
+    $canDeleteNews = Auth::check() && Auth::user()->hasPermissionTo('delete news');
+    $statusNews = Auth::check() && Auth::user()->hasPermissionTo('status news');
+@endphp
+
+
 @section('content')
     <script type="module">
         $(function() {
@@ -9,59 +18,127 @@
             if (dataTableNews.length) {
                 dt_news = dataTableNews.DataTable({
                     ajax: "{{ route('news') }}",
-                    columns: [
-                        { data: 'DT_RowIndex', title: 'No.' },
-                        { data: 'name', title: 'Title' },
-                        { data: 'content', title: 'Content' },
-                        { data: 'image', title: 'Image' },
-                        { data: 'status', title: 'Status' },
-                        { data: '', title: 'Actions' }
-                    ],
-                    columnDefs: [
+                    columns: [{
+                            data: 'DT_RowIndex',
+                            title: 'No.'
+                        },
                         {
+                            data: 'name',
+                            title: 'Title'
+                        },
+                        {
+                            data: 'content',
+                            title: 'Content'
+                        },
+                        {
+                            data: 'image',
+                            title: 'Image'
+                        },
+                        {
+                            data: 'status',
+                            title: 'Status'
+                        },
+                        {
+                            data: '',
+                            title: 'Actions'
+                        }
+                    ],
+                    columnDefs: [{
                             targets: 3, // Image column
                             render: function(data, type, full, meta) {
-                                return data ? `<img src="${data}" alt="News Image" width="50" height="50">` : 'No Image';
+                                return data ?
+                                    `<img src="${data}" alt="News Image" width="50" height="50">` :
+                                    'No Image';
                             }
                         },
+                        // {
+                        //     targets: 4,
+                        //     render: function(data, type, full, meta) {
+                        //         var $checkedStatus = full['status'] == 1 ? 'checked' : '';
+                        //         var $nameStatus = full['status'] == 1 ? 'Published' : 'Draft';
+                        //         var isDisabled =
+                        //             'onclick="updateActiveStatus(&#39;/news/status/' +
+                        //             full['id'] + '&#39;, &#39;news-updates-table&#39;)"';
+                        //         return '<label class="switch">' +
+                        //             '<input  type="checkbox" ' + isDisabled + $checkedStatus +
+                        //             ' class="switch-input">' +
+                        //             '<span class="switch-toggle-slider">' +
+                        //             '<span class="switch-on">' +
+                        //             '<i class="ti ti-check"></i>' +
+                        //             '</span>' +
+                        //             '<span class="switch-off">' +
+                        //             '<i class="ti ti-x"></i>' +
+                        //             '</span>' +
+                        //             '</span>' +
+                        //             '<span class="switch-label">' + $nameStatus + '</span>' +
+                        //             '</label>';
+                        //     }
+                        // },
                         {
                             targets: 4,
                             render: function(data, type, full, meta) {
+                                @php
+                                    // Encode this condition for JavaScript use
+                                    $statusToggleAllowed = $statusNews ? 'true' : 'false';
+                                @endphp
+
+                                var statusToggleAllowed = {{ $statusToggleAllowed }};
                                 var $checkedStatus = full['status'] == 1 ? 'checked' : '';
                                 var $nameStatus = full['status'] == 1 ? 'Published' : 'Draft';
-                                var isDisabled =
-                                    'onclick="updateActiveStatus(&#39;/news/status/' +
-                                    full['id'] + '&#39;, &#39;news-updates-table&#39;)"';
+
+                                var isDisabled = statusToggleAllowed ?
+                                    'onclick="updateActiveStatus(\'/news/status/' + full['id'] +
+                                    '\', \'news-updates-table\')"' :
+                                    'disabled';
+
                                 return '<label class="switch">' +
-                                    '<input  type="checkbox" ' + isDisabled + $checkedStatus +
-                                    ' class="switch-input">' +
+                                    '<input type="checkbox" class="switch-input" ' +
+                                    $checkedStatus + ' ' + isDisabled + '>' +
                                     '<span class="switch-toggle-slider">' +
-                                    '<span class="switch-on">' +
-                                    '<i class="ti ti-check"></i>' +
-                                    '</span>' +
-                                    '<span class="switch-off">' +
-                                    '<i class="ti ti-x"></i>' +
-                                    '</span>' +
+                                    '<span class="switch-on"><i class="ti ti-check"></i></span>' +
+                                    '<span class="switch-off"><i class="ti ti-x"></i></span>' +
                                     '</span>' +
                                     '<span class="switch-label">' + $nameStatus + '</span>' +
                                     '</label>';
+
                             }
                         },
                         {
-                            targets: -1, // Actions column
+                            targets: -1,
                             searchable: false,
                             orderable: false,
+                            // render: function(data, type, full, meta) {
+                            //     return (
+                            //         '<span class="text-nowrap">' +
+                            //         '<button class="btn btn-sm btn-icon me-2" onclick="edit(\'/news/edit/' +
+                            //         full['id'] + '\', \'modal-lg\')">' +
+                            //         '<i class="ti ti-edit"></i></button>' +
+                            //         '<button class="btn btn-sm btn-icon delete-record" onclick="destry(\'/news/destroy/' +
+                            //         full['id'] + '\', \'news-updates-table\')">' +
+                            //         '<i class="ti ti-trash"></i></button></span>'
+                            //     );
+                            // }
                             render: function(data, type, full, meta) {
-                                return (
-                                    '<span class="text-nowrap">' +
-                                    '<button class="btn btn-sm btn-icon me-2" onclick="edit(\'/news/edit/' +
-                                    full['id'] + '\', \'modal-lg\')">' +
-                                    '<i class="ti ti-edit"></i></button>' +
-                                    '<button class="btn btn-sm btn-icon delete-record" onclick="destry(\'/news/destroy/' +
-                                    full['id'] + '\', \'news-updates-table\')">' +
-                                    '<i class="ti ti-trash"></i></button></span>'
-                                );
+                                let actions = '<span class="text-nowrap">';
+
+                                @if ($canEditNews)
+                                    actions +=
+                                        '<button class="btn btn-sm btn-icon me-2" onclick="edit(\'/news/edit/' +
+                                        full['id'] + '\', \'modal-lg\')">' +
+                                        '<i class="ti ti-edit"></i></button>';
+                                @endif
+
+                                @if ($canDeleteNews)
+                                    actions +=
+                                        '<button class="btn btn-sm btn-icon delete-record" onclick="destry(\'/news/destroy/' +
+                                        full['id'] + '\', \'news-updates-table\')">' +
+                                        '<i class="ti ti-trash"></i></button>';
+                                @endif
+
+                                actions += '</span>';
+                                return actions;
                             }
+
                         }
                     ],
                     aaSorting: false,
@@ -79,16 +156,32 @@
                         search: 'Search',
                         searchPlaceholder: 'Search News..'
                     },
-                    buttons: [{
-                        text: 'Add News',
-                        className: 'add-new btn btn-primary mb-3 mb-md-0 waves-effect waves-light',
-                        attr: {
-                            'onclick': "add('{{ route('news.create') }}', 'modal-lg')"
-                        },
-                        init: function(api, node, config) {
-                            $(node).removeClass('btn-secondary');
-                        }
-                    }],
+                    // buttons: [{
+                    //     text: 'Add News',
+                    //     className: 'add-new btn btn-primary mb-3 mb-md-0 waves-effect waves-light',
+                    //     attr: {
+                    //         'onclick': "add('{{ route('news.create') }}', 'modal-lg')"
+                    //     },
+                    //     init: function(api, node, config) {
+                    //         $(node).removeClass('btn-secondary');
+                    //     }
+                    // }],
+                    buttons: [
+
+                        @if ($canCreateNews)
+                            {
+                                text: 'Add News',
+                                className: 'add-new btn btn-primary mb-3 mb-md-0 waves-effect waves-light',
+                                attr: {
+                                    'onclick': "add('{{ route('news.create') }}', 'modal-lg')"
+                                },
+                                init: function(api, node, config) {
+                                    $(node).removeClass('btn-secondary');
+                                }
+                            }
+                        @endif
+                    ],
+
                     responsive: {
                         details: {
                             display: $.fn.dataTable.Responsive.display.modal({
@@ -100,7 +193,8 @@
                             type: 'column',
                             renderer: function(api, rowIdx, columns) {
                                 var data = $.map(columns, function(col, i) {
-                                    return col.title !== '' ? '<tr data-dt-row="' + col.rowIndex +
+                                    return col.title !== '' ? '<tr data-dt-row="' + col
+                                        .rowIndex +
                                         '" data-dt-column="' + col.columnIndex + '">' +
                                         '<td>' + col.title + ':</td> ' +
                                         '<td>' + col.data + '</td>' +

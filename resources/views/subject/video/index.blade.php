@@ -139,18 +139,48 @@
     </script>
     <script>
         function showVideo(videoUrl, uploadType) {
-    let videoContent = '';
+            let videoContent = '';
 
-    if (uploadType === 'youtube') {
-        videoContent = `<iframe width="100%" height="400" src="${videoUrl}" frameborder="0" allowfullscreen></iframe>`;
-    } else {
-        videoContent = `<video width="100%" controls><source src="${videoUrl}" type="video/mp4"></video>`;
-    }
+            if (uploadType === 'youtube') {
+                videoContent =
+                    `<iframe width="100%" height="400" src="${videoUrl}" frameborder="0" allowfullscreen></iframe>`;
+            } else {
+                videoContent = `<video width="100%" controls><source src="${videoUrl}" type="video/mp4"></video>`;
+            }
 
-    $('#videoContainer').html(videoContent);
-    $('#videoModal').modal('show');
-}
+            $('#videoContainer').html(videoContent);
+            $('#videoModal').modal('show');
+        }
     </script>
+
+
+    {{-- for both youtube and normal video URLs and embeded YouTube URLs --}}
+    {{-- <script>
+        function showVideo(videoUrl, uploadType) {
+            let videoContent = '';
+
+            if (uploadType === 'youtube') {
+                // Handle normal and embed YouTube URLs
+                if (videoUrl.includes('watch?v=')) {
+                    const videoId = videoUrl.split('watch?v=')[1].split('&')[0];
+                    videoUrl = `https://www.youtube.com/embed/${videoId}`;
+                } else if (videoUrl.includes('youtu.be/')) {
+                    const videoId = videoUrl.split('youtu.be/')[1].split('?')[0];
+                    videoUrl = `https://www.youtube.com/embed/${videoId}`;
+                }
+                // For already embedded URLs, keep as-is
+
+                videoContent =
+                    `<iframe width="100%" height="400" src="${videoUrl}" frameborder="0" allowfullscreen></iframe>`;
+            } else {
+                videoContent = `<video width="100%" controls><source src="${videoUrl}" type="video/mp4"></video>`;
+            }
+
+            $('#videoContainer').html(videoContent);
+            $('#videoModal').modal('show');
+        }
+    </script> --}}
+
 
     <h4 class="mb-4">Subject Videos</h4>
     <div class="card">
@@ -173,7 +203,7 @@
 
 
 
-    
+
     <!-- Video Modal (Place it here, before ) -->
     <div class="modal fade" id="videoModal" tabindex="-1" aria-labelledby="videoModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-md">

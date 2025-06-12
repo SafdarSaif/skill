@@ -67,7 +67,7 @@ class DashboardController extends Controller
         $studentCount = Students::where('status', 1)->count();
         $courseCount = Course::where('status', 1)->count();
         $userCount   = User::where('status', 1)->count();
-        
+
 
         $totalRevenue = StudentPayment::where('payment_status', 'completed')->sum('amount');
 
@@ -102,16 +102,16 @@ class DashboardController extends Controller
         //     ->get();
         // dd($courses);
         $courses = Course::withCount('students')
-        ->latest()
-        ->get() 
-        ->map(function ($course) use ($totalEnrollments) {
-            $course->enrollment_percent = $totalEnrollments > 0
-                ? round(($course->students_count / $totalEnrollments) * 100, 1)
-                : 0;
-            return $course;
-        })
-        ->sortByDesc('students_count') 
-        ->take(10);
+            ->latest()
+            ->get()
+            ->map(function ($course) use ($totalEnrollments) {
+                $course->enrollment_percent = $totalEnrollments > 0
+                    ? round(($course->students_count / $totalEnrollments) * 100, 1)
+                    : 0;
+                return $course;
+            })
+            ->sortByDesc('students_count')
+            ->take(10);
 
         return view('content.home', compact(
             'studentCount',
@@ -225,7 +225,4 @@ class DashboardController extends Controller
             'values' => $values
         ]);
     }
-
-
-
 }

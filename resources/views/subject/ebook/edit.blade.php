@@ -82,7 +82,7 @@
         </div>
 
         <!-- Uploader -->
-        <div class="col-md-6">
+        {{-- <div class="col-md-6">
             <label for="user_id" class="form-label">Uploaded By <span class="text-danger">*</span></label>
             <select name="user_id" id="user_id" class="form-select" required>
                 <option value="">Select Uploaded By</option>
@@ -91,7 +91,7 @@
                         {{ $name }}</option>
                 @endforeach
             </select>
-        </div>
+        </div> --}}
 
         <!-- Upload Type -->
         <div class="col-md-6">
