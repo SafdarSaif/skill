@@ -263,4 +263,6 @@ class OTPController extends Controller
 
         return response()->json(['status' => true, 'message' => 'Logged out successfully']);
     }
+
+
 }

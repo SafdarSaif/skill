@@ -61,9 +61,9 @@ class EasebuzzPaymentController extends Controller
     }
     public function paymentSuccess(Request $request)
     {
-        
+
         $payment = StudentPayment::where('transaction_id', $request->txnid)->first();
-      
+
 
         if ($payment) {
             $payment->update([
@@ -102,7 +102,6 @@ class EasebuzzPaymentController extends Controller
             'data' => $payment,
             'pdf_url'   => $receiptData['pdf_url'] ?? null,
         ]);
-
     }
 
     public function paymentFailure(Request $request)
@@ -128,6 +127,5 @@ class EasebuzzPaymentController extends Controller
                 'data' => $request->all()
             ], 404);
         }
-
     }
 }

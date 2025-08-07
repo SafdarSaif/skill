@@ -106,8 +106,8 @@
         <div class="col-md-12" id="youtube_field">
             <label for="video_url" class="form-label">YouTube Video URL <span class="text-danger">*</span></label>
             <input type="url" name="video_url" id="video_url" class="form-control" placeholder="Enter YouTube URL">
-            <!--<small class="text-muted">⚠ Only YouTube embedded URLs are allowed (e.g.,-->
-            <!--    <code>https://www.youtube.com/embed/VIDEO_ID</code>).</small>-->
+            <small class="text-muted">⚠ Only YouTube embedded URLs are allowed (e.g.,
+               <code>https://www.youtube.com/embed/VIDEO_ID</code>).</small>
         </div>
 
         <!-- Local File Upload -->
@@ -456,10 +456,13 @@ $("#subject-video-form").validate({
     function onPlayerReady(event) {
         setTimeout(() => {
             const durationInSeconds = player.getDuration();
-            const minutes = Math.floor(durationInSeconds / 60).toString().padStart(2, '0');
+
+            const hours = Math.floor(durationInSeconds / 3600).toString().padStart(2, '0');
+            const minutes = Math.floor((durationInSeconds % 3600) / 60).toString().padStart(2, '0');
             const seconds = Math.floor(durationInSeconds % 60).toString().padStart(2, '0');
-            const formatted = `00:${minutes}:${seconds}`;
-            $('#duration-display').text(`Video Duration: ${minutes} min ${seconds} sec`);
+
+            const formatted = `${hours}:${minutes}:${seconds}`;
+            $('#duration-display').text(`Video Duration: ${hours} hr ${minutes} min ${seconds} sec`);
             $('#duration').val(formatted);
         }, 1000);
     }

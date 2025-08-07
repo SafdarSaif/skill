@@ -284,7 +284,13 @@ class SubjectVideoController extends Controller
             'position'    => 'required|integer|in:0,1',
             'upload_type' => 'required|in:youtube,local,drive_link',
             // 'video_url'   => 'nullable|required_if:upload_type,youtube|url|regex:/^https?:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+$/',
-            'video_url'   => 'nullable|required_if:upload_type,youtube|url',
+            // 'video_url'   => 'nullable|required_if:upload_type,youtube|url',
+             'video_url'   => [
+                'nullable',
+                'required_if:upload_type,youtube',
+                'url',
+                'regex:/^https:\/\/(www\.)?youtube\.com\/embed\/[a-zA-Z0-9_-]+(\?.*)?$/'
+            ],
             'video_file'  => 'nullable|required_if:upload_type,local',
         ]);
 
@@ -487,7 +493,14 @@ class SubjectVideoController extends Controller
             'position'    => 'required|integer|in:0,1',
             'upload_type' => 'required|in:youtube,local,drive_link',
             // 'video_url'   => 'nullable|required_if:upload_type,youtube|url|regex:/^https?:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]+$/',
-            'video_url'   => 'nullable|required_if:upload_type,youtube',
+            // 'video_url'   => 'nullable|required_if:upload_type,youtube',
+            'video_url'   => [
+                'nullable',
+                'required_if:upload_type,youtube',
+                'url',
+                'regex:/^https:\/\/(www\.)?youtube\.com\/embed\/[a-zA-Z0-9_-]+(\?.*)?$/'
+            ],
+
             'video_file'  => 'nullable|mimes:mp4,avi,mkv,mov',
 
         ]);
@@ -512,16 +525,17 @@ class SubjectVideoController extends Controller
             } elseif ($request->upload_type === 'drive_link') {
                 $videoUrl = $request->drive_link;
                 preg_match('/\/d\/(.*?)\//', $videoUrl, $matches);
-                if (!isset($matches[1])) {
-                    return response()->json([
-                        'status' => 'error',
-                        'message' => 'Invalid Google Drive URL.'
-                    ], 400);
+                if ($videoUrl != $subjectVideo->video_url) {
+                    if (!isset($matches[1])) {
+                        return response()->json([
+                            'status' => 'error',
+                            'message' => 'Invalid Google Drive URL.'
+                        ], 400);
+                    }
+                    $fileId = $matches[1];
+                    // Create streamable link
+                    $videoUrl = "https://drive.google.com/uc?export=download&id={$fileId}";
                 }
-                $fileId = $matches[1];
-
-                // Create streamable link
-                $videoUrl = "https://drive.google.com/uc?export=download&id={$fileId}";
             }
 
             // Convert HH:MM:SS to seconds

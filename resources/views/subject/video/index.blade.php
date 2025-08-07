@@ -1,8 +1,8 @@
 @extends('layouts.main')
 
 @section('content')
-    <script type="module">
-        $(function() {
+<script type="module">
+    $(function() {
             var dataTableVideos = $('#videos-table'),
                 dt_videos;
 
@@ -136,9 +136,9 @@
                 });
             }
         });
-    </script>
-    {{-- <script>
-        function showVideo(videoUrl, uploadType) {
+</script>
+{{-- <script>
+    function showVideo(videoUrl, uploadType) {
             let videoContent = '';
 
             if (uploadType === 'youtube') {
@@ -151,12 +151,12 @@
             $('#videoContainer').html(videoContent);
             $('#videoModal').modal('show');
         }
-    </script> --}}
+</script> --}}
 
 
-    {{-- for both youtube and normal video URLs and embeded YouTube URLs --}}
-    {{-- <script>
-        function showVideo(videoUrl, uploadType) {
+{{-- for both youtube and normal video URLs and embeded YouTube URLs --}}
+{{-- <script>
+    function showVideo(videoUrl, uploadType) {
             let videoContent = '';
 
             if (uploadType === 'youtube') {
@@ -179,9 +179,9 @@
             $('#videoContainer').html(videoContent);
             $('#videoModal').modal('show');
         }
-    </script> --}}
+</script> --}}
 
-   <script>
+<script>
     function showVideo(videoUrl, uploadType) {
         let videoContent = '';
 
@@ -197,9 +197,9 @@
             videoContent = `<iframe width="100%" height="400" src="${videoUrl}" frameborder="0" allowfullscreen></iframe>`;
         } else if (uploadType === 'drive_link') {
             // Support both preview and download links
-            let fileIdMatch = videoUrl.match(/id=([a-zA-Z0-9_-]+)/); // for uc?export=download
+            let fileIdMatch = videoUrl.match(/id=([a-zA-Z0-9_-]+)/);
             if (!fileIdMatch) {
-                fileIdMatch = videoUrl.match(/\/d\/([a-zA-Z0-9_-]+)/); // for /file/d/ID/view
+                fileIdMatch = videoUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
             }
 
             if (fileIdMatch && fileIdMatch[1]) {
@@ -222,40 +222,40 @@
 
 
 
-    <h4 class="mb-4">Subject Videos</h4>
-    <div class="card">
-        <div class="card-datatable table-responsive">
-            <table id="videos-table" class="table border-top">
-                <thead>
-                    <tr>
-                        <th>No.</th>
-                        <th>Video Name</th>
-                        <th>Subject</th>
-                        <th>Uploader</th>
-                        <th>Upload Type</th>
-                        <th>Video</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-            </table>
-        </div>
+<h4 class="mb-4">Subject Videos</h4>
+<div class="card">
+    <div class="card-datatable table-responsive">
+        <table id="videos-table" class="table border-top">
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Video Name</th>
+                    <th>Subject</th>
+                    <th>Uploader</th>
+                    <th>Upload Type</th>
+                    <th>Video</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+        </table>
     </div>
+</div>
 
 
 
 
-    <!-- Video Modal (Place it here, before ) -->
-    <div class="modal fade" id="videoModal" tabindex="-1" aria-labelledby="videoModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-md">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="videoModalLabel">Watch Video</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="videoContainer" class="text-center"></div>
-                </div>
+<!-- Video Modal (Place it here, before ) -->
+<div class="modal fade" id="videoModal" tabindex="-1" aria-labelledby="videoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="videoModalLabel">Watch Video</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="videoContainer" class="text-center"></div>
             </div>
         </div>
     </div>
+</div>
 @endsection

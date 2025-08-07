@@ -136,7 +136,8 @@
             <label for="video_url" class="form-label">YouTube Video URL <span class="text-danger">*</span></label>
             <input type="url" name="video_url" id="video_url" class="form-control"
                 value="{{ $video->upload_type == 'youtube' ? $video->video_url : '' }}" placeholder="Enter YouTube URL">
-            <!--<small class="text-muted">⚠ Only YouTube embedded URLs are allowed (e.g., <code>https://www.youtube.com/embed/VIDEO_ID</code>).</small>-->
+            <small class="text-muted">⚠ Only YouTube embedded URLs are allowed (e.g.,
+                <code>https://www.youtube.com/embed/VIDEO_ID</code>).</small>
         </div>
 
         <!-- Local File Upload -->
@@ -161,8 +162,7 @@
             <input type="url" name="drive_link" id="drive_link" class="form-control"
                 value="{{ $video->upload_type == 'drive_link' ? $video->video_url : '' }}"
                 placeholder="Enter Google Drive URL">
-            <!--<small class="text-muted">⚠ Only YouTube embedded URLs are allowed (e.g.,-->
-            <!--    <code>https://www.youtube.com/embed/VIDEO_ID</code>).</small>-->
+
         </div>
         <!-- YouTube Video Preview and Duration Display -->
         <div class="col-md-12 mt-3" id="youtube-preview" style="display: none;">
@@ -262,33 +262,7 @@
 <script>
     $(document).ready(function () {
 
-        // function toggleFields() {
-        //     const uploadType = $('#upload_type').val();
-        //     if ($('#upload_type').val() === 'youtube') {
-        //         $('#youtube_field').show();
-        //         $('#video_url').prop('required', true);
-        //         $('#local_field').hide();
-        //         $('#video_file').prop('required', false);
-        //         $('#drive_field').hide();
-        //         $('#drive_link').prop('required', false);
-        //     }
-        //     else if($('#upload_type').val() == 'drive_link'){
-        //         $('#drive_field').show();
-        //         $('#drive_link').prop('required', true);
-        //         $('#local_field').hide();
-        //         $('#video_file').prop('required', false);
-        //         $('#youtube_field').hide();
-        //         $('#video_url').prop('required', false);
-        //     }
-        //     else {
-        //         $('#local_field').show();
-        //         $('#video_file').prop('required', true);
-        //         $('#youtube_field').hide();
-        //         $('#video_url').prop('required', false);
-        //         $('#drive_field').hide();
-        //         $('#drive_link').prop('required', false);
-        //     }
-        // }
+
 
         function toggleFields() {
     const uploadType = $('#upload_type').val();
@@ -343,95 +317,16 @@
             }
         });
 
-        // Validate and AJAX Submit
-        // $('#subject-video-form').validate({
-        //     rules: {
-        //         subject_id: { required: true },
-        //         name: { required: true, minlength: 3 },
-        //         user_id: { required: true },
-        //         upload_type: { required: true },
-        //           duration: {
-        //             required: function() {
-        //                 return $("#upload_type").val() === "drive_link";
-        //             },
-        //             pattern: {
-        //                 param: /^([0-9]{1,2}):([0-5][0-9]):([0-5][0-9])$/,
-        //                 depends: function() {
-        //                     // Only validate pattern if value is not empty (to avoid failing when optional)
-        //                     return $("#upload_type").val() === "drive_link" || $("#duration").val()
-        //                         .trim() !== "";
-        //                 }
-        //             }
-        //         }
-        //     },
-        //     messages: {
-        //         subject_id: { required: "Please select a subject" },
-        //         name: { required: "Enter a video name", minlength: "At least 3 characters" },
-        //         user_id: { required: "Please select an uploader" },
-        //         upload_type: { required: "Please select an upload type" },
-        //          duration: {
-        //             required: "Please enter video duration for Google Drive videos",
-        //             pattern: "Duration must be in HH:MM:SS format"
-        //         }
-        //     },
-        //     submitHandler: function (form) {
-        //         const formData = new FormData(form);
-        //         formData.append('_token', "{{ csrf_token() }}");
-
-        //         // Reset and show progress bar
-        //         $("#uploadProgressBar").val(0).show();
-
-        //         $.ajax({
-        //             url: $(form).attr('action'),
-        //             method: $(form).attr('method'),
-        //             data: formData,
-        //             contentType: false,
-        //             processData: false,
-
-        //             // ✅ Upload progress tracking
-        //             xhr: function () {
-        //                 let xhr = new XMLHttpRequest();
-        //                 xhr.upload.addEventListener("progress", function (e) {
-        //                     if (e.lengthComputable) {
-        //                         let percent = Math.round((e.loaded / e.total) * 100);
-        //                         $("#uploadProgressBar").val(percent);
-        //                     }
-        //                 }, false);
-        //                 return xhr;
-        //             },
-
-        //             beforeSend: () => {
-        //                 $(':input[type="submit"]').prop('disabled', true);
-        //             },
-
-        //             success: function (response) {
-        //                 toastr.success(response.message);
-        //                 $(".modal").modal('hide');
-        //                 $('#subjects-video-table').DataTable().ajax.reload();
-        //             },
-
-        //             error: function (response) {
-        //                 toastr.error(response.responseJSON?.message || 'Something went wrong.');
-        //             },
-
-        //             complete: () => {
-        //                 $(':input[type="submit"]').prop('disabled', false);
-        //                 $("#uploadProgressBar").hide(); // ✅ Hide progress bar after complete
-        //             }
-        //         });
-        //     }
-        // });
 
         // Custom HH:MM:SS duration format validation method
-$.validator.addMethod("driveLink", function(value, element) {
-    const drivePattern1 = /^https:\/\/drive\.google\.com\/file\/d\/[a-zA-Z0-9_-]{10,}\/view(\?.*)?$/;
+    $.validator.addMethod("driveLink", function(value, element) {
     const drivePattern2 = /^https:\/\/drive\.google\.com\/uc\?export=download&id=[a-zA-Z0-9_-]{10,}$/;
     return this.optional(element) || drivePattern1.test(value) || drivePattern2.test(value);
-}, "Please enter a valid Google Drive link.");
+    }, "Please enter a valid Google Drive link.");
 
-$.validator.addMethod("hhmmss", function(value, element) {
+   $.validator.addMethod("hhmmss", function(value, element) {
     return this.optional(element) || /^([0-9]{1,2}):([0-5][0-9]):([0-5][0-9])$/.test(value);
-}, "Duration must be in HH:MM:SS format");
+   }, "Duration must be in HH:MM:SS format");
 
 $('#subject-video-form').validate({
     rules: {
@@ -527,16 +422,34 @@ $('#subject-video-form').validate({
         }
     }
 
+    // function onPlayerReady(event) {
+    //     setTimeout(() => {
+    //         const durationInSeconds = player.getDuration();
+    //         const minutes = Math.floor(durationInSeconds / 60).toString().padStart(2, '0');
+    //         const seconds = Math.floor(durationInSeconds % 60).toString().padStart(2, '0');
+    //         const formatted = `00:${minutes}:${seconds}`;
+    //         $('#duration-display').text(`Video Duration: ${minutes} min ${seconds} sec`);
+    //         $('#duration').val(formatted);
+    //     }, 1000);
+    // }
+
     function onPlayerReady(event) {
-        setTimeout(() => {
-            const durationInSeconds = player.getDuration();
-            const minutes = Math.floor(durationInSeconds / 60).toString().padStart(2, '0');
-            const seconds = Math.floor(durationInSeconds % 60).toString().padStart(2, '0');
-            const formatted = `00:${minutes}:${seconds}`;
-            $('#duration-display').text(`Video Duration: ${minutes} min ${seconds} sec`);
-            $('#duration').val(formatted);
-        }, 1000);
-    }
+    setTimeout(() => {
+        const durationInSeconds = player.getDuration();
+
+        const hours = Math.floor(durationInSeconds / 3600).toString().padStart(2, '0');
+        const minutes = Math.floor((durationInSeconds % 3600) / 60).toString().padStart(2, '0');
+        const seconds = Math.floor(durationInSeconds % 60).toString().padStart(2, '0');
+
+        const formatted = `${hours}:${minutes}:${seconds}`;
+
+        // Optional: Display in readable format (e.g., 1 hr 2 min 5 sec)
+        const displayText = `${parseInt(hours)} hr ${parseInt(minutes)} min ${parseInt(seconds)} sec`;
+
+        $('#duration-display').text(`Video Duration: ${displayText}`);
+        $('#duration').val(formatted);
+    }, 1000);
+}
 
     // Watch YouTube URL input
     $('#video_url').on('input', function() {
